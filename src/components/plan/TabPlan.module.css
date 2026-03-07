@@ -1,0 +1,23 @@
+.root    { display: flex; height: 100%; overflow: hidden; }
+.sidebar {
+  width: clamp(200px, 18vw, 280px); min-width: 180px;
+  border-right: 1px solid var(--border); padding: clamp(14px, 2vh, 24px);
+  overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
+  background: rgba(0,4,12,.4);
+}
+.sidebarTitle { font-family: var(--font-mono); font-size: clamp(10px, 0.85vw, 12px); color: var(--text-dim); letter-spacing: 3px; margin-bottom: 14px; text-transform: uppercase; }
+.empty        { font-size: clamp(12px, 1vw, 15px); color: var(--text-dim); }
+.milestone    { padding: 12px; border-left: 3px solid var(--border); margin-bottom: 6px; display: flex; flex-direction: column; gap: 4px; }
+.ms-todo        { border-color: var(--text-dim); }
+.ms-in-progress { border-color: var(--yellow); }
+.ms-done        { border-color: var(--green); }
+.msStatus { font-family: var(--font-mono); font-size: clamp(9px, 0.75vw, 11px); color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+.msTitle  { font-size: clamp(12px, 1vw, 15px); }
+.msDate   { font-family: var(--font-mono); font-size: clamp(10px, 0.85vw, 13px); color: var(--yellow); }
+.editor   { flex: 1; display: flex; overflow: hidden; }
+.textarea {
+  flex: 1; background: var(--bg-editor); border: none; color: var(--text);
+  font-family: var(--font-code); font-size: clamp(13px, 1.1vw, 16px);
+  line-height: 1.9; padding: clamp(20px, 3vh, 36px) clamp(24px, 3.5vw, 48px);
+  resize: none; outline: none;
+}

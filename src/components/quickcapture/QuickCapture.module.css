@@ -1,0 +1,42 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 140px;
+  z-index: 200;
+}
+.popup {
+  width: 540px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.08);
+}
+.header { display: flex; justify-content: space-between; align-items: center; }
+.label  {
+  font-family: var(--font-display);
+  font-size: var(--fs-xxs);
+  color: var(--cyan);
+  letter-spacing: 3px;
+}
+.typeSwitcher { display: flex; gap: 4px; }
+.typeBtn {
+  padding: 3px 12px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xxs);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all var(--t-fast);
+}
+.typeBtn:hover { color: var(--text); border-color: var(--border-bright); }
+.typeActive    { color: var(--cyan); border-color: var(--cyan); }
+.input  { font-size: var(--fs-base) !important; }
+.hint   { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); letter-spacing: 1px; }

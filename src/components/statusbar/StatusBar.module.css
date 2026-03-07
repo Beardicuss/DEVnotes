@@ -1,0 +1,24 @@
+.bar {
+  display: flex; align-items: center; justify-content: space-between;
+  height: var(--statusbar-h); padding: 0 1.2em;
+  background: rgba(0, 1, 6, 0.98);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0; user-select: none;
+}
+.left, .right { display: flex; align-items: center; gap: 1.4em; }
+
+.projLabel  { display: flex; align-items: center; gap: 0.5em; }
+.dot        { font-size: 0.6em; }
+.projName   { font-family: var(--font-mono); font-size: var(--fs-xs); }
+.noProj     { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim); }
+.statusTag  {
+  font-family: var(--font-mono); font-size: var(--fs-xxs);
+  color: var(--yellow); border: 1px solid var(--yellow);
+  padding: 0.08em 0.45em; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.gitInfo    { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim); }
+.gitDirty   { color: var(--yellow); }
+.syncStatus { font-family: var(--font-mono); font-size: var(--fs-xxs); text-transform: uppercase; letter-spacing: 0.1em; }
+.resolution { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); letter-spacing: 0.08em; }
+.locale     { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); letter-spacing: 0.15em; }
+.clock      { font-family: var(--font-display); font-size: var(--fs-sm); color: var(--cyan); letter-spacing: 0.2em; text-shadow: var(--glow-cyan); min-width: 5em; text-align: right; }

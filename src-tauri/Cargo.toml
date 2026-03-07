@@ -1,0 +1,33 @@
+[package]
+name    = "devnotes"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.77"
+
+[lib]
+name       = "devnotes_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri                       = { version = "2", features = ["tray-icon", "menu", "image-png"] }
+tauri-plugin-fs             = "2"
+tauri-plugin-shell          = "2"
+tauri-plugin-autostart      = "2"
+tauri-plugin-notification   = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-updater        = "2"
+serde      = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[profile.release]
+panic         = "abort"
+codegen-units = 1
+lto           = true
+opt-level     = "s"
+strip         = true

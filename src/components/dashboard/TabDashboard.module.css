@@ -1,0 +1,79 @@
+.root {
+  padding: clamp(24px, 4vh, 56px) clamp(28px, 5vw, 80px);
+  overflow-y: auto;
+  height: 100%;
+}
+
+.projHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(14px, 2vw, 28px);
+  margin-bottom: clamp(24px, 4vh, 48px);
+  padding-bottom: clamp(20px, 3vh, 36px);
+  border-bottom: 1px solid var(--border-dim);
+}
+.icon     { font-size: clamp(32px, 4vw, 52px); line-height: 1; }
+.projName { font-family: var(--font-ui); font-weight: 700; font-size: clamp(20px, 2.2vw, 34px); letter-spacing: 2px; }
+.projDesc { font-size: clamp(13px, 1.1vw, 17px); color: var(--text-dim); margin-top: 6px; line-height: 1.5; }
+.deadline { margin-left: auto; text-align: right; flex-shrink: 0; }
+.deadlineLabel { font-family: var(--font-mono); font-size: clamp(10px, 0.9vw, 13px); color: var(--text-dim); letter-spacing: 2px; display: block; text-transform: uppercase; margin-bottom: 4px; }
+.deadlineDate  { font-family: var(--font-display); font-size: clamp(18px, 2vw, 28px); color: var(--yellow); }
+
+/* Stats grid — always 5 wide on desktop, fills available width */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: clamp(10px, 1.5vw, 20px);
+  margin-bottom: clamp(28px, 4vh, 48px);
+}
+@media (max-width: 800px) {
+  .statsRow { grid-template-columns: repeat(3, 1fr); }
+}
+
+.stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: clamp(16px, 2.5vh, 30px) clamp(12px, 1.5vw, 20px);
+  text-align: center;
+  transition: border-color var(--t-base);
+}
+.stat:hover { border-color: var(--border-bright); }
+.statAlert  { border-color: rgba(255,51,68,.4); background: rgba(255,51,68,.04); }
+
+.statValue {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 56px);
+  font-weight: 900;
+  line-height: 1;
+}
+.statLabel {
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 0.85vw, 13px);
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-top: 10px;
+  text-transform: uppercase;
+}
+
+.section       { margin-bottom: clamp(20px, 3vh, 36px); }
+.sectionTitle  {
+  font-family: var(--font-mono);
+  font-size: clamp(10px, 0.9vw, 13px);
+  color: var(--text-dim);
+  letter-spacing: 3px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.gitRow    { display: flex; align-items: center; gap: 20px; font-family: var(--font-mono); font-size: clamp(12px, 1.1vw, 16px); flex-wrap: wrap; }
+.gitBranch { color: var(--cyan); }
+.gitCommit { color: var(--text-dim); font-size: clamp(11px, 0.9vw, 14px); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.taskRow   { display: flex; align-items: center; gap: 14px; padding: clamp(8px, 1.2vh, 14px) 16px; margin-bottom: 5px; cursor: pointer; border: 1px solid var(--border-dim); transition: all var(--t-fast); }
+.taskRow:hover { background: var(--bg-hover); border-color: var(--border); }
+.taskTitle { flex: 1; font-size: clamp(12px, 1.1vw, 16px); }
+
+.noteRow   { display: flex; align-items: center; gap: 12px; padding: clamp(8px, 1.2vh, 14px) 0; border-bottom: 1px solid var(--border-dim); cursor: pointer; transition: color var(--t-fast); }
+.noteRow:hover .noteTitle { color: var(--cyan); }
+.noteTitle { flex: 1; font-size: clamp(12px, 1.1vw, 16px); }

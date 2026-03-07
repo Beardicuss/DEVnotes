@@ -1,0 +1,55 @@
+{
+  "name": "devnotes-vscode",
+  "displayName": "DevNotes",
+  "description": "DevNotes sidebar — view and manage tasks/notes from VS Code",
+  "version": "2.0.0",
+  "publisher": "softcurse",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "devnotes", "title": "DevNotes", "icon": "$(checklist)" }
+      ]
+    },
+    "views": {
+      "devnotes": [
+        { "id": "devnotesExplorer", "name": "DevNotes", "icon": "$(checklist)" }
+      ]
+    },
+    "commands": [
+      { "command": "devnotes.newTask",   "title": "DevNotes: New Task",     "icon": "$(add)" },
+      { "command": "devnotes.newNote",   "title": "DevNotes: New Note",     "icon": "$(note)" },
+      { "command": "devnotes.refresh",   "title": "DevNotes: Refresh",      "icon": "$(refresh)" },
+      { "command": "devnotes.toggleDone","title": "DevNotes: Toggle Done",  "icon": "$(check)" },
+      { "command": "devnotes.quickJump", "title": "DevNotes: Quick Jump",   "icon": "$(search)" },
+      { "command": "devnotes.openApp",   "title": "DevNotes: Open Desktop App" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "devnotes.newTask",  "when": "view == devnotesExplorer", "group": "navigation" },
+        { "command": "devnotes.newNote",  "when": "view == devnotesExplorer", "group": "navigation" },
+        { "command": "devnotes.refresh",  "when": "view == devnotesExplorer", "group": "navigation" }
+      ],
+      "view/item/context": [
+        { "command": "devnotes.toggleDone", "when": "viewItem == task", "group": "inline" }
+      ]
+    },
+    "keybindings": [
+      { "command": "devnotes.newTask",   "key": "ctrl+shift+t", "mac": "cmd+shift+t" },
+      { "command": "devnotes.newNote",   "key": "ctrl+shift+n", "mac": "cmd+shift+n" },
+      { "command": "devnotes.quickJump", "key": "ctrl+shift+j", "mac": "cmd+shift+j" }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch":   "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node":  "^20.0.0",
+    "@types/vscode":"^1.85.0",
+    "typescript":   "^5.4.0"
+  }
+}

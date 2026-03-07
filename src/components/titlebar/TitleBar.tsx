@@ -1,0 +1,87 @@
+import { useAppStore } from "@/stores/useAppStore";
+import { isTauri } from "@/utils/platform";
+import type { ProjectTab } from "@/types";
+import s from "./TitleBar.module.css";
+
+const TABS: { id: ProjectTab; label: string }[] = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "plan",      label: "Plan" },
+  { id: "notes",     label: "Notes" },
+  { id: "todos",     label: "Todo" },
+  { id: "tasks",     label: "Tasks" },
+  { id: "mindmap",   label: "Mind Map" },
+  { id: "tools",     label: "Tools" },
+];
+
+export default function TitleBar() {
+  const activeProjectId = useAppStore((s) => s.activeProjectId);
+  const activeTab       = useAppStore((s) => s.activeTab);
+  const setTab          = useAppStore((s) => s.setTab);
+  const isSaving        = useAppStore((s) => s.isSaving);
+  const syncState       = useAppStore((s) => s.syncState);
+  const ghEnabled       = useAppStore((s) => s.data.settings.githubSyncEnabled);
+  const projects        = useAppStore((s) => s.data.projects);
+  const activeProject   = projects.find((p) => p.id === activeProjectId);
+
+  const handleMin   = async () => { try { const { getCurrentWindow } = await import(/* @vite-ignore */"@tauri-apps/api/window"); await getCurrentWindow().minimize(); } catch {} };
+  const handleMax   = async () => { try { const { getCurrentWindow } = await import(/* @vite-ignore */"@tauri-apps/api/window"); await getCurrentWindow().toggleMaximize(); } catch {} };
+  const handleClose = async () => { try { const { getCurrentWindow } = await import(/* @vite-ignore */"@tauri-apps/api/window"); await getCurrentWindow().hide(); } catch { window.close(); } };
+
+  return (
+    <header className={s.bar} data-tauri-drag-region>
+      {/* Logo */}
+      <div className={s.logo}>
+        <span className={s.logoCyan}>DEV</span>
+        <span className={s.logoText}>NOTES</span>
+        {activeProject && (
+          <>
+            <span className={s.sep}>›</span>
+            <span className={s.projName}>{activeProject.name}</span>
+          </>
+        )}
+      </div>
+
+      {/* Tabs — only show when a project is active */}
+      {activeProjectId && (
+        <nav className={s.tabs}>
+          {TABS.map((tab, i) => (
+            <button
+              key={tab.id}
+              className={`${s.tab} ${activeTab === tab.id ? s.tabActive : ""}`}
+              onClick={() => setTab(tab.id)}
+              title={`Ctrl+${i + 1}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      )}
+
+      <div className={s.right}>
+        {/* Saving indicator */}
+        {isSaving && <span className={s.saving}>SAVING…</span>}
+
+        {/* GitHub sync */}
+        {ghEnabled && (
+          <span className={`${s.sync} sync-${syncState.status}`}>
+            {syncState.status === "syncing" ? "↻" : syncState.status === "error" ? "⚠" : "⬆"}
+          </span>
+        )}
+
+        {/* Settings */}
+        <button className={s.settingsBtn} onClick={() => setTab("settings")} title="Settings">
+          ⚙
+        </button>
+
+        {/* Window controls — Tauri only */}
+        {isTauri && (
+          <div className={s.winBtns}>
+            <button className={s.winBtn} onClick={handleMin} title="Minimise">─</button>
+            <button className={s.winBtn} onClick={handleMax} title="Maximise">□</button>
+            <button className={`${s.winBtn} ${s.close}`} onClick={handleClose} title="Close">✕</button>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+}

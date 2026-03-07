@@ -1,0 +1,290 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Fira+Code:wght@300;400;500&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════
+   SOFTCURSE DEVNOTES DESKTOP — Design System
+   
+   html font-size is set by applyResolution() before first render:
+     HD  (1280×720)  → 13px
+     HD+ (1600×900)  → 15px  
+     FHD (1920×1080) → 16px  ← default
+     QHD (2560×1440) → 20px
+   
+   EVERY size below uses em — 1em = current html font-size.
+   Change the html font-size → everything scales perfectly.
+═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Layout (overridden by applyResolution per preset) ── */
+  --titlebar-h:  46px;
+  --statusbar-h: 36px;
+  --sidebar-w:   248px;
+  --tab-h:       46px;
+
+  /* ── Backgrounds ── */
+  --bg-root:      #020202;
+  --bg-panel:     #06111e;
+  --bg-editor:    #080f1c;
+  --bg-card:      rgba(4, 14, 28, 0.92);
+  --bg-hover:     rgba(0, 255, 255, 0.05);
+  --bg-selected:  rgba(0, 255, 255, 0.10);
+  --bg-input:     rgba(0, 8, 18, 0.92);
+  --bg-overlay:   rgba(0, 0, 0, 0.78);
+
+  /* ── Borders ── */
+  --border:        rgba(0, 255, 255, 0.14);
+  --border-bright: rgba(0, 255, 255, 0.48);
+  --border-dim:    rgba(0, 255, 255, 0.06);
+  --border-focus:  rgba(0, 255, 255, 0.72);
+
+  /* ── Brand ── */
+  --cyan:    #00ffff;
+  --blue:    #0088ff;
+  --magenta: #ff00ff;
+  --green:   #00ff88;
+  --yellow:  #ffee00;
+  --red:     #ff3344;
+  --orange:  #ff8844;
+  --purple:  #aa44ff;
+
+  /* ── Priority ── */
+  --pri-low:      #00ff88;
+  --pri-medium:   #ffee00;
+  --pri-high:     #ff3344;
+  --pri-critical: #ff00ff;
+
+  /* ── Text ── */
+  --text:           #c8e8ff;
+  --text-bright:    #e8f8ff;
+  --text-dim:       #4a6880;
+  --text-muted:     #2a3848;
+  --text-on-accent: #020202;
+
+  /* ── Fonts ── */
+  --font-mono:    'Share Tech Mono', 'Courier New', monospace;
+  --font-display: 'Orbitron', monospace;
+  --font-ui:      'Rajdhani', sans-serif;
+  --font-code:    'Fira Code', 'Courier New', monospace;
+
+  /* ── Font scale — all em, anchored to html font-size ── */
+  --fs-xxs:  0.69em;   /* ~11px at FHD */
+  --fs-xs:   0.81em;   /* ~13px */
+  --fs-sm:   0.875em;  /* ~14px */
+  --fs-base: 1em;      /* 16px  */
+  --fs-md:   1.125em;  /* ~18px */
+  --fs-lg:   1.375em;  /* ~22px */
+  --fs-xl:   1.625em;  /* ~26px */
+  --fs-2xl:  2em;      /* ~32px */
+  --fs-3xl:  2.75em;   /* ~44px */
+
+  /* ── Spacing ── */
+  --sp-1: 0.25em;
+  --sp-2: 0.5em;
+  --sp-3: 0.75em;
+  --sp-4: 1em;
+  --sp-5: 1.25em;
+  --sp-6: 1.5em;
+  --sp-8: 2em;
+
+  /* ── Glows ── */
+  --glow-cyan:    0 0 1em rgba(0,255,255,0.35);
+  --glow-blue:    0 0 1em rgba(0,136,255,0.35);
+  --glow-magenta: 0 0 1em rgba(255,0,255,0.35);
+  --glow-red:     0 0 0.8em rgba(255,51,68,0.45);
+  --glow-green:   0 0 0.8em rgba(0,255,136,0.35);
+
+  /* ── Transitions ── */
+  --t-fast: 90ms ease;
+  --t-base: 150ms ease;
+  --t-slow: 280ms ease;
+}
+
+/* ── Light theme ── */
+[data-theme="light"] {
+  --bg-root:       #eef2f8;
+  --bg-panel:      #e2e8f2;
+  --bg-editor:     #ffffff;
+  --bg-card:       rgba(255,255,255,0.95);
+  --bg-hover:      rgba(0,90,170,0.05);
+  --bg-selected:   rgba(0,90,170,0.10);
+  --bg-input:      rgba(255,255,255,0.95);
+  --bg-overlay:    rgba(0,0,0,0.45);
+  --border:        rgba(0,90,160,0.16);
+  --border-bright: rgba(0,90,160,0.45);
+  --border-dim:    rgba(0,90,160,0.07);
+  --border-focus:  rgba(0,90,160,0.65);
+  --cyan:          #0060a8;
+  --blue:          #0050cc;
+  --text:          #182838;
+  --text-bright:   #080e18;
+  --text-dim:      #5a7898;
+  --glow-cyan: none; --glow-blue: none; --glow-magenta: none;
+  --glow-red: none;  --glow-green: none;
+}
+
+/* ════════════════════════════════════════════════
+   BASE RESET
+════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; width: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg-root);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 1em;       /* inherits html font-size set by applyResolution */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}
+a { color: var(--cyan); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+::-webkit-scrollbar       { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.15); }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,255,255,0.35); }
+
+/* ════════════════════════════════════════════════
+   GRID BACKGROUND
+════════════════════════════════════════════════ */
+.grid-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,255,255,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,255,0.022) 1px, transparent 1px);
+  background-size: 3em 3em;
+  animation: gridDrift 40s linear infinite;
+}
+.grid-bg::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 90% 55% at 50% 0%,
+    rgba(0,136,255,0.055), transparent 70%);
+}
+@keyframes gridDrift { to { background-position: 3em 3em; } }
+
+/* ════════════════════════════════════════════════
+   GLASS PANEL
+════════════════════════════════════════════════ */
+.glass {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.glass::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+  opacity: 0.28; pointer-events: none;
+}
+
+/* ════════════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; gap: 0.4em;
+  padding: 0.45em 1.2em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border: 1px solid var(--border);
+  background: transparent; color: var(--text);
+  transition: all var(--t-base);
+  outline: none; white-space: nowrap; cursor: pointer;
+}
+.btn:hover { border-color: var(--cyan); color: var(--cyan); background: var(--bg-hover); }
+
+.btn-primary {
+  border-color: var(--cyan); color: var(--text-on-accent);
+  background: var(--cyan); font-weight: 700;
+}
+.btn-primary:hover { opacity: 0.88; box-shadow: var(--glow-cyan); }
+.btn-danger  { border-color: var(--red);  color: var(--red);  }
+.btn-danger:hover  { background: rgba(255,51,68,0.08); }
+.btn-ghost   { border-color: transparent; color: var(--text-dim); }
+.btn-ghost:hover { color: var(--text); border-color: var(--border); }
+.btn-icon {
+  padding: 0.3em 0.5em; border: none; background: none;
+  color: var(--text-dim); font-size: var(--fs-md);
+  line-height: 1; cursor: pointer; transition: color var(--t-fast);
+}
+.btn-icon:hover { color: var(--cyan); }
+
+/* ════════════════════════════════════════════════
+   INPUTS
+════════════════════════════════════════════════ */
+.input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  padding: 0.5em 0.875em;
+  outline: none;
+  transition: border-color var(--t-base);
+  width: 100%;
+  line-height: 1.5;
+}
+.input::placeholder { color: var(--text-dim); }
+.input:focus        { border-color: var(--border-focus); }
+select.input        { appearance: none; cursor: pointer; }
+textarea.input      { resize: none; line-height: 1.7; }
+
+/* ════════════════════════════════════════════════
+   CHIPS
+════════════════════════════════════════════════ */
+.chip {
+  display: inline-flex; align-items: center;
+  padding: 0.12em 0.55em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xxs);
+  letter-spacing: 0.07em; text-transform: uppercase;
+  border: 1px solid currentColor; white-space: nowrap; line-height: 1.6;
+}
+.chip-low      { color: var(--pri-low); }
+.chip-medium   { color: var(--pri-medium); }
+.chip-high     { color: var(--pri-high); }
+.chip-critical { color: var(--pri-critical); }
+.chip-tag      { color: var(--blue); border-color: var(--blue); }
+.chip-status-backlog     { color: var(--text-dim); border-color: var(--text-dim); }
+.chip-status-todo        { color: var(--blue);   border-color: var(--blue); }
+.chip-status-in-progress { color: var(--yellow); border-color: var(--yellow); }
+.chip-status-done        { color: var(--green);  border-color: var(--green); }
+
+/* ════════════════════════════════════════════════
+   TASK STATES
+════════════════════════════════════════════════ */
+.task-done { opacity: 0.42; }
+.task-done .task-title { text-decoration: line-through; color: var(--text-muted); }
+.task-overdue { border-left: 2px solid var(--red) !important; background: rgba(255,51,68,0.04); }
+
+/* ════════════════════════════════════════════════
+   SYNC STATUS
+════════════════════════════════════════════════ */
+.sync-idle    { color: var(--text-dim); }
+.sync-syncing { color: var(--yellow); animation: pulse 1s ease-in-out infinite; }
+.sync-success { color: var(--green); }
+.sync-error   { color: var(--red); }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+/* ════════════════════════════════════════════════
+   SECTION LABEL — reusable uppercase mono label
+════════════════════════════════════════════════ */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xxs);
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.75em;
+}
+
+/* ════════════════════════════════════════════════
+   UTILITIES
+════════════════════════════════════════════════ */
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.uppercase { text-transform: uppercase; }
+
+/* Loading pulse used in App.tsx */
+@keyframes loadpulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }

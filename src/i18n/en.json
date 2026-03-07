@@ -1,0 +1,248 @@
+{
+  "app": {
+    "name": "DevNotes",
+    "tagline": "Softcurse Studio"
+  },
+  "nav": {
+    "projects": "Projects",
+    "dashboard": "Dashboard",
+    "plan": "Plan",
+    "notes": "Notes",
+    "todos": "Todo",
+    "tasks": "Tasks",
+    "mindmap": "Mind Map",
+    "tools": "Tools",
+    "settings": "Settings",
+    "archive": "Archive"
+  },
+  "projects": {
+    "title": "Projects",
+    "new": "New Project",
+    "import": "Import from IDE",
+    "open": "Open",
+    "edit": "Edit",
+    "delete": "Delete",
+    "archive": "Archive",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "status": {
+      "active": "Active",
+      "on-hold": "On Hold",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
+    "empty": "No projects yet. Create your first one.",
+    "searchPlaceholder": "Search projects…",
+    "deadline": "Deadline",
+    "lastUpdated": "Last updated"
+  },
+  "plan": {
+    "title": "Project Plan",
+    "milestones": "Milestones",
+    "addMilestone": "Add Milestone",
+    "placeholder": "Write your project plan in Markdown…",
+    "export": "Export as PDF",
+    "template": "Use Template"
+  },
+  "notes": {
+    "title": "Notes",
+    "new": "+ New Note",
+    "untitled": "Untitled",
+    "searchPlaceholder": "Search notes…",
+    "empty": "No notes yet.",
+    "pin": "Pin",
+    "archive": "Archive",
+    "delete": "Delete",
+    "export": "Export .md",
+    "viewMode": {
+      "edit": "Edit",
+      "split": "Split",
+      "preview": "Preview"
+    }
+  },
+  "todos": {
+    "title": "Todo Lists",
+    "newList": "New List",
+    "newItem": "Add item…",
+    "clearDone": "Clear completed",
+    "empty": "Nothing here. Add your first item.",
+    "promote": "Promote to Task"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "new": "+ Add Task",
+    "searchPlaceholder": "Search tasks…",
+    "empty": "No tasks match your filter.",
+    "status": {
+      "backlog": "Backlog",
+      "todo": "To Do",
+      "in-progress": "In Progress",
+      "done": "Done",
+      "archived": "Archived"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "critical": "Critical"
+    },
+    "dueDate": "Due date",
+    "reminder": "Reminder",
+    "overdue": "Overdue",
+    "dueToday": "Due today",
+    "archive": "Archive",
+    "delete": "Delete",
+    "view": {
+      "list": "List",
+      "kanban": "Kanban"
+    }
+  },
+  "mindmap": {
+    "title": "Mind Map",
+    "addNode": "Add Node",
+    "deleteNode": "Delete Node",
+    "editNode": "Edit",
+    "export": "Export PNG",
+    "autoLayout": "Auto Layout",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "fitView": "Fit View"
+  },
+  "tools": {
+    "title": "Tools",
+    "links": "Project Links",
+    "commands": "Commands",
+    "snippets": "Snippets",
+    "openVSCode": "Open in VS Code",
+    "openVS": "Open in Visual Studio",
+    "openFolder": "Open Folder",
+    "openTerminal": "Open Terminal",
+    "gitBranch": "Branch",
+    "gitDirty": "Uncommitted changes",
+    "run": "Run",
+    "copy": "Copy",
+    "addLink": "Add Link",
+    "addCommand": "Add Command",
+    "addSnippet": "Add Snippet"
+  },
+  "settings": {
+    "title": "Settings",
+    "sections": {
+      "general": "General",
+      "appearance": "Appearance",
+      "fonts": "Fonts",
+      "language": "Language",
+      "notifications": "Notifications",
+      "calendar": "Calendar Sync",
+      "ide": "IDE Integration",
+      "github": "GitHub Sync",
+      "hotkeys": "Keyboard Shortcuts",
+      "data": "Data & Backup",
+      "about": "About"
+    },
+    "general": {
+      "launchAtStartup": "Launch at Windows startup",
+      "minimizeToTray": "Minimize to tray on close",
+      "startMinimized": "Start minimized",
+      "autoDetectIDE": "Auto-detect IDE project",
+      "confirmDelete": "Confirm before deleting"
+    },
+    "appearance": {
+      "theme": "Theme",
+      "themes": {
+        "softcurse-dark": "Softcurse Dark",
+        "light": "Light",
+        "system": "System"
+      },
+      "accentColour": "Accent colour",
+      "opacity": "Window opacity",
+      "gridBg": "Grid background",
+      "glowEffects": "Glow effects",
+      "animations": "Animations"
+    },
+    "fonts": {
+      "uiFont": "UI font",
+      "editorFont": "Editor font",
+      "codeFont": "Code font",
+      "fontSize": "Font size",
+      "lineHeight": "Line height",
+      "lineHeights": {
+        "compact": "Compact",
+        "normal": "Normal",
+        "relaxed": "Relaxed"
+      }
+    },
+    "language": {
+      "locale": "Language",
+      "dateFormat": "Date format",
+      "timeFormat": "Time format",
+      "firstDayOfWeek": "First day of week"
+    },
+    "github": {
+      "title": "GitHub Gist Sync",
+      "description": "Sync your DevNotes data to a private GitHub Gist. Works across devices.",
+      "enableSync": "Enable GitHub sync",
+      "token": "Personal Access Token",
+      "tokenHelp": "Create a token at github.com/settings/tokens with 'gist' scope.",
+      "gistId": "Gist ID",
+      "gistIdHelp": "Leave blank to create a new Gist on first sync.",
+      "syncNow": "Sync Now",
+      "lastSync": "Last synced",
+      "status": {
+        "idle": "Ready",
+        "syncing": "Syncing…",
+        "success": "Synced",
+        "error": "Sync failed"
+      },
+      "frequency": {
+        "on-save": "On every save",
+        "hourly": "Every hour",
+        "manual": "Manual only"
+      }
+    },
+    "save": "Save Settings",
+    "saved": "Saved"
+  },
+  "quickcapture": {
+    "placeholder": "Quick note or task… (Enter to save)",
+    "asNote": "Note",
+    "asTask": "Task",
+    "asTodo": "Todo"
+  },
+  "sync": {
+    "syncing": "Syncing with GitHub…",
+    "success": "Synced successfully",
+    "error": "Sync failed",
+    "lastSync": "Last sync"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "loading": "Loading…",
+    "empty": "Nothing here yet.",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "new": "New",
+    "open": "Open",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "export": "Export",
+    "import": "Import",
+    "all": "All"
+  },
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "saveFailed": "Failed to save",
+    "syncFailed": "GitHub sync failed",
+    "genericError": "Something went wrong"
+  }
+}

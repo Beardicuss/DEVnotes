@@ -1,0 +1,248 @@
+{
+  "app": {
+    "name": "DevNotes",
+    "tagline": "Softcurse Studio"
+  },
+  "nav": {
+    "projects": "Проекты",
+    "dashboard": "Обзор",
+    "plan": "План",
+    "notes": "Заметки",
+    "todos": "Список дел",
+    "tasks": "Задачи",
+    "mindmap": "Карта мыслей",
+    "tools": "Инструменты",
+    "settings": "Настройки",
+    "archive": "Архив"
+  },
+  "projects": {
+    "title": "Проекты",
+    "new": "Новый проект",
+    "import": "Импорт из IDE",
+    "open": "Открыть",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "archive": "Архивировать",
+    "pin": "Закрепить",
+    "unpin": "Открепить",
+    "status": {
+      "active": "Активный",
+      "on-hold": "Приостановлен",
+      "completed": "Завершён",
+      "archived": "В архиве"
+    },
+    "empty": "Нет проектов. Создайте первый.",
+    "searchPlaceholder": "Поиск проектов…",
+    "deadline": "Срок",
+    "lastUpdated": "Обновлён"
+  },
+  "plan": {
+    "title": "План проекта",
+    "milestones": "Этапы",
+    "addMilestone": "Добавить этап",
+    "placeholder": "Напишите план проекта в Markdown…",
+    "export": "Экспорт в PDF",
+    "template": "Использовать шаблон"
+  },
+  "notes": {
+    "title": "Заметки",
+    "new": "+ Новая заметка",
+    "untitled": "Без названия",
+    "searchPlaceholder": "Поиск заметок…",
+    "empty": "Нет заметок.",
+    "pin": "Закрепить",
+    "archive": "Архивировать",
+    "delete": "Удалить",
+    "export": "Экспорт .md",
+    "viewMode": {
+      "edit": "Редактор",
+      "split": "Разделить",
+      "preview": "Просмотр"
+    }
+  },
+  "todos": {
+    "title": "Списки дел",
+    "newList": "Новый список",
+    "newItem": "Добавить пункт…",
+    "clearDone": "Очистить выполненные",
+    "empty": "Список пуст. Добавьте первый пункт.",
+    "promote": "Сделать задачей"
+  },
+  "tasks": {
+    "title": "Задачи",
+    "new": "+ Добавить задачу",
+    "searchPlaceholder": "Поиск задач…",
+    "empty": "Нет задач по фильтру.",
+    "status": {
+      "backlog": "Бэклог",
+      "todo": "К выполнению",
+      "in-progress": "В работе",
+      "done": "Готово",
+      "archived": "В архиве"
+    },
+    "priority": {
+      "low": "Низкий",
+      "medium": "Средний",
+      "high": "Высокий",
+      "critical": "Критический"
+    },
+    "dueDate": "Срок",
+    "reminder": "Напоминание",
+    "overdue": "Просрочено",
+    "dueToday": "Срок сегодня",
+    "archive": "Архивировать",
+    "delete": "Удалить",
+    "view": {
+      "list": "Список",
+      "kanban": "Канбан"
+    }
+  },
+  "mindmap": {
+    "title": "Карта мыслей",
+    "addNode": "Добавить узел",
+    "deleteNode": "Удалить узел",
+    "editNode": "Редактировать",
+    "export": "Экспорт PNG",
+    "autoLayout": "Авторасположение",
+    "zoomIn": "Увеличить",
+    "zoomOut": "Уменьшить",
+    "fitView": "По размеру"
+  },
+  "tools": {
+    "title": "Инструменты",
+    "links": "Ссылки проекта",
+    "commands": "Команды",
+    "snippets": "Сниппеты",
+    "openVSCode": "Открыть в VS Code",
+    "openVS": "Открыть в Visual Studio",
+    "openFolder": "Открыть папку",
+    "openTerminal": "Открыть терминал",
+    "gitBranch": "Ветка",
+    "gitDirty": "Несохранённые изменения",
+    "run": "Запустить",
+    "copy": "Копировать",
+    "addLink": "Добавить ссылку",
+    "addCommand": "Добавить команду",
+    "addSnippet": "Добавить сниппет"
+  },
+  "settings": {
+    "title": "Настройки",
+    "sections": {
+      "general": "Основные",
+      "appearance": "Внешний вид",
+      "fonts": "Шрифты",
+      "language": "Язык",
+      "notifications": "Уведомления",
+      "calendar": "Синхронизация с календарём",
+      "ide": "Интеграция с IDE",
+      "github": "GitHub синхронизация",
+      "hotkeys": "Горячие клавиши",
+      "data": "Данные и резервные копии",
+      "about": "О программе"
+    },
+    "general": {
+      "launchAtStartup": "Запускать при старте Windows",
+      "minimizeToTray": "Сворачивать в трей при закрытии",
+      "startMinimized": "Запускать свёрнутым",
+      "autoDetectIDE": "Автоопределение проекта IDE",
+      "confirmDelete": "Подтверждать удаление"
+    },
+    "appearance": {
+      "theme": "Тема",
+      "themes": {
+        "softcurse-dark": "Softcurse Тёмная",
+        "light": "Светлая",
+        "system": "Системная"
+      },
+      "accentColour": "Акцентный цвет",
+      "opacity": "Прозрачность окна",
+      "gridBg": "Фон с сеткой",
+      "glowEffects": "Эффект свечения",
+      "animations": "Анимации"
+    },
+    "fonts": {
+      "uiFont": "Шрифт интерфейса",
+      "editorFont": "Шрифт редактора",
+      "codeFont": "Шрифт кода",
+      "fontSize": "Размер шрифта",
+      "lineHeight": "Межстрочный интервал",
+      "lineHeights": {
+        "compact": "Компактный",
+        "normal": "Обычный",
+        "relaxed": "Широкий"
+      }
+    },
+    "language": {
+      "locale": "Язык",
+      "dateFormat": "Формат даты",
+      "timeFormat": "Формат времени",
+      "firstDayOfWeek": "Первый день недели"
+    },
+    "github": {
+      "title": "GitHub Gist синхронизация",
+      "description": "Синхронизируйте данные DevNotes в приватный GitHub Gist.",
+      "enableSync": "Включить синхронизацию",
+      "token": "Personal Access Token",
+      "tokenHelp": "Создайте токен на github.com/settings/tokens с правом 'gist'.",
+      "gistId": "ID Gist",
+      "gistIdHelp": "Оставьте пустым для создания нового Gist.",
+      "syncNow": "Синхронизировать",
+      "lastSync": "Последняя синхронизация",
+      "status": {
+        "idle": "Готово",
+        "syncing": "Синхронизация…",
+        "success": "Синхронизировано",
+        "error": "Ошибка синхронизации"
+      },
+      "frequency": {
+        "on-save": "При каждом сохранении",
+        "hourly": "Каждый час",
+        "manual": "Только вручную"
+      }
+    },
+    "save": "Сохранить настройки",
+    "saved": "Сохранено"
+  },
+  "quickcapture": {
+    "placeholder": "Быстрая заметка или задача… (Enter — сохранить)",
+    "asNote": "Заметка",
+    "asTask": "Задача",
+    "asTodo": "Список дел"
+  },
+  "sync": {
+    "syncing": "Синхронизация с GitHub…",
+    "success": "Синхронизировано",
+    "error": "Ошибка синхронизации",
+    "lastSync": "Последняя синхронизация"
+  },
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "add": "Добавить",
+    "close": "Закрыть",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "sort": "Сортировка",
+    "loading": "Загрузка…",
+    "empty": "Здесь пока ничего нет.",
+    "confirm": "Подтвердить",
+    "yes": "Да",
+    "no": "Нет",
+    "or": "или",
+    "new": "Новый",
+    "open": "Открыть",
+    "copy": "Копировать",
+    "copied": "Скопировано!",
+    "export": "Экспорт",
+    "import": "Импорт",
+    "all": "Все"
+  },
+  "errors": {
+    "loadFailed": "Не удалось загрузить данные",
+    "saveFailed": "Не удалось сохранить",
+    "syncFailed": "Ошибка GitHub синхронизации",
+    "genericError": "Что-то пошло не так"
+  }
+}
