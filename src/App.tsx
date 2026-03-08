@@ -25,6 +25,7 @@ import Onboarding    from "@/components/onboarding/Onboarding";
 import Pomodoro      from "@/components/pomodoro/Pomodoro";
 import GlobalSearch  from "@/components/search/GlobalSearch";
 import ShareDialog   from "@/components/share/ShareDialog";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 export default function App() {
   const init            = useAppStore((s) => s.init);
@@ -106,17 +107,39 @@ export default function App() {
             <ProjectPicker />
           ) : (
             <>
-              {activeTab === "dashboard" && <TabDashboard />}
-              {activeTab === "plan"      && <TabPlan />}
-              {activeTab === "notes"     && <TabNotes />}
-              {activeTab === "todos"     && <TabTodos />}
-              {activeTab === "tasks"     && <TabTasks />}
-              {activeTab === "mindmap"   && <TabMindMap />}
-              {activeTab === "tools"      && <TabTools />}
-              {activeTab === "settings"  && <TabSettings />}
-              {activeTab === "gantt"     && <TabGantt />}
-              {activeTab === "decisions" && <TabDecisions />}
-              {activeTab === "standup"   && <TabStandup />}
+              <ErrorBoundary tabName="dashboard" key="dashboard">
+                {activeTab === "dashboard" && <TabDashboard />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="plan" key="plan">
+                {activeTab === "plan" && <TabPlan />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="notes" key="notes">
+                {activeTab === "notes" && <TabNotes />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="todos" key="todos">
+                {activeTab === "todos" && <TabTodos />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="tasks" key="tasks">
+                {activeTab === "tasks" && <TabTasks />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="mindmap" key="mindmap">
+                {activeTab === "mindmap" && <TabMindMap />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="tools" key="tools">
+                {activeTab === "tools" && <TabTools />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="settings" key="settings">
+                {activeTab === "settings" && <TabSettings />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="gantt" key="gantt">
+                {activeTab === "gantt" && <TabGantt />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="decisions" key="decisions">
+                {activeTab === "decisions" && <TabDecisions />}
+              </ErrorBoundary>
+              <ErrorBoundary tabName="standup" key="standup">
+                {activeTab === "standup" && <TabStandup />}
+              </ErrorBoundary>
             </>
           )}
           {/* Settings accessible from anywhere via TitleBar ⚙ button */}

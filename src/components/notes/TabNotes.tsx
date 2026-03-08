@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import s from "./TabNotes.module.css";
 import { useState } from "react";
 import ExportDialog from "@/components/export/ExportDialog";
+import AiPanel from "@/components/ai/AiPanel";
 
 export function TabNotes() {
   const { t }        = useTranslation();
@@ -19,10 +20,12 @@ export function TabNotes() {
   const selected     = notes.find((n) => n.id === selectedId) ?? notes[0] ?? null;
 
   const [exportTarget, setExportTarget] = useState<"note"|"all-notes"|null>(null);
+  const [aiOpen, setAiOpen] = useState(false);
   if (!project) return null;
 
   return (
-    <div className={s.root}>
+    <div className={s.root} style={{display:"flex"}}>
+      <div style={{flex:1,display:"flex",overflow:"hidden"}}>
       <aside className={`glass ${s.sidebar}`}>
         <div className={s.sidebarHeader}>
           <input className={`input ${s.search}`} placeholder={t("notes.searchPlaceholder")}
@@ -52,6 +55,7 @@ export function TabNotes() {
                 onChange={(e) => updateNote(selected.id, { title: e.target.value })} />
               <button className="btn-icon" onClick={() => archiveNote(selected.id)} title={t("notes.archive")}>⊟</button>
               <button className="btn-icon" onClick={() => setExportTarget("note")} title="Export this note">⬇</button>
+              <button className="btn-icon" style={aiOpen?{color:"var(--cyan)"}:{}} onClick={() => setAiOpen(o=>!o)} title="AI Assistant">✦ AI</button>
             </div>
             <div className={s.divider} />
             <textarea className={s.body} value={selected.body}
@@ -63,6 +67,8 @@ export function TabNotes() {
           <div className={s.emptyEditor}>{t("notes.empty")}</div>
         )}
       </section>
+      </div>
+      {aiOpen && selected && <div style={{width:"320px",flexShrink:0}}><AiPanel noteId={selected.id}/></div>}
       {exportTarget && (
         <ExportDialog
           target={exportTarget}

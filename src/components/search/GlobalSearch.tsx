@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import s from "./GlobalSearch.module.css";
+import { useDebounce } from "@/hooks/useDebounce";
 
 type ResultKind = "note" | "task" | "decision" | "standup" | "project";
 
@@ -46,6 +47,7 @@ export default function GlobalSearch({ onClose }: { onClose: () => void }) {
   const [filter, setFilter] = useState<ResultKind | "all">("all");
   const [cursor, setCursor] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const debouncedQuery = useDebounce(query, 150);
 
   const projects  = useAppStore((s) => s.data.projects);
   const notes     = useAppStore((s) => s.data.notes);
@@ -62,7 +64,7 @@ export default function GlobalSearch({ onClose }: { onClose: () => void }) {
     projects.find((p) => p.id === id)?.name ?? "Unknown";
 
   const results = useMemo<SearchResult[]>(() => {
-    const q = query.trim();
+    const q = debouncedQuery.trim();
     if (q.length < 1) return [];
     const out: SearchResult[] = [];
 
@@ -112,7 +114,7 @@ export default function GlobalSearch({ onClose }: { onClose: () => void }) {
     }
 
     return out.sort((a, b) => b.score - a.score).slice(0, 40);
-  }, [query, filter, projects, notes, tasks, decisions, standups]);
+  }, [debouncedQuery, filter, projects, notes, tasks, decisions, standups]);
 
   // Reset cursor when results change
   useEffect(() => { setCursor(0); }, [results.length, query]);
