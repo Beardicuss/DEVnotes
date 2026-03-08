@@ -5,6 +5,7 @@ import { useAutoSync } from "@/hooks/useAutoSync";
 import { useReminders }    from "@/hooks/useReminders";
 import { useFileWatcher }  from "@/hooks/useFileWatcher";
 import { useGlobalHotkey } from "@/hooks/useGlobalHotkey";
+import i18n from "@/i18n";
 import { applyResolution, type ResolutionKey } from "@/utils/resolution";
 import TitleBar    from "@/components/titlebar/TitleBar";
 import StatusBar   from "@/components/statusbar/StatusBar";
@@ -63,11 +64,13 @@ export default function App() {
   useEffect(() => {
     const resolution = (settings as any).resolution as ResolutionKey ?? "fhd";
     applyResolution(resolution);
-    import("@/i18n").then((m) => m.setLocale(settings.locale ?? "en"));
+    i18n.changeLanguage(settings.locale ?? "en");
     document.documentElement.setAttribute("data-theme", settings.theme);
-    document.documentElement.style.setProperty(
-      "--font-mono", `'${settings.uiFont}', 'Share Tech Mono', monospace`
-    );
+    if (settings.uiFont) {
+      document.documentElement.style.setProperty(
+        "--font-mono", `'${settings.uiFont}', 'Share Tech Mono', monospace`
+      );
+    }
     document.documentElement.style.setProperty(
       "--font-code", `'${settings.codeFont}', 'Fira Code', monospace`
     );

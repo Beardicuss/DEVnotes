@@ -13,7 +13,10 @@
     "mindmap": "Карта мыслей",
     "tools": "Инструменты",
     "settings": "Настройки",
-    "archive": "Архив"
+    "archive": "Архив",
+    "gantt": "Диаграмма",
+    "decisions": "Решения",
+    "standup": "Стендап"
   },
   "projects": {
     "title": "Проекты",

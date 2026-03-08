@@ -13,7 +13,10 @@
     "mindmap": "Mind Map",
     "tools": "Tools",
     "settings": "Settings",
-    "archive": "Archive"
+    "archive": "Archive",
+    "gantt": "Gantt",
+    "decisions": "Decisions",
+    "standup": "Standup"
   },
   "projects": {
     "title": "Projects",

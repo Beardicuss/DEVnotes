@@ -363,3 +363,87 @@ textarea.input      { resize: none; line-height: 1.7; }
 
 /* Loading pulse used in App.tsx */
 @keyframes loadpulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+/* ── Light theme: font & readability fixes ── */
+[data-theme="light"] body {
+  font-family: 'Inter', 'Segoe UI', 'Rajdhani', sans-serif;
+  color: var(--text);
+}
+
+/* Override mono font stack for light mode — Share Tech Mono is too thin on paper */
+[data-theme="light"] {
+  --font-mono:    'Inter', 'Segoe UI', sans-serif;
+  --font-display: 'Rajdhani', 'Segoe UI', sans-serif;
+  --font-ui:      'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Ensure all text elements use the theme color */
+[data-theme="light"] input,
+[data-theme="light"] textarea,
+[data-theme="light"] select {
+  color: var(--text);
+  background: var(--bg-input);
+}
+
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--text-dim);
+}
+
+/* Buttons readable on light */
+[data-theme="light"] .btn {
+  color: var(--text);
+  border-color: rgba(80,60,40,0.28);
+}
+[data-theme="light"] .btn:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: rgba(0,104,184,0.07);
+}
+[data-theme="light"] .btn-icon {
+  color: var(--text-dim);
+}
+[data-theme="light"] .btn-icon:hover {
+  color: var(--cyan);
+}
+
+/* Sidebar / panel text */
+[data-theme="light"] [class*="sectionTitle"],
+[data-theme="light"] [class*="cardTitle"],
+[data-theme="light"] [class*="label"] {
+  color: var(--text-dim);
+}
+
+/* Stat values */
+[data-theme="light"] [class*="statValue"],
+[data-theme="light"] [class*="projName"],
+[data-theme="light"] [class*="ringPct"] {
+  color: inherit;
+}
+
+/* Note/task titles */
+[data-theme="light"] [class*="noteTitle"],
+[data-theme="light"] [class*="taskTitle"],
+[class*="tabActive"] {
+  color: var(--text);
+}
+
+/* Feed text */
+[data-theme="light"] [class*="feedText"],
+[data-theme="light"] [class*="overdueTitle"],
+[data-theme="light"] [class*="upcomingTitle"] {
+  color: var(--text);
+}
+
+/* Editor / textarea */
+[data-theme="light"] textarea {
+  color: var(--text);
+}
+
+/* Titlebar tabs in light mode */
+[data-theme="light"] [class*="tab"] {
+  color: var(--text-dim);
+}
+[data-theme="light"] [class*="tabActive"] {
+  color: var(--cyan);
+}

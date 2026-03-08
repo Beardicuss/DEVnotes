@@ -2,10 +2,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-// ALL Tauri-only packages that Vite must not try to resolve in browser mode.
-// Any dynamic import of these — even with /* @vite-ignore */ — gets aliased
-// to a harmless no-op stub. Real Tauri runtime injects the real modules.
-const TAURI_STUBS = [
+// Tauri sets TAURI_ENV_PLATFORM during `tauri build` / `tauri dev`
+const isTauriBuild = !!process.env.TAURI_ENV_PLATFORM;
+
+// Only stub Tauri packages when running plain `vite dev` in browser mode.
+// During actual Tauri builds, the real packages must resolve normally.
+const TAURI_STUBS = isTauriBuild ? [] : [
   "@tauri-apps/plugin-autostart",
   "@tauri-apps/plugin-notification",
   "@tauri-apps/plugin-global-shortcut",
@@ -41,7 +43,7 @@ export default defineConfig(({ command }) => ({
   },
 
   build: {
-    target: command === "build" ? ["es2021", "chrome100", "safari13"] : "esnext",
+    target: isTauriBuild ? ["es2021", "chrome105", "safari13"] : "esnext",
     minify: !process.env.TAURI_DEBUG ? "esbuild" : false,
     sourcemap: !!process.env.TAURI_DEBUG,
     outDir: "dist",

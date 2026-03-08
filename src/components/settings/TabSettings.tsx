@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 import { useAppStore } from "@/stores/useAppStore";
 import { RESOLUTIONS, applyResolution, type ResolutionKey } from "@/utils/resolution";
 import { syncWithGitHub } from "@/integrations/github";
@@ -24,6 +25,7 @@ export default function TabSettings() {
   const [verifying, setVerifying]   = useState(false);
   const [verified, setVerified]     = useState<boolean | null>(null);
   const [syncing, setSyncing]       = useState(false);
+  const [backupOpen, setBackupOpen] = useState(false);
 
   const set = (patch: Partial<typeof settings>) => updateSettings(patch);
 
@@ -190,7 +192,7 @@ export default function TabSettings() {
             <Row label="Language">
               <select className="input" style={{ width: "12em" }}
                 value={settings.locale}
-                onChange={(e) => { set({ locale: e.target.value as any }); import("@/i18n").then(m => m.setLocale(e.target.value)); }}>
+                onChange={(e) => { const loc = e.target.value; set({ locale: loc as any }); i18n.changeLanguage(loc); }}>
                 <option value="en">English</option>
                 <option value="ru">Русский</option>
                 <option value="ge">ქართული</option>

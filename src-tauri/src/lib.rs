@@ -9,17 +9,15 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
-        .plugin(tauri_plugin_autostart::init(
-            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
-            Some(vec!["--autostarted"]),
-        ))
+        .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
-        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_autostart::init(tauri_plugin_autostart::MacosLauncher::LaunchAgent, Some(vec!["--autostarted"])))
         .setup(|app| {
             #[cfg(target_os = "windows")]
             { if let Some(win) = app.get_webview_window("main") { let _ = win.set_zoom(1.0); } }
-            setup_tray(app)?;
+            // Only set up tray if icon exists
+            let _ = setup_tray(app);
             setup_window_close_behaviour(app);
             Ok(())
         })
@@ -122,16 +120,29 @@ async fn unregister_global_hotkey(app: tauri::AppHandle) -> Result<(), String> {
 async fn open_path_in_explorer(path: String) -> Result<(), String> {
     #[cfg(target_os = "windows")]
     std::process::Command::new("explorer").arg(&path).spawn().map_err(|e| e.to_string())?;
+    #[cfg(not(target_os = "windows"))]
+    let _ = path;
     Ok(())
 }
 
 #[tauri::command]
 async fn run_shell_command(command: String, cwd: Option<String>) -> Result<String, String> {
-    let mut cmd = std::process::Command::new("cmd");
-    cmd.args(["/C", &command]);
-    if let Some(dir) = cwd { cmd.current_dir(dir); }
-    let out = cmd.output().map_err(|e| e.to_string())?;
-    Ok(format!("{}{}", String::from_utf8_lossy(&out.stdout), String::from_utf8_lossy(&out.stderr)))
+    #[cfg(target_os = "windows")]
+    {
+        let mut cmd = std::process::Command::new("cmd");
+        cmd.args(["/C", &command]);
+        if let Some(dir) = cwd { cmd.current_dir(dir); }
+        let out = cmd.output().map_err(|e| e.to_string())?;
+        Ok(format!("{}{}", String::from_utf8_lossy(&out.stdout), String::from_utf8_lossy(&out.stderr)))
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let mut cmd = std::process::Command::new("sh");
+        cmd.args(["-c", &command]);
+        if let Some(dir) = cwd { cmd.current_dir(dir); }
+        let out = cmd.output().map_err(|e| e.to_string())?;
+        Ok(format!("{}{}", String::from_utf8_lossy(&out.stdout), String::from_utf8_lossy(&out.stderr)))
+    }
 }
 
 // ── Window / tray ─────────────────────────────────────────────────
@@ -140,19 +151,24 @@ fn setup_tray<R: Runtime>(app: &tauri::App<R>) -> tauri::Result<()> {
     let sep  = tauri::menu::PredefinedMenuItem::separator(app)?;
     let quit = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
     let menu = Menu::with_items(app, &[&show, &sep, &quit])?;
-    TrayIconBuilder::new().menu(&menu).menu_on_left_click(false)
+    TrayIconBuilder::new()
+        .menu(&menu)
+        .menu_on_left_click(false)
         .on_menu_event(|app, event| match event.id().as_ref() {
             "show" => { if let Some(w) = app.get_webview_window("main") { let _ = w.show(); let _ = w.set_focus(); } }
-            "quit" => app.exit(0), _ => {}
+            "quit" => app.exit(0),
+            _ => {}
         })
         .on_tray_icon_event(|tray, event| {
             if let TrayIconEvent::Click { button: MouseButton::Left, button_state: MouseButtonState::Up, .. } = event {
                 let app = tray.app_handle();
                 if let Some(w) = app.get_webview_window("main") {
-                    if w.is_visible().unwrap_or(false) { let _ = w.hide(); } else { let _ = w.show(); let _ = w.set_focus(); }
+                    if w.is_visible().unwrap_or(false) { let _ = w.hide(); }
+                    else { let _ = w.show(); let _ = w.set_focus(); }
                 }
             }
-        }).build(app)?;
+        })
+        .build(app)?;
     Ok(())
 }
 
@@ -168,6 +184,19 @@ fn setup_window_close_behaviour<R: Runtime>(app: &tauri::App<R>) {
     }
 }
 
-#[tauri::command] fn show_window(app: tauri::AppHandle) { if let Some(w) = app.get_webview_window("main") { let _ = w.show(); let _ = w.set_focus(); } }
-#[tauri::command] fn hide_window(app: tauri::AppHandle) { if let Some(w) = app.get_webview_window("main") { let _ = w.hide(); } }
-#[tauri::command] fn get_app_data_path(app: tauri::AppHandle) -> String { app.path().app_data_dir().map(|p| p.to_string_lossy().to_string()).unwrap_or_default() }
+#[tauri::command]
+fn show_window(app: tauri::AppHandle) {
+    if let Some(w) = app.get_webview_window("main") { let _ = w.show(); let _ = w.set_focus(); }
+}
+
+#[tauri::command]
+fn hide_window(app: tauri::AppHandle) {
+    if let Some(w) = app.get_webview_window("main") { let _ = w.hide(); }
+}
+
+#[tauri::command]
+fn get_app_data_path(app: tauri::AppHandle) -> String {
+    app.path().app_data_dir()
+        .map(|p| p.to_string_lossy().to_string())
+        .unwrap_or_default()
+}

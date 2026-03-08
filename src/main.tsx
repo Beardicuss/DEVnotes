@@ -1,24 +1,26 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { I18nextProvider } from "react-i18next";
 import App from "./App";
-import "./i18n/index";
+import i18n from "./i18n/index";
 import "./styles/theme.css";
 import { applyResolution, type ResolutionKey } from "./utils/resolution";
 
-// Apply resolution BEFORE first render so layout dimensions are correct
-// from frame 1 — no layout shift.
+// Apply resolution BEFORE first render
 const saved = localStorage.getItem("devnotes_desktop_v2");
-let resKey: ResolutionKey = "fhd"; // default
+let resKey: ResolutionKey = "fhd";
 if (saved) {
   try {
     const data = JSON.parse(saved);
     if (data?.settings?.resolution) resKey = data.settings.resolution;
   } catch {}
 }
-applyResolution(resKey); // sync part runs instantly (CSS vars); Tauri window resize is async
+applyResolution(resKey);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <I18nextProvider i18n={i18n}>
+      <App />
+    </I18nextProvider>
   </React.StrictMode>
 );

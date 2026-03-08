@@ -1,23 +1,33 @@
+import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/stores/useAppStore";
 import { isTauri } from "@/utils/platform";
 import type { ProjectTab } from "@/types";
 import s from "./TitleBar.module.css";
 
-const TABS: { id: ProjectTab; label: string; hotkey?: string }[] = [
-  { id: "dashboard", label: "Dashboard",  hotkey: "1" },
-  { id: "plan",      label: "Plan",       hotkey: "2" },
-  { id: "notes",     label: "Notes",      hotkey: "3" },
-  { id: "todos",     label: "Todo",       hotkey: "4" },
-  { id: "tasks",     label: "Tasks",      hotkey: "5" },
-  { id: "mindmap",   label: "Mind Map",   hotkey: "6" },
-  { id: "tools",     label: "Tools",      hotkey: "7" },
-  { id: "gantt",     label: "Gantt" },
-  { id: "decisions", label: "Decisions" },
-  { id: "standup",   label: "Standup" },
-];
+interface TitleBarProps {
+  onPomodoroToggle?: () => void;
+  pomodoroOpen?: boolean;
+  onSearchOpen?: () => void;
+  onShareOpen?: () => void;
+}
 
-interface TitleBarProps { onPomodoroToggle?: () => void; pomodoroOpen?: boolean; onSearchOpen?: () => void; onShareOpen?: () => void; }
 export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen, onShareOpen }: TitleBarProps = {}) {
+  const { t } = useTranslation();
+
+  // Tabs defined inside component so t() is available
+  const TABS: { id: ProjectTab; label: string; hotkey?: string }[] = [
+    { id: "dashboard", label: t("nav.dashboard"), hotkey: "1" },
+    { id: "plan",      label: t("nav.plan"),      hotkey: "2" },
+    { id: "notes",     label: t("nav.notes"),     hotkey: "3" },
+    { id: "todos",     label: t("nav.todos"),     hotkey: "4" },
+    { id: "tasks",     label: t("nav.tasks"),     hotkey: "5" },
+    { id: "mindmap",   label: t("nav.mindmap"),   hotkey: "6" },
+    { id: "tools",     label: t("nav.tools"),     hotkey: "7" },
+    { id: "gantt",     label: t("nav.gantt",     "Gantt") },
+    { id: "decisions", label: t("nav.decisions", "Decisions") },
+    { id: "standup",   label: t("nav.standup",   "Standup") },
+  ];
+
   const activeProjectId = useAppStore((s) => s.activeProjectId);
   const activeTab       = useAppStore((s) => s.activeTab);
   const setTab          = useAppStore((s) => s.setTab);
@@ -45,15 +55,15 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
         )}
       </div>
 
-      {/* Tabs — only show when a project is active */}
+      {/* Tabs */}
       {activeProjectId && (
         <nav className={s.tabs}>
-          {TABS.map((tab, i) => (
+          {TABS.map((tab) => (
             <button
               key={tab.id}
               className={`${s.tab} ${activeTab === tab.id ? s.tabActive : ""}`}
               onClick={() => setTab(tab.id)}
-              title={`Ctrl+${i + 1}`}
+              title={tab.hotkey ? `Ctrl+${tab.hotkey}` : tab.label}
             >
               {tab.label}
             </button>
@@ -62,38 +72,26 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
       )}
 
       <div className={s.right}>
-        {/* Saving indicator */}
         {isSaving && <span className={s.saving}>SAVING…</span>}
 
-        {/* GitHub sync */}
         {ghEnabled && (
           <span className={`${s.sync} sync-${syncState.status}`}>
             {syncState.status === "syncing" ? "↻" : syncState.status === "error" ? "⚠" : "⬆"}
           </span>
         )}
 
-        {/* Settings */}
         {onSearchOpen && (
-          <button className={s.settingsBtn} onClick={onSearchOpen} title="Global Search (Ctrl+K)">
-            ⌕
-          </button>
+          <button className={s.settingsBtn} onClick={onSearchOpen} title="Global Search (Ctrl+K)">⌕</button>
         )}
         {onShareOpen && activeProjectId && (
-          <button className={s.settingsBtn} onClick={onShareOpen} title="Share / Export Project">
-            ↑ Share
-          </button>
+          <button className={s.settingsBtn} onClick={onShareOpen} title="Share / Export Project">↑ Share</button>
         )}
         {onPomodoroToggle && (
           <button className={`${s.settingsBtn} ${pomodoroOpen ? s.pomodoroActive : ""}`}
-            onClick={onPomodoroToggle} title="Pomodoro Timer">
-            🍅
-          </button>
+            onClick={onPomodoroToggle} title="Pomodoro Timer">🍅</button>
         )}
-        <button className={s.settingsBtn} onClick={() => setTab("settings")} title="Settings">
-          ⚙
-        </button>
+        <button className={s.settingsBtn} onClick={() => setTab("settings")} title={t("nav.settings")}>⚙</button>
 
-        {/* Window controls — Tauri only */}
         {isTauri && (
           <div className={s.winBtns}>
             <button className={s.winBtn} onClick={handleMin} title="Minimise">─</button>
