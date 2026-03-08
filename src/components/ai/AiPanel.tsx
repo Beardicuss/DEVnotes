@@ -12,7 +12,7 @@
  * API key stored in AppSettings.aiApiKey (never synced to Gist).
  */
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useAppStore, selActiveProject, selTasks, selNotes } from "@/stores/useAppStore";
 import s from "./AiPanel.module.css";
 
@@ -22,33 +22,54 @@ type Mode = "ask" | "summarise" | "tags" | "standup" | "breakdown";
 interface Message { role: "user" | "assistant"; content: string; }
 
 // ─── API call ─────────────────────────────────────────────────────
+const AI_TIMEOUT_MS = 30_000;
+
 async function callClaude(
   apiKey: string,
   systemPrompt: string,
   messages: Message[],
-  maxTokens = 1024
+  maxTokens = 1024,
+  signal?: AbortSignal
 ): Promise<string> {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: {
-      "Content-Type":         "application/json",
-      "x-api-key":            apiKey,
-      "anthropic-version":    "2023-06-01",
-      "anthropic-dangerous-allow-browser": "true",
-    },
-    body: JSON.stringify({
-      model:      "claude-haiku-4-5-20251001",
-      max_tokens: maxTokens,
-      system:     systemPrompt,
-      messages,
-    }),
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error((err as any)?.error?.message ?? `HTTP ${res.status}`);
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
+  // Merge with any external signal
+  const combined = signal
+    ? (() => {
+        signal.addEventListener("abort", () => controller.abort());
+        return controller.signal;
+      })()
+    : controller.signal;
+
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      signal: combined,
+      headers: {
+        "Content-Type":         "application/json",
+        "x-api-key":            apiKey,
+        "anthropic-version":    "2023-06-01",
+        "anthropic-dangerous-allow-browser": "true",
+      },
+      body: JSON.stringify({
+        model:      "claude-haiku-4-5-20251001",
+        max_tokens: maxTokens,
+        system:     systemPrompt,
+        messages,
+      }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error((err as any)?.error?.message ?? `HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    return (data.content as any[]).map((b: any) => b.text ?? "").join("");
+  } catch (e: any) {
+    if (e?.name === "AbortError") throw new Error("Request timed out (30s). Try again.");
+    throw e;
+  } finally {
+    clearTimeout(timer);
   }
-  const data = await res.json();
-  return (data.content as any[]).map((b: any) => b.text ?? "").join("");
 }
 
 // ─── Helper: build project context string ─────────────────────────
@@ -132,6 +153,7 @@ export default function AiPanel({ noteId }: { noteId?: string }) {
   const addTask   = useAppStore(s => s.addTask);
   const updateNote = useAppStore(s => s.updateNote);
 
+  const cancelRef = useRef<AbortController | null>(null);
   const [mode,     setMode]     = useState<Mode>("ask");
   const [input,    setInput]    = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
@@ -139,17 +161,17 @@ export default function AiPanel({ noteId }: { noteId?: string }) {
   const [error,    setError]    = useState<string|null>(null);
   const [applied,  setApplied]  = useState<string|null>(null);
 
-  const apiKey: string = (settings as any).aiApiKey ?? "";
+  const apiKey: string = settings.aiApiKey ?? "";
   const projDecisions = decisions.filter(d => d.projectId === project?.id);
   const projStandups  = standups.filter(e => e.projectId === project?.id);
 
   if (!project) return null;
 
   const saveApiKey = (key: string) => {
-    updateSettings({ aiApiKey: key } as any);
+    updateSettings({ aiApiKey: key });
   };
 
-  const clearChat = () => { setMessages([]); setError(null); setApplied(null); };
+  const clearChat = () => { cancelRef.current?.abort(); cancelRef.current = null; setMessages([]); setError(null); setApplied(null); setLoading(false); };
 
   const ctx = buildProjectContext(project, tasks, notes, projDecisions, projStandups);
 
@@ -159,6 +181,8 @@ export default function AiPanel({ noteId }: { noteId?: string }) {
   const send = async (overridePrompt?: string) => {
     const userText = (overridePrompt ?? input).trim();
     if (!userText || loading) return;
+    cancelRef.current?.abort();
+    cancelRef.current = new AbortController();
     setInput("");
     setError(null);
     setApplied(null);
@@ -175,7 +199,7 @@ export default function AiPanel({ noteId }: { noteId?: string }) {
         system += `\n\nThe user is viewing a note titled "${currentNote.title}".\nNote body:\n${currentNote.body ?? "(empty)"}`;
       }
 
-      const reply = await callClaude(apiKey, system, newMessages);
+      const reply = await callClaude(apiKey, system, newMessages, 1024, cancelRef.current?.signal);
       setMessages(m => [...m, { role: "assistant", content: reply }]);
     } catch (e: any) {
       setError(e.message ?? "Unknown error");
@@ -324,7 +348,7 @@ Respond ONLY with a JSON array of task title strings, e.g. ["Set up database sch
       <div className={s.footer}>
         <span>Claude Haiku · key saved locally</span>
         <button className={s.clearBtn} onClick={clearChat}>Clear</button>
-        <button className={s.clearBtn} onClick={() => updateSettings({ aiApiKey: "" } as any)}>Remove key</button>
+        <button className={s.clearBtn} onClick={() => updateSettings({ aiApiKey: null })}>Remove key</button>
       </div>
     </div>
   );

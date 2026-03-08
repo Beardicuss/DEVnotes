@@ -73,7 +73,7 @@ export default function TabStandup() {
       "",
       `Mood: ${MOOD_LABELS[todayEntry.mood]}`,
     ].join("\n");
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text).catch(() => {});
     setCopyMsg(true);
     setTimeout(() => setCopyMsg(false), 2000);
   };
@@ -96,6 +96,7 @@ export default function TabStandup() {
             <button className="btn" onClick={handleCopy} disabled={!todayEntry}>
               {copyMsg ? "✓ Copied!" : "⎘ Copy"}
             </button>
+            <button className="btn" onClick={() => setExportOpen(true)} title="Export standup history">⬇ Export</button>
           </div>
         )}
       </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAppStore, selTools, selActiveProject } from "@/stores/useAppStore";
 import {
   openInVSCode, openInVisualStudio, openInJetBrains,
@@ -31,14 +31,14 @@ export default function TabTools() {
   const t = tools ?? { projectId: project.id, links: [], commands: [], snippets: [] };
 
   // ── Load git status ──
-  const refreshGit = async () => {
+  const refreshGit = useCallback(async () => {
     if (!project.rootPath) return;
     setGitLoading(true);
     const status = await getGitStatus(project.rootPath);
     setGit(status);
     setGitLoading(false);
-  };
-  useEffect(() => { refreshGit(); }, [project.id, project.rootPath]);
+  }, [project.id, project.rootPath]);
+  useEffect(() => { refreshGit(); }, [refreshGit]);
 
   // ── Auto-detect IDE paths ──
   const handleAutoDetect = async () => {
@@ -46,7 +46,7 @@ export default function TabTools() {
     updateSettings({
       vscodePath:  paths.vscode  ?? settings.vscodePath,
       vstudioPath: paths.visualstudio ?? settings.vstudioPath,
-      terminal:    (paths.terminal ?? settings.terminal) as any,
+      terminal:    (paths.terminal ?? settings.terminal) as import("@/types").TerminalType,
     });
     setAutoDetected(true);
     setTimeout(() => setAutoDetected(false), 2500);
@@ -77,7 +77,7 @@ export default function TabTools() {
   };
 
   const copySnippet = (id: string, content: string) => {
-    navigator.clipboard.writeText(content);
+    navigator.clipboard.writeText(content).catch(() => {});
     setCopied(id);
     setTimeout(() => setCopied(null), 1500);
   };
@@ -372,7 +372,7 @@ function IDEButton({ label, icon, colour, disabled, onClick }: {
   label: string; icon: string; colour: string; disabled: boolean; onClick: () => void;
 }) {
   return (
-    <button className={s.ideBtn} style={{ "--ide-colour": colour } as any} disabled={disabled} onClick={onClick}>
+    <button className={s.ideBtn} style={{ "--ide-colour": colour } as React.CSSProperties} disabled={disabled} onClick={onClick}>
       <span className={s.ideBtnIcon} style={{ color: colour }}>{icon}</span>
       <span className={s.ideBtnLabel}>{label}</span>
     </button>

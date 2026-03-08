@@ -57,11 +57,11 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
     // Apply all settings
     updateSettings({
       resolution,
-      theme: theme as any,
+      theme: theme as import("@/types").Theme,
       githubToken: (skipGithub || !githubToken) ? null : githubToken,
       githubSyncEnabled: !skipGithub && !!githubToken,
       onboardingComplete: true,
-    } as any);
+    });
     applyResolution(resolution);
 
     // Create first project from template

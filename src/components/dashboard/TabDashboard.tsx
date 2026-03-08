@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useAppStore, selActiveProject, selTasks, selNotes } from "@/stores/useAppStore";
-import { isOverdue, shortDate } from "@/utils/date";
+import { isOverdue, shortDate, daysUntil } from "@/utils/date";
 import { useGitStatus } from "@/hooks/useGitStatus";
 import AiPanel from "@/components/ai/AiPanel";
 import s from "./TabDashboard.module.css";
@@ -72,8 +72,8 @@ function ActivityFeed({ tasks, notes }: { tasks: any[]; notes: any[] }) {
   if (!items.length) return <div className={s.empty}>No recent activity.</div>;
   return (
     <div className={s.feed}>
-      {items.map((item, i) => (
-        <div key={i} className={s.feedRow}>
+      {items.map((item) => (
+        <div key={`${item.ts}-${item.text}`} className={s.feedRow}>
           <span className={s.feedIcon}>{item.icon}</span>
           <span className={s.feedText}>{item.text}</span>
           <span className={s.feedTime}>{item.ts.slice(0, 10)}</span>
@@ -96,7 +96,7 @@ function Upcoming({ tasks, onGo }: { tasks: any[]; onGo: () => void }) {
   return (
     <div className={s.upcomingList}>
       {list.map(t => {
-        const days   = Math.ceil((new Date(t.dueDate).getTime() - Date.now()) / 86400000);
+        const days   = daysUntil(t.dueDate);
         const urgent = days <= 2;
         return (
           <div key={t.id} className={`${s.upcomingRow} ${urgent ? s.upcomingUrgent : ""}`} onClick={onGo}>

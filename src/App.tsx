@@ -34,7 +34,7 @@ export default function App() {
   const settings        = useAppStore((s) => s.data.settings);
   const activeProjectId = useAppStore((s) => s.activeProjectId);
   const activeTab       = useAppStore((s) => s.activeTab);
-  const showOnboarding  = !(settings as any).onboardingComplete;
+  const showOnboarding  = !settings.onboardingComplete;
   const [pomodoroOpen,  setPomodoroOpen]  = useState(false);
   const [searchOpen,    setSearchOpen]    = useState(false);
   const [shareOpen,     setShareOpen]     = useState(false);
@@ -62,7 +62,7 @@ export default function App() {
 
   // Apply resolution + theme whenever settings change
   useEffect(() => {
-    const resolution = (settings as any).resolution as ResolutionKey ?? "fhd";
+    const resolution = (settings.resolution ?? "fhd") as ResolutionKey;
     applyResolution(resolution);
     i18n.changeLanguage(settings.locale ?? "en");
     document.documentElement.setAttribute("data-theme", settings.theme);
@@ -151,6 +151,10 @@ export default function App() {
 
         <StatusBar />
         <QuickCapture />
+        {pomodoroOpen && <ErrorBoundary tabName="pomodoro"><Pomodoro onClose={() => setPomodoroOpen(false)} /></ErrorBoundary>}
+        {showOnboarding && <ErrorBoundary tabName="onboarding"><Onboarding onComplete={() => {}} /></ErrorBoundary>}
+        {searchOpen && <ErrorBoundary tabName="search"><GlobalSearch onClose={() => setSearchOpen(false)} /></ErrorBoundary>}
+        {shareOpen  && <ErrorBoundary tabName="share"><ShareDialog  onClose={() => setShareOpen(false)}  /></ErrorBoundary>}
       </div>
     </>
   );

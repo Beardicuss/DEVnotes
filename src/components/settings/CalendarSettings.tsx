@@ -21,10 +21,10 @@ export default function CalendarSettings() {
   const [exportingICS, setExportingICS] = useState(false);
 
   const set = (p: Partial<typeof settings>) => updateSettings(p);
-  const tokens = (settings as any).calendarTokens as { access_token: string; refresh_token: string; expires_at: number } | null;
+  const tokens = settings.calendarTokens;
   const isConnected = !!tokens?.access_token;
-  const clientId     = (settings as any).googleClientId     as string ?? "";
-  const clientSecret = (settings as any).googleClientSecret as string ?? "";
+  const clientId     = settings.googleClientId     ?? "";
+  const clientSecret = settings.googleClientSecret ?? "";
 
   /* ── Connect ── */
   const handleConnect = async () => {
@@ -41,14 +41,14 @@ export default function CalendarSettings() {
       const { code } = result;
       const { exchangeCode: exchange } = await import("@/integrations/calendar/google");
       const newTokens = await exchange(code, clientId, clientSecret);
-      set({ calendarTokens: newTokens } as any);
+      set({ calendarTokens: newTokens });
     } catch (e: any) { setError(e.message); }
     setConnecting(false);
   };
 
   /* ── Disconnect ── */
   const handleDisconnect = () => {
-    set({ calendarTokens: null } as any);
+    set({ calendarTokens: null });
     setEvents([]);
   };
 
@@ -100,13 +100,13 @@ export default function CalendarSettings() {
             <label className={s.label}>Client ID</label>
             <input className="input" placeholder="xxxx.apps.googleusercontent.com"
               value={clientId}
-              onChange={(e) => set({ googleClientId: e.target.value } as any)} />
+              onChange={(e) => set({ googleClientId: e.target.value })} />
           </div>
           <div className={s.field}>
             <label className={s.label}>Client Secret</label>
             <input className="input" type="password" placeholder="GOCSPX-xxxx"
               value={clientSecret}
-              onChange={(e) => set({ googleClientSecret: e.target.value } as any)} />
+              onChange={(e) => set({ googleClientSecret: e.target.value })} />
           </div>
           {error && <p className={s.error}>⚠ {error}</p>}
           <button className="btn btn-primary" onClick={handleConnect} disabled={connecting}>
@@ -122,8 +122,8 @@ export default function CalendarSettings() {
             <div className={s.sectionTitle}>Sync Settings</div>
             <Row label="Auto-push tasks to Google Calendar">
               <Toggle
-                checked={(settings as any).calendarAutoPush ?? false}
-                onChange={(v) => set({ calendarAutoPush: v } as any)} />
+                checked={settings.calendarAutoPush ?? false}
+                onChange={(v) => set({ calendarAutoPush: v })} />
             </Row>
             <Row label="Sync plan milestones">
               <Toggle
@@ -133,7 +133,7 @@ export default function CalendarSettings() {
             <Row label="Sync frequency">
               <select className="input" style={{ width: "12em" }}
                 value={settings.calendarSyncFrequency}
-                onChange={(e) => set({ calendarSyncFrequency: e.target.value as any })}>
+                onChange={(e) => set({ calendarSyncFrequency: e.target.value as import("@/types").SyncFrequency })}>
                 <option value="on-save">On every save</option>
                 <option value="hourly">Hourly</option>
                 <option value="manual">Manual only</option>

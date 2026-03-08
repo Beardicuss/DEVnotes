@@ -10,7 +10,7 @@ export default function StatusBar() {
   const syncState      = useAppStore((st) => st.syncState);
   const ghEnabled      = useAppStore((st) => st.data.settings.githubSyncEnabled);
   const locale         = useAppStore((st) => st.data.settings.locale);
-  const resolution     = useAppStore((st) => st.data.settings.resolution as any ?? "fhd");
+  const resolution     = useAppStore((st) => st.data.settings.resolution ?? "fhd");
   const git            = useGitStatus();
 
   const [time, setTime] = useState(() => new Date().toTimeString().slice(0, 8));

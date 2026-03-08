@@ -60,15 +60,7 @@ export default function TabTodos() {
           </button>
         ))}
 
-        <button
-          className="btn"
-          style={{ marginTop: 12 }}
-          onClick={() => {
-            const name = prompt(t("todos.newList"));
-            if (name?.trim()) addList(name.trim());
-          }}>
-          + {t("todos.newList")}
-        </button>
+        <AddListInline onAdd={addList} label={`+ ${t("todos.newList")}`} />
       </div>
 
       {/* ── Items ────────────────────────────────────── */}
@@ -168,6 +160,33 @@ export default function TabTodos() {
           Create a list to get started
         </div>
       )}
+    </div>
+  );
+}
+
+function AddListInline({ onAdd, label }: { onAdd: (name: string) => void; label: string }) {
+  const [open, setOpen] = useState(false);
+  const [val, setVal]   = useState("");
+  if (!open) return (
+    <button className="btn" style={{marginTop:12,width:"100%"}} onClick={() => setOpen(true)}>
+      {label}
+    </button>
+  );
+  return (
+    <div style={{marginTop:12,display:"flex",flexDirection:"column",gap:"4px"}}>
+      <input
+        className="input" style={{fontSize:"var(--fs-xs)"}} placeholder="List name…"
+        value={val} autoFocus onChange={e => setVal(e.target.value)}
+        onKeyDown={e => {
+          if (e.key==="Enter" && val.trim()) { onAdd(val.trim()); setVal(""); setOpen(false); }
+          if (e.key==="Escape") { setVal(""); setOpen(false); }
+        }}
+      />
+      <div style={{display:"flex",gap:"4px"}}>
+        <button className="btn btn-primary" style={{flex:1}}
+          onClick={() => { if(val.trim()){ onAdd(val.trim()); setVal(""); setOpen(false); } }}>✓ Add</button>
+        <button className="btn" onClick={() => { setVal(""); setOpen(false); }}>✕</button>
+      </div>
     </div>
   );
 }

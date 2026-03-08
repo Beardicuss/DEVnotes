@@ -23,11 +23,13 @@ const MODE_COLOURS: Record<Mode, string> = {
   "long-break":  "var(--blue)",
 };
 
-export default function Pomodoro() {
+export default function Pomodoro({ onClose }: { onClose?: () => void }) {
   const project      = useAppStore(selActiveProject);
   const tasks        = useAppStore(selTasks);
-  const addPomodoro  = useAppStore((s) => s.addPomodoro);
-  const pomodoros    = useAppStore((s) => s.data.pomodoros ?? []);
+  const addPomodoro    = useAppStore((s) => s.addPomodoro);
+  const pomodoros      = useAppStore((s) => s.data.pomodoros ?? []);
+  const updateSettings = useAppStore((s) => s.updateSettings);
+  const savedDuration  = useAppStore((s) => s.data.settings.pomodoroDurationMins ?? 25);
 
   const [mode,       setMode]       = useState<Mode>("work");
   const [timeLeft,   setTimeLeft]   = useState(DURATIONS["work"]);
@@ -35,7 +37,7 @@ export default function Pomodoro() {
   const [cycle,      setCycle]      = useState(1);   // pomodoro number
   const [taskId,     setTaskId]     = useState<string | null>(null);
   const [minimised,  setMinimised]  = useState(false);
-  const [customWork, setCustomWork] = useState(25);
+  const [customWork, setCustomWork] = useState<number>(savedDuration);
   const [showSettings, setShowSettings] = useState(false);
 
   const startedAt = useRef<string | null>(null);
@@ -119,6 +121,7 @@ export default function Pomodoro() {
 
   const applyCustomWork = () => {
     if (mode === "work") setTimeLeft(customWork * 60);
+    updateSettings({ pomodoroDurationMins: customWork });
     setShowSettings(false);
   };
 

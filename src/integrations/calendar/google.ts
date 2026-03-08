@@ -238,7 +238,8 @@ export async function waitForOAuthCallback(): Promise<{ code: string; state: str
     // In browser dev mode: prompt the user to paste the code manually
     const isTauri = "__TAURI_INTERNALS__" in window;
     if (!isTauri) {
-      const code = prompt(
+      // DEV-ONLY: in production Tauri handles OAuth via local redirect listener
+      const code = prompt( // eslint-disable-line no-alert
         "Paste the authorization code from the browser URL\n" +
         "(after ?code= in the redirect URL):"
       );

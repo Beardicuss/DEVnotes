@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore, selMindMap, selActiveProject } from "@/stores/useAppStore";
 import { uid } from "@/utils/id";
@@ -106,6 +106,8 @@ function MindMapCanvas({ project, mindMap, updateMap }: {
   updateMap: (projectId: string, patch: any) => void;
 }) {
   const { t } = useTranslation();
+  const [addNodeOpen, setAddNodeOpen] = useState(false);
+  const [addNodeText, setAddNodeText] = useState("");
 
   // Convert internal nodes → ReactFlow nodes
   const initialRFNodes = useMemo(() => (mindMap?.nodes ?? []).map((n) => ({
@@ -159,10 +161,8 @@ function MindMapCanvas({ project, mindMap, updateMap }: {
     updateMap(project.id, { edges: [...mindMap.edges, newEdge] });
   }, [project, mindMap, updateMap, setRFEdges]);
 
-  const addNode = () => {
-    if (!project || !mindMap) return;
-    const text = prompt(t("mindmap.addNode"));
-    if (!text) return;
+  const addNode = (text: string) => {
+    if (!project || !mindMap || !text.trim()) return;
     const newNode: MapNode = {
       id:       uid(),
       text,
@@ -190,9 +190,24 @@ function MindMapCanvas({ project, mindMap, updateMap }: {
         position: "absolute", top: 12, left: 12, zIndex: 5,
         display: "flex", gap: 8,
       }}>
-        <button className="btn" onClick={addNode}>
-          + {t("mindmap.addNode")}
-        </button>
+        {addNodeOpen ? (
+          <div style={{display:"flex",gap:"4px",alignItems:"center"}}>
+            <input className="input" style={{width:"140px",fontSize:"var(--fs-xs)"}}
+              placeholder={t("mindmap.addNode")} value={addNodeText} autoFocus
+              onChange={e => setAddNodeText(e.target.value)}
+              onKeyDown={e => {
+                if (e.key==="Enter") { addNode(addNodeText); setAddNodeText(""); setAddNodeOpen(false); }
+                if (e.key==="Escape") { setAddNodeText(""); setAddNodeOpen(false); }
+              }} />
+            <button className="btn btn-primary"
+              onClick={() => { addNode(addNodeText); setAddNodeText(""); setAddNodeOpen(false); }}>✓</button>
+            <button className="btn" onClick={() => { setAddNodeText(""); setAddNodeOpen(false); }}>✕</button>
+          </div>
+        ) : (
+          <button className="btn" onClick={() => setAddNodeOpen(true)}>
+            + {t("mindmap.addNode")}
+          </button>
+        )}
         <button className="btn" onClick={() => {
           if (!project || !mindMap) return;
           const svg = document.querySelector(".react-flow__renderer") as SVGElement;

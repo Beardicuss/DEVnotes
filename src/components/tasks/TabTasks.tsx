@@ -50,7 +50,7 @@ export default function TabTasks() {
   };
 
   const handlePushGCal = async (task: Task) => {
-    const token = (settings as any).calendarAccessToken;
+    const token = settings.calendarAccessToken;
     if (!token) { alert("Connect Google Calendar in Settings → Calendar first."); return; }
     setCalPushing(task.id);
     try {
@@ -66,7 +66,7 @@ export default function TabTasks() {
   };
 
   const handleUnlinkGCal = async (task: Task) => {
-    const token = (settings as any).calendarAccessToken;
+    const token = settings.calendarAccessToken;
     if (token && task.calendarEventId) { try { await deleteEvent(token, task.calendarEventId); } catch {} }
     updateTask(task.id, { calendarEventId: null });
   };
@@ -81,11 +81,11 @@ export default function TabTasks() {
         <div className={s.filters}>
           <input className={`input ${s.search}`} placeholder="Search tasks…"
             value={taskFilter.search} onChange={(e) => setFilter({ search: e.target.value })} />
-          <select className="input" value={taskFilter.status} onChange={(e) => setFilter({ status: e.target.value as any })}>
+          <select className="input" value={taskFilter.status} onChange={(e) => setFilter({ status: e.target.value as import("@/types").TaskStatus | "all" })}>
             <option value="all">All statuses</option>
             {STATUSES.map((st) => <option key={st} value={st}>{st}</option>)}
           </select>
-          <select className="input" value={taskFilter.priority} onChange={(e) => setFilter({ priority: e.target.value as any })}>
+          <select className="input" value={taskFilter.priority} onChange={(e) => setFilter({ priority: e.target.value as import("@/types").Priority | "all" })}>
             <option value="all">All priorities</option>
             {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
           </select>
@@ -198,11 +198,11 @@ function TaskEditorFields({ task, onUpdate, onPushGCal, calPushing }: {
         <textarea className="input" rows={3} value={task.description} onChange={(e) => u({ description: e.target.value })} /></div>
       <div className={s.row2}>
         <div className={s.field}><label className={s.fieldLabel}>Priority</label>
-          <select className="input" value={task.priority} onChange={(e) => u({ priority: e.target.value as any })}>
+          <select className="input" value={task.priority} onChange={(e) => u({ priority: e.target.value as import("@/types").Priority })}>
             {PRIORITIES.map((p) => <option key={p} value={p}>{p}</option>)}
           </select></div>
         <div className={s.field}><label className={s.fieldLabel}>Status</label>
-          <select className="input" value={task.status} onChange={(e) => u({ status: e.target.value as any })}>
+          <select className="input" value={task.status} onChange={(e) => u({ status: e.target.value as import("@/types").TaskStatus })}>
             {STATUSES.map((st) => <option key={st} value={st}>{st}</option>)}
           </select></div>
       </div>
@@ -230,7 +230,7 @@ function TaskEditorFields({ task, onUpdate, onPushGCal, calPushing }: {
       </div>
       <div className={s.field}><label className={s.fieldLabel}>Repeat</label>
         <select className="input" value={task.recurring?.frequency ?? ""}
-          onChange={(e) => u({ recurring: e.target.value ? { frequency: e.target.value as any, count: null, endDate: null } : null })}>
+          onChange={(e) => u({ recurring: e.target.value ? { frequency: e.target.value as import("@/types").RecurringConfig["frequency"], interval: 1, endDate: null } : null })}>
           <option value="">No repeat</option>
           {Object.entries(FREQ_LABELS).map(([v,l]) => <option key={v} value={v}>{l}</option>)}
         </select>

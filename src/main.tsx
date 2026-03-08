@@ -17,6 +17,12 @@ if (saved) {
 }
 applyResolution(resKey);
 
+// Apply saved theme before first render to prevent flash
+try {
+  const savedTheme = saved ? (JSON.parse(saved)?.settings?.theme ?? "softcurse-dark") : "softcurse-dark";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+} catch {}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <I18nextProvider i18n={i18n}>

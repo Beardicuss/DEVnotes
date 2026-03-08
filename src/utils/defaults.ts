@@ -81,6 +81,24 @@ export const DEFAULT_SETTINGS: AppSettings = {
   noteViewMode: "edit",
   sidebarWidth: 220,
   activeProjectId: null,
+
+  // Pomodoro
+  pomodoroDurationMins: 25,
+
+  // AI
+  aiApiKey: null,
+
+  // Appearance extras
+  resolution: "fhd",
+
+  // Onboarding
+  onboardingComplete: false,
+
+  // Calendar OAuth
+  calendarTokens:     null,
+  googleClientId:     "",
+  googleClientSecret: "",
+  calendarAutoPush:   false,
 };
 
 export const DEMO_PROJECT: Project = {
@@ -196,5 +214,8 @@ export const DEFAULT_DATA: AppData = {
       snippets: [],
     },
   ],
+  decisions: [],
+  standups:  [],
+  pomodoros: [],
   settings: DEFAULT_SETTINGS,
 };

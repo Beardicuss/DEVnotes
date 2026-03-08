@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "@/i18n";
 import { useAppStore } from "@/stores/useAppStore";
+import { setAutostart } from "@/utils/platform";
 import { RESOLUTIONS, applyResolution, type ResolutionKey } from "@/utils/resolution";
-import { syncWithGitHub } from "@/integrations/github";
+
 import CalendarSettings from "./CalendarSettings";
 import s from "./TabSettings.module.css";
 import BackupDialog from "@/components/backup/BackupDialog";
@@ -30,7 +31,7 @@ export default function TabSettings() {
   const set = (patch: Partial<typeof settings>) => updateSettings(patch);
 
   const handleResolutionChange = async (key: ResolutionKey) => {
-    set({ resolution: key } as any);
+    set({ resolution: key });
     await applyResolution(key);
   };
 
@@ -46,9 +47,10 @@ export default function TabSettings() {
     setVerifying(false);
   };
 
+  const storeSyncNow = useAppStore((st) => st.syncNow);
   const syncNow = async () => {
     setSyncing(true);
-    try { await syncWithGitHub(); } catch {}
+    try { await storeSyncNow(); } catch {}
     setSyncing(false);
   };
 
@@ -75,7 +77,7 @@ export default function TabSettings() {
           <>
             <h2 className={s.title}>GENERAL</h2>
             <Row label="Launch at startup">
-              <Toggle checked={settings.launchAtStartup} onChange={(v) => set({ launchAtStartup: v })} />
+              <Toggle checked={settings.launchAtStartup} onChange={(v) => { set({ launchAtStartup: v }); setAutostart(v); }} />
             </Row>
             <Row label="Minimize to tray on close">
               <Toggle checked={settings.minimizeToTray} onChange={(v) => set({ minimizeToTray: v })} />
@@ -84,15 +86,15 @@ export default function TabSettings() {
               <Toggle checked={settings.startMinimized} onChange={(v) => set({ startMinimized: v })} />
             </Row>
             <Row label="Auto-detect IDE">
-              <Toggle checked={settings.autoDetectIde} onChange={(v) => set({ autoDetectIde: v })} />
+              <Toggle checked={settings.autoDetectIDE} onChange={(v) => set({ autoDetectIDE: v })} />
             </Row>
             <Row label="Confirm before delete">
               <Toggle checked={settings.confirmDelete} onChange={(v) => set({ confirmDelete: v })} />
             </Row>
             <Row label="Autosave delay (ms)">
               <select className="input" style={{ width: "10em" }}
-                value={settings.autosaveDelay}
-                onChange={(e) => set({ autosaveDelay: Number(e.target.value) })}>
+                value={settings.autosaveDelayMs}
+                onChange={(e) => set({ autosaveDelayMs: Number(e.target.value) })}>
                 {[500,800,1500,3000].map((v) => <option key={v} value={v}>{v}ms</option>)}
               </select>
             </Row>
@@ -110,7 +112,7 @@ export default function TabSettings() {
 
             <div className={s.resGrid}>
               {RESOLUTIONS.map((r) => {
-                const current = ((settings as any).resolution ?? "fhd") === r.key;
+                const current = (settings.resolution ?? "fhd") === r.key;
                 return (
                   <button
                     key={r.key}
@@ -142,7 +144,7 @@ export default function TabSettings() {
             <Row label="Theme">
               <select className="input" style={{ width: "14em" }}
                 value={settings.theme}
-                onChange={(e) => set({ theme: e.target.value as any })}>
+                onChange={(e) => set({ theme: e.target.value as import("@/types").Theme })}>
                 <option value="softcurse-dark">Softcurse Dark</option>
                 <option value="light">Light</option>
               </select>
@@ -173,7 +175,7 @@ export default function TabSettings() {
             <Row label="Line height">
               <select className="input" style={{ width: "10em" }}
                 value={settings.lineHeight}
-                onChange={(e) => set({ lineHeight: e.target.value as any })}>
+                onChange={(e) => set({ lineHeight: e.target.value as "compact"|"normal"|"relaxed" })}>
                 <option value="compact">Compact</option>
                 <option value="normal">Normal</option>
                 <option value="relaxed">Relaxed</option>
@@ -192,7 +194,7 @@ export default function TabSettings() {
             <Row label="Language">
               <select className="input" style={{ width: "12em" }}
                 value={settings.locale}
-                onChange={(e) => { const loc = e.target.value; set({ locale: loc as any }); i18n.changeLanguage(loc); }}>
+                onChange={(e) => { const loc = e.target.value; set({ locale: loc as import("@/types").Locale }); i18n.changeLanguage(loc); }}>
                 <option value="en">English</option>
                 <option value="ru">Русский</option>
                 <option value="ge">ქართული</option>
@@ -201,14 +203,14 @@ export default function TabSettings() {
             <Row label="Date format">
               <select className="input" style={{ width: "12em" }}
                 value={settings.dateFormat}
-                onChange={(e) => set({ dateFormat: e.target.value as any })}>
+                onChange={(e) => set({ dateFormat: e.target.value as import("@/types").DateFormat })}>
                 <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                 <option value="DD/MM/YYYY">DD/MM/YYYY</option>
                 <option value="MM/DD/YYYY">MM/DD/YYYY</option>
               </select>
             </Row>
             <Row label="24-hour clock">
-              <Toggle checked={settings.use24h} onChange={(v) => set({ use24h: v })} />
+              <Toggle checked={settings.timeFormat === "24h"} onChange={(v) => set({ timeFormat: v ? "24h" : "12h" })} />
             </Row>
           </>
         )}
@@ -254,7 +256,7 @@ export default function TabSettings() {
             <Row label="Sync frequency">
               <select className="input" style={{ width: "12em" }}
                 value={settings.githubSyncFrequency}
-                onChange={(e) => set({ githubSyncFrequency: e.target.value as any })}>
+                onChange={(e) => set({ githubSyncFrequency: e.target.value as import("@/types").SyncFrequency })}>
                 <option value="on-save">On every save</option>
                 <option value="hourly">Hourly</option>
                 <option value="manual">Manual only</option>
@@ -307,7 +309,7 @@ export default function TabSettings() {
                     <td>
                       <HotkeyInput
                         value={(settings[field] as string) ?? ""}
-                        onChange={(v) => set({ [field]: v } as any)}
+                        onChange={(v) => set({ [field]: v } as Partial<typeof settings>)}
                       />
                     </td>
                   </tr>

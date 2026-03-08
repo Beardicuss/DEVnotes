@@ -13,11 +13,16 @@ import { syncWithGitHub } from "@/integrations/github";
 import { setLocale } from "@/i18n";
 
 // ─── Autosave debounce ────────────────────────────────────────────
-let _saveTimer: ReturnType<typeof setTimeout> | null = null;
-function scheduleSave(save: () => Promise<void>, delayMs: number) {
-  if (_saveTimer) clearTimeout(_saveTimer);
-  _saveTimer = setTimeout(save, delayMs);
+// Factory-based debounce: each store instance gets its own timer,
+// so multiple instances (e.g. in tests) don't share state.
+function makeScheduler() {
+  let timer: ReturnType<typeof setTimeout> | null = null;
+  return function scheduleSave(save: () => Promise<void>, delayMs: number) {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => { timer = null; save(); }, delayMs);
+  };
 }
+const scheduleSave = makeScheduler();
 
 // ─── Store shape ──────────────────────────────────────────────────
 
@@ -555,7 +560,15 @@ export const useAppStore = create<AppStore>()(
     addPomodoro: (session) => {
       const id = uid();
       const item = { id, ...session };
-      set((s) => ({ data: { ...s.data, pomodoros: [item, ...(s.data.pomodoros??[])] } }));
+      const MAX_POMODOROS = 500; // ~8 months of daily use at 2 sessions/day
+      set((s) => {
+        const updated = [item, ...(s.data.pomodoros ?? [])];
+        // Prune oldest sessions beyond the cap to keep data.json lean
+        const pruned = updated.length > MAX_POMODOROS
+          ? updated.slice(0, MAX_POMODOROS)
+          : updated;
+        return { data: { ...s.data, pomodoros: pruned } };
+      });
       scheduleSave(get().save, 400);
       return id;
     },

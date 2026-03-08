@@ -123,7 +123,7 @@ export default function GlobalSearch({ onClose }: { onClose: () => void }) {
     openProject(result.projectId);
     switch (result.kind) {
       case "project":  break;
-      case "note":     setTab("notes");     setTimeout(() => selectNote(result.id), 50); break;
+      case "note":     setTab("notes");     selectNote(result.id); break;
       case "task":     setTab("tasks");     break;
       case "decision": setTab("decisions"); break;
       case "standup":  setTab("standup");   break;

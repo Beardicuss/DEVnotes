@@ -8,7 +8,8 @@ export function useHotkeys() {
   const setTab            = useAppStore((s) => s.setTab);
   const addNote           = useAppStore((s) => s.addNote);
   const selectNote        = useAppStore((s) => s.selectNote);
-  const setQuickCapture   = useAppStore((s) => s.setQuickCaptureOpen);
+  const openQuickCapture  = useAppStore((s) => s.openQuickCapture);
+  const closeQuickCapture = useAppStore((s) => s.closeQuickCapture);
   const addProject        = useAppStore((s) => s.addProject);
   const save              = useAppStore((s) => s.save);
   const activeProjectId   = useAppStore((s) => s.activeProjectId);
@@ -35,7 +36,7 @@ export function useHotkeys() {
           if (!e.shiftKey) { e.preventDefault(); if (activeProjectId) setTab("tasks"); }
           break;
         case " ":
-          if (e.shiftKey) { e.preventDefault(); setQuickCapture(true); }
+          if (e.shiftKey) { e.preventDefault(); openQuickCapture(); }
           break;
         case "N":
           if (e.shiftKey) { e.preventDefault(); addProject({}); }
@@ -45,12 +46,12 @@ export function useHotkeys() {
           save();
           break;
         case "Escape":
-          setQuickCapture(false);
+          closeQuickCapture();
           break;
       }
     };
 
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [activeProjectId, setTab, addNote, selectNote, setQuickCapture, addProject, save]);
+  }, [activeProjectId, setTab, addNote, selectNote, openQuickCapture, closeQuickCapture, addProject, save]);
 }

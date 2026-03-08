@@ -47,6 +47,7 @@ export type MilestoneStatus = "todo" | "in-progress" | "done";
 export interface Milestone {
   id:              ID;
   title:           string;
+  description?:    string;           // optional notes on the milestone
   date:            ISODate | null;
   status:          MilestoneStatus;
   calendarEventId: string | null;
@@ -173,20 +174,22 @@ export interface ProjectLink {
 }
 
 export interface ProjectCommand {
-  id:      ID;
-  label:   string;
-  command: string;    // supports {projectRoot}
-  cwd:     string;
-  icon:    string;
+  id:             ID;
+  label:          string;
+  command:        string;    // supports {projectRoot} and {projectName}
+  cwd?:           string;
+  icon?:          string;
+  runInTerminal?: boolean;
 }
 
 export interface Snippet {
   id:        ID;
-  title:     string;
+  label:     string;           // display name (was "title" in early drafts)
+  title?:    string;           // legacy alias — kept for backup restore compat
   content:   string;
   language:  string;
-  tags:      string[];
-  createdAt: ISODateTime;
+  tags?:     string[];
+  createdAt?: ISODateTime;
 }
 
 export interface Tools {
@@ -295,6 +298,24 @@ export interface AppSettings {
   noteViewMode:     NoteViewMode;
   sidebarWidth:     number;
   activeProjectId:  ID | null;
+
+  // Pomodoro
+  pomodoroDurationMins: number;
+
+  // AI
+  aiApiKey:         string | null;
+
+  // Appearance extras (persisted)
+  resolution:       string;
+
+  // Onboarding
+  onboardingComplete: boolean;
+
+  // Calendar OAuth (stored locally only)
+  calendarTokens:     { access_token: string; refresh_token: string; expires_at: number } | null;
+  googleClientId:     string;
+  googleClientSecret: string;
+  calendarAutoPush:   boolean;
 }
 
 // ─── ROOT DATA SHAPE ──────────────────────────────────────────────

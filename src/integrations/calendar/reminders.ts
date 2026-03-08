@@ -130,10 +130,11 @@ export function scheduleDailyDigest(
       description: lines.join(" · "),
       dueDate: today, dueTime: null,
       reminder: { enabled: true, offsetMinutes: 0, notificationId: null },
-    } as any);
+    } as Partial<Task> & Pick<Task, "id"|"title"|"dueDate"|"dueTime"|"reminder">);
 
-    // Reschedule for next day
-    scheduleDailyDigest(tasks, digestHour);
+    // Reschedule for next day — useReminders hook will re-call this
+    // when tasks change, so we don't need to recurse with stale data.
+    // Just let the React effect cycle handle re-scheduling.
   }, delay);
 
   scheduled.set("__digest__", timer);
