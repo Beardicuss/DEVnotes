@@ -1,0 +1,19 @@
+.wrap { display: inline-flex; }
+
+.display { display: flex; align-items: center; gap: 0.5em; }
+.kbd     { font-family: var(--font-mono); font-size: var(--fs-xs); background: var(--bg-input); border: 1px solid var(--border); padding: 0.2em 0.7em; color: var(--cyan); min-width: 8em; text-align: center; }
+
+.editBtn  { background: none; border: 1px solid var(--border); font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); padding: 0.2em 0.5em; cursor: pointer; transition: all var(--t-fast); }
+.editBtn:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.clearBtn { background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: var(--fs-xs); padding: 0.1em 0.3em; transition: color var(--t-fast); }
+.clearBtn:hover { color: var(--red); }
+
+.recording {
+  font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--yellow);
+  background: rgba(255,200,0,0.07); border: 1px solid var(--yellow);
+  padding: 0.3em 0.9em; outline: none; cursor: default;
+  animation: blink 1s step-end infinite;
+  min-width: 16em; text-align: center;
+}
+@keyframes blink { 50% { opacity: 0.5; } }

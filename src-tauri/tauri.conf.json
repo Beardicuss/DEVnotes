@@ -12,30 +12,33 @@
   "app": {
     "windows": [
       {
-        "label":       "main",
-        "title":       "DevNotes Desktop",
-        "width":       1920,
-        "height":      1080,
-        "minWidth":    1280,
-        "minHeight":   720,
-        "resizable":   true,
+        "label": "main",
+        "title": "DevNotes Desktop",
+        "width": 1920,
+        "height": 1080,
+        "minWidth": 1280,
+        "minHeight": 720,
+        "resizable": true,
         "decorations": false,
         "transparent": false,
-        "shadow":      true,
-        "center":      true,
-        "visible":     true
+        "shadow": true,
+        "center": true,
+        "visible": true
       }
     ],
     "trayIcon": {
-      "iconPath":        "icons/tray.png",
-      "iconAsTemplate":  false,
+      "iconPath": "icons/tray.png",
+      "iconAsTemplate": false,
       "menuOnLeftClick": false,
-      "tooltip":         "DevNotes Desktop"
+      "tooltip": "DevNotes Desktop"
     }
   },
   "bundle": {
-    "active":  true,
-    "targets": "all",
+    "active": true,
+    "targets": [
+      "nsis",
+      "msi"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -45,13 +48,42 @@
     ],
     "windows": {
       "certificateThumbprint": null,
-      "digestAlgorithm":       "sha256",
-      "timestampUrl":          ""
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "nsis": {
+      "displayLanguageSelector": false,
+      "installMode": "perMachine",
+      "shortcut": true,
+      "compression": "lzma"
     }
   },
   "plugins": {
-    "fs":        { "all": true, "scope": { "allow": ["$APPDATA/DevNotes/**"], "deny": [] } },
-    "shell":     { "open": true },
-    "autostart": {}
+    "fs": {
+      "all": true,
+      "scope": {
+        "allow": [
+          "$APPDATA/DevNotes/**"
+        ],
+        "deny": []
+      }
+    },
+    "shell": {
+      "open": true
+    },
+    "autostart": {},
+    "updater": {
+      "pubkey": "REPLACE_WITH_YOUR_TAURI_SIGNING_PUBLIC_KEY",
+      "endpoints": [
+        "https://releases.yourapp.com/update/{{target}}/{{arch}}/{{current_version}}"
+      ],
+      "dialog": true,
+      "windows": {
+        "installerArgs": [
+          "/S"
+        ],
+        "installMode": "passive"
+      }
+    }
   }
 }

@@ -1,0 +1,89 @@
+.root    { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+.toolbar {
+  display: flex; align-items: center; gap: 1em; flex-wrap: wrap;
+  padding: 0.75em 1.5em; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.title { font-family: var(--font-display); font-size: var(--fs-xs); color: var(--cyan); letter-spacing: 0.2em; }
+.hint  { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); }
+.toggle { display: flex; align-items: center; gap: 0.4em; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim); cursor: pointer; }
+.toggle input { accent-color: var(--cyan); }
+
+.zoomBtns { display: flex; border: 1px solid var(--border); }
+.zoomBtn  { padding: 0.3em 0.8em; background: transparent; border: none; font-family: var(--font-mono); font-size: var(--fs-xxs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-dim); cursor: pointer; transition: all var(--t-fast); }
+.zoomBtn:hover { color: var(--text); }
+.zoomActive    { background: var(--bg-selected); color: var(--cyan); }
+
+.empty     { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.75em; color: var(--text-dim); }
+.emptyIcon { font-size: 3em; }
+.emptyHint { font-family: var(--font-mono); font-size: var(--fs-xs); }
+
+/* Main gantt layout */
+.ganttWrap { flex: 1; display: flex; overflow: hidden; }
+
+/* Label column */
+.labels {
+  width: 220px; flex-shrink: 0; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.labelHeader { padding: 0 0.75em; border-bottom: 1px solid var(--border); background: var(--bg-panel); flex-shrink: 0; }
+.labelHeaderText { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; line-height: 2.4; }
+.monthSpacer     { height: 1.6em; border-bottom: 1px solid var(--border-dim); flex-shrink: 0; background: var(--bg-panel); }
+.dayHeaderSpacer { height: 1.8em; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg-panel); }
+
+.labelRow {
+  display: flex; align-items: center; gap: 0.4em;
+  padding: 0 0.75em; height: 28px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border-dim);
+  transition: background var(--t-fast);
+}
+.labelRow:hover { background: var(--bg-hover); }
+.labelMilestone { background: rgba(255,0,255,0.04); }
+.labelKind { font-size: var(--fs-xs); flex-shrink: 0; }
+.labelText { font-family: var(--font-mono); font-size: var(--fs-xxs); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+
+/* Chart */
+.chart { flex: 1; overflow: auto; }
+.chartInner { position: relative; min-height: 100%; }
+
+/* Month row */
+.monthRow  { position: relative; height: 1.6em; border-bottom: 1px solid var(--border-dim); background: var(--bg-panel); }
+.monthCell { position: absolute; top: 0; height: 100%; font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; padding: 0 0.4em; border-right: 1px solid var(--border-dim); }
+
+/* Day header */
+.dayRow     { position: relative; height: 1.8em; border-bottom: 1px solid var(--border); background: var(--bg-panel); display: flex; }
+.dayCell    { display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 0.6em; color: var(--text-dim); border-right: 1px solid var(--border-dim); flex-shrink: 0; }
+.dayCellToday   { background: rgba(0,255,255,0.12); color: var(--cyan); font-weight: bold; }
+.dayCellWeekend { background: rgba(255,255,255,0.02); color: var(--text-muted); }
+
+/* Bars area */
+.barsArea  { position: relative; }
+.barRow    { position: relative; height: 28px; border-bottom: 1px solid var(--border-dim); }
+
+.gridLine   { position: absolute; top: 0; bottom: 0; border-right: 1px solid var(--border-dim); pointer-events: none; }
+.gridWeekend { background: rgba(255,255,255,0.015); }
+
+.todayLine  { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--red); opacity: 0.7; pointer-events: none; z-index: 5; }
+
+.bar {
+  position: absolute; top: 4px; height: 20px;
+  border-radius: 2px; opacity: 0.85;
+  display: flex; align-items: center; overflow: hidden;
+  cursor: default; transition: opacity var(--t-fast); z-index: 2;
+  min-width: 8px;
+}
+.bar:hover { opacity: 1; z-index: 10; }
+.barDone   { opacity: 0.4; }
+.barLabel  { font-family: var(--font-mono); font-size: 0.65em; color: #000; padding: 0 0.4em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; mix-blend-mode: multiply; }
+
+.milestoneMarker {
+  position: absolute; top: 4px; font-size: var(--fs-md);
+  transform: translateX(-50%); cursor: default; z-index: 3;
+  transition: transform var(--t-fast);
+}
+.milestoneMarker:hover { transform: translateX(-50%) scale(1.3); z-index: 10; }
+
+/* Legend */
+.legend { display: flex; flex-wrap: wrap; gap: 1.25em; padding: 0.75em 1.5em; border-top: 1px solid var(--border); flex-shrink: 0; }
+.legendItem { display: flex; align-items: center; gap: 0.4em; font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); }
+.legendDot  { width: 0.8em; height: 0.8em; border-radius: 1px; flex-shrink: 0; }

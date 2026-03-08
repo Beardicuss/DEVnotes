@@ -1,0 +1,49 @@
+.root   { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+.header { display: flex; align-items: center; justify-content: space-between; padding: 0 1.5em; border-bottom: 1px solid var(--border); flex-shrink: 0; flex-wrap: wrap; gap: 0.5em; }
+.tabs   { display: flex; }
+.tab    { padding: 0.75em 1.25em; background: transparent; border: none; border-bottom: 2px solid transparent; font-family: var(--font-mono); font-size: var(--fs-xs); letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; transition: all var(--t-fast); }
+.tab:hover { color: var(--text); }
+.tabActive { color: var(--cyan); border-bottom-color: var(--cyan); }
+.dateLabel { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--yellow); }
+
+/* Today form */
+.todayForm {
+  flex: 1; overflow-y: auto; padding: 1.5em 2em;
+  display: flex; flex-direction: column; gap: 1.25em;
+  max-width: 760px;
+}
+
+.contextCards { display: flex; gap: 1em; flex-wrap: wrap; }
+.contextCard  { flex: 1; min-width: 200px; padding: 0.75em 1em; border: 1px solid var(--border-dim); border-left: 3px solid; background: var(--bg-card); }
+.contextLabel { font-family: var(--font-mono); font-size: var(--fs-xxs); letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
+.contextList  { margin: 0.5em 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 0.2em; }
+.contextList li { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); }
+
+.field      { display: flex; flex-direction: column; gap: 0.4em; }
+.fieldLabel { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim); }
+
+/* Mood */
+.moodRow { display: flex; gap: 0.5em; flex-wrap: wrap; }
+.moodBtn {
+  flex: 1; min-width: 6em; display: flex; flex-direction: column; align-items: center; gap: 0.2em;
+  padding: 0.6em 0.5em; background: var(--bg-card); border: 1px solid var(--border);
+  cursor: pointer; transition: all var(--t-fast);
+}
+.moodBtn:hover  { border-color: var(--border-bright); }
+.moodActive     { background: var(--bg-selected); }
+.moodEmoji { font-size: var(--fs-xl); line-height: 1; }
+.moodText  { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); text-align: center; }
+
+/* History */
+.history { flex: 1; overflow-y: auto; padding: 1em 1.5em; display: flex; flex-direction: column; gap: 0.75em; }
+.empty   { padding: 3em; text-align: center; color: var(--text-dim); font-family: var(--font-mono); font-size: var(--fs-sm); }
+
+.historyCard { background: var(--bg-card); border: 1px solid var(--border-dim); padding: 1em; }
+.historyHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75em; padding-bottom: 0.6em; border-bottom: 1px solid var(--border-dim); }
+.historyDate   { font-family: var(--font-display); font-size: var(--fs-sm); color: var(--yellow); }
+.historyMood   { font-family: var(--font-mono); font-size: var(--fs-xs); }
+
+.historySection { margin-bottom: 0.6em; }
+.historySectionLabel { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.12em; display: block; margin-bottom: 0.2em; }
+.historySection p { font-size: var(--fs-xs); color: var(--text); line-height: 1.7; margin: 0; white-space: pre-wrap; }

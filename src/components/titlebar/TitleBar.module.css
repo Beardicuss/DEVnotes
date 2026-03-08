@@ -74,3 +74,5 @@
 }
 .winBtn:hover { background: rgba(255,255,255,0.07); color: var(--text); }
 .close:hover  { background: rgba(255,51,68,0.25); color: var(--red); }
+
+.pomodoroActive { color: var(--orange, #ff8800) !important; }

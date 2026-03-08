@@ -1,0 +1,44 @@
+.root {
+  display: flex; flex-direction: column; gap: 1em;
+  padding: 1.5em; background: var(--bg-panel);
+  border: 1px solid var(--border); max-width: 340px;
+}
+
+.header { display: flex; justify-content: space-between; align-items: center; }
+.title  { font-family: var(--font-display); font-size: var(--fs-xs); color: var(--cyan); letter-spacing: 0.25em; }
+.headerRight { display: flex; gap: 0.25em; }
+.iconBtn { background: none; border: none; font-size: var(--fs-sm); color: var(--text-dim); cursor: pointer; padding: 0.2em 0.4em; transition: color var(--t-fast); }
+.iconBtn:hover { color: var(--text); }
+
+.modes { display: flex; border-bottom: 1px solid var(--border); }
+.modeBtn { flex: 1; padding: 0.5em; background: transparent; border: none; border-bottom: 2px solid transparent; font-family: var(--font-mono); font-size: var(--fs-xxs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim); cursor: pointer; transition: all var(--t-fast); }
+.modeBtn:hover { color: var(--text); }
+.modeBtnActive { }
+
+.timerWrap { position: relative; width: 160px; height: 160px; align-self: center; }
+.ring { width: 100%; height: 100%; }
+.timerInner { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.1em; }
+.time       { font-family: var(--font-display); font-size: 2.4em; line-height: 1; letter-spacing: 0.05em; }
+.modeLabel  { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.15em; }
+.cycleLabel { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); }
+
+.controls { display: flex; gap: 0.75em; justify-content: center; }
+.startBtn { padding: 0.6em 2.5em; background: transparent; border: 2px solid; font-family: var(--font-display); font-size: var(--fs-sm); letter-spacing: 0.15em; cursor: pointer; transition: all var(--t-base); }
+.startBtn:hover { filter: brightness(1.2); }
+.resetBtn { padding: 0.6em 1em; background: transparent; border: 1px solid var(--border); font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim); cursor: pointer; transition: all var(--t-fast); }
+.resetBtn:hover { border-color: var(--border-bright); color: var(--text); }
+
+.taskSel   { display: flex; flex-direction: column; gap: 0.3em; }
+.taskLabel { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; }
+
+.stats { display: flex; justify-content: space-around; padding: 0.75em; border: 1px solid var(--border-dim); background: var(--bg-card); }
+.statItem { display: flex; flex-direction: column; align-items: center; gap: 0.15em; }
+.statVal  { font-family: var(--font-display); font-size: var(--fs-xl); line-height: 1; }
+.statKey  { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.1em; }
+
+.settings { display: flex; flex-direction: column; gap: 0.5em; padding: 0.75em; border: 1px solid var(--border); background: var(--bg-input); }
+
+/* Minimised floating chip */
+.mini { position: fixed; bottom: 3em; right: 1.5em; background: var(--bg-panel); border: 1px solid var(--border); padding: 0.4em 0.9em; cursor: pointer; z-index: 90; box-shadow: 0 4px 20px rgba(0,0,0,0.5); transition: border-color var(--t-fast); }
+.mini:hover { border-color: var(--cyan); }
+.miniTimer { font-family: var(--font-display); font-size: var(--fs-sm); }

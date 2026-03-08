@@ -78,6 +78,22 @@ interface AppStore {
   restoreTask: (id: ID) => void;
   setTaskFilter: (patch: Partial<TaskFilter>) => void;
 
+  // ── Decisions ──
+  addDecision:    (partial: Partial<import("@/types").Decision>) => string;
+  updateDecision: (id: import("@/types").ID, patch: Partial<import("@/types").Decision>) => void;
+  deleteDecision: (id: import("@/types").ID) => void;
+
+  // ── Standups ──
+  addStandup:    (entry: Omit<import("@/types").StandupEntry, "id"|"createdAt">) => string;
+  updateStandup: (id: import("@/types").ID, patch: Partial<import("@/types").StandupEntry>) => void;
+
+  // ── Pomodoros ──
+  addPomodoro:    (session: Omit<import("@/types").PomodoroSession, "id">) => string;
+  updatePomodoro: (id: import("@/types").ID, patch: Partial<import("@/types").PomodoroSession>) => void;
+
+  // ── Git status (for file watcher) ──
+  setGitStatus: (projectId: import("@/types").ID, status: any) => void;
+
   // ── Mind map ──
   updateMindMap: (projectId: ID, patch: Partial<Omit<MindMap, "projectId">>) => void;
 
@@ -181,6 +197,10 @@ export const useAppStore = create<AppStore>()(
       if (raw) {
         try {
           const loaded = JSON.parse(raw) as AppData;
+          // Migrate: add new fields if missing (Phase 4)
+          if (!loaded.decisions) loaded.decisions = [];
+          if (!loaded.standups)  loaded.standups  = [];
+          if (!loaded.pomodoros) loaded.pomodoros = [];
           const data: AppData = {
             ...DEFAULT_DATA,
             ...loaded,
@@ -498,6 +518,54 @@ export const useAppStore = create<AppStore>()(
       if (patch.locale) setLocale(patch.locale);
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
     },
+
+    // ── Decisions ─────────────────────────────────────────────────
+    addDecision: (partial) => {
+      const id = uid();
+      const now = nowISO();
+      const proj = get().activeProjectId!;
+      const item = { id, projectId: proj, title:"New Decision", context:"", options:"", outcome:"", status:"proposed" as const, decisionDate:null, decidedBy:"", tags:[], linkedTaskId:null, createdAt:now, updatedAt:now, ...partial };
+      set((s) => ({ data: { ...s.data, decisions: [item, ...(s.data.decisions??[])] } }));
+      scheduleSave(get().save, 800);
+      return id;
+    },
+    updateDecision: (id, patch) => {
+      set((s) => ({ data: { ...s.data, decisions: (s.data.decisions??[]).map((d) => d.id===id ? {...d,...patch,updatedAt:nowISO()} : d) } }));
+      scheduleSave(get().save, 800);
+    },
+    deleteDecision: (id) => {
+      set((s) => ({ data: { ...s.data, decisions: (s.data.decisions??[]).filter((d) => d.id!==id) } }));
+      scheduleSave(get().save, 400);
+    },
+
+    // ── Standups ───────────────────────────────────────────────────
+    addStandup: (entry) => {
+      const id = uid();
+      const item = { id, createdAt: nowISO(), ...entry };
+      set((s) => ({ data: { ...s.data, standups: [item, ...(s.data.standups??[])] } }));
+      scheduleSave(get().save, 800);
+      return id;
+    },
+    updateStandup: (id, patch) => {
+      set((s) => ({ data: { ...s.data, standups: (s.data.standups??[]).map((e) => e.id===id ? {...e,...patch} : e) } }));
+      scheduleSave(get().save, 800);
+    },
+
+    // ── Pomodoros ──────────────────────────────────────────────────
+    addPomodoro: (session) => {
+      const id = uid();
+      const item = { id, ...session };
+      set((s) => ({ data: { ...s.data, pomodoros: [item, ...(s.data.pomodoros??[])] } }));
+      scheduleSave(get().save, 400);
+      return id;
+    },
+    updatePomodoro: (id, patch) => {
+      set((s) => ({ data: { ...s.data, pomodoros: (s.data.pomodoros??[]).map((p) => p.id===id ? {...p,...patch} : p) } }));
+      scheduleSave(get().save, 400);
+    },
+
+    // ── Git status cache ───────────────────────────────────────────
+    setGitStatus: (_projectId, _status) => { /* stored in component state for now */ },
 
     // ── GitHub sync ───────────────────────────────────────────────
     syncNow: async () => {

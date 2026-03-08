@@ -1,0 +1,14 @@
+.wrap { display:flex; flex-direction:column; gap:0.75em; margin-top:1.5em; padding:1.25em; border:1px solid var(--border-dim); background:var(--bg-card); }
+
+.row      { display:flex; align-items:center; justify-content:space-between; gap:1em; flex-wrap:wrap; }
+.verInfo  { display:flex; flex-direction:column; gap:0.15em; }
+.label    { font-family:var(--font-mono); font-size:var(--fs-xxs); color:var(--text-dim); text-transform:uppercase; letter-spacing:0.1em; }
+.ver      { font-family:var(--font-display); font-size:var(--fs-md); color:var(--cyan); }
+
+.ok  { font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--green); }
+.err { font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--yellow); line-height:1.6; }
+
+.updateCard  { display:flex; flex-direction:column; gap:0.75em; padding:1em; background:rgba(0,255,100,0.05); border:1px solid rgba(0,200,80,0.25); }
+.updateHeader { display:flex; align-items:center; gap:0.5em; }
+.updateLabel { font-family:var(--font-mono); font-size:var(--fs-sm); color:var(--green); }
+.updateNotes { font-size:var(--fs-xs); color:var(--text-dim); line-height:1.7; white-space:pre-wrap; }

@@ -2,6 +2,8 @@
 import { useAppStore, selNotes, selActiveProject } from "@/stores/useAppStore";
 import { useTranslation } from "react-i18next";
 import s from "./TabNotes.module.css";
+import { useState } from "react";
+import ExportDialog from "@/components/export/ExportDialog";
 
 export function TabNotes() {
   const { t }        = useTranslation();
@@ -16,6 +18,7 @@ export function TabNotes() {
   const filter       = useAppStore((st) => st.noteFilter);
   const selected     = notes.find((n) => n.id === selectedId) ?? notes[0] ?? null;
 
+  const [exportTarget, setExportTarget] = useState<"note"|"all-notes"|null>(null);
   if (!project) return null;
 
   return (
@@ -25,6 +28,7 @@ export function TabNotes() {
           <input className={`input ${s.search}`} placeholder={t("notes.searchPlaceholder")}
             value={filter.search} onChange={(e) => setFilter({ search: e.target.value })} />
           <button className="btn btn-primary" onClick={() => addNote()}>+</button>
+          <button className="btn" title="Export all notes" onClick={() => setExportTarget("all-notes")}>⬇ Export</button>
         </div>
         <ul className={s.list}>
           {notes.map((n) => (
@@ -47,6 +51,7 @@ export function TabNotes() {
                 placeholder={t("notes.untitled")}
                 onChange={(e) => updateNote(selected.id, { title: e.target.value })} />
               <button className="btn-icon" onClick={() => archiveNote(selected.id)} title={t("notes.archive")}>⊟</button>
+              <button className="btn-icon" onClick={() => setExportTarget("note")} title="Export this note">⬇</button>
             </div>
             <div className={s.divider} />
             <textarea className={s.body} value={selected.body}
@@ -58,8 +63,14 @@ export function TabNotes() {
           <div className={s.emptyEditor}>{t("notes.empty")}</div>
         )}
       </section>
+      {exportTarget && (
+        <ExportDialog
+          target={exportTarget}
+          note={exportTarget === "note" ? (selected ?? undefined) : undefined}
+          onClose={() => setExportTarget(null)}
+        />
+      )}
     </div>
   );
 }
-
 export default TabNotes;

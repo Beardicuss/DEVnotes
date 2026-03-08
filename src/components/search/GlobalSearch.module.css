@@ -1,0 +1,86 @@
+.overlay {
+  position: fixed; inset: 0; background: var(--bg-overlay);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding-top: 8vh; z-index: 80;
+}
+
+.palette {
+  background: var(--bg-panel); border: 1px solid var(--border-bright);
+  width: min(680px, 96vw); max-height: 75vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+}
+
+/* Input */
+.inputRow {
+  display: flex; align-items: center; gap: 0.75em;
+  padding: 0.85em 1.1em; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.searchIcon { font-size: 1.4em; color: var(--cyan); flex-shrink: 0; }
+.input {
+  flex: 1; background: transparent; border: none; outline: none;
+  font-family: var(--font-ui); font-size: var(--fs-md);
+  color: var(--text); caret-color: var(--cyan);
+}
+.input::placeholder { color: var(--text-dim); }
+.clearBtn {
+  background: none; border: none; color: var(--text-dim);
+  cursor: pointer; font-size: var(--fs-sm); padding: 0.2em;
+  transition: color var(--t-fast);
+}
+.clearBtn:hover { color: var(--red); }
+
+/* Filter pills */
+.filters {
+  display: flex; align-items: center; gap: 0.4em; flex-wrap: wrap;
+  padding: 0.6em 1.1em; border-bottom: 1px solid var(--border-dim);
+  flex-shrink: 0;
+}
+.filterPill {
+  padding: 0.2em 0.7em; background: transparent;
+  border: 1px solid var(--border); font-family: var(--font-mono);
+  font-size: var(--fs-xxs); color: var(--text-dim);
+  cursor: pointer; transition: all var(--t-fast); white-space: nowrap;
+}
+.filterPill:hover  { border-color: var(--cyan); color: var(--cyan); }
+.filterActive      { border-color: var(--cyan); color: var(--cyan); background: var(--bg-selected); }
+.resultCount       { margin-left: auto; font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); }
+
+/* Results list */
+.results { flex: 1; overflow-y: auto; }
+
+.hint      { padding: 2.5em 1.5em; text-align: center; display: flex; flex-direction: column; gap: 0.6em; align-items: center; }
+.hintTitle { font-family: var(--font-display); font-size: var(--fs-md); color: var(--cyan); letter-spacing: 0.15em; }
+.hintSub   { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim); max-width: 28em; line-height: 1.7; }
+.shortcuts { display: flex; gap: 1.5em; margin-top: 0.5em; }
+.shortcuts span { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); display: flex; align-items: center; gap: 0.4em; }
+.shortcuts kbd { background: var(--bg-input); border: 1px solid var(--border); padding: 0.15em 0.4em; font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--cyan); }
+
+.empty { padding: 2em; text-align: center; font-family: var(--font-mono); font-size: var(--fs-sm); color: var(--text-dim); }
+.empty strong { color: var(--text); }
+
+.result {
+  display: flex; align-items: center; gap: 0.85em;
+  padding: 0.75em 1.1em; cursor: pointer;
+  border-bottom: 1px solid var(--border-dim);
+  transition: background var(--t-fast);
+}
+.result:hover    { background: var(--bg-hover); }
+.resultActive    { background: var(--bg-selected); }
+.resultIcon      { font-size: var(--fs-md); flex-shrink: 0; width: 1.5em; text-align: center; }
+.resultBody      { flex: 1; min-width: 0; }
+.resultTitle     { font-size: var(--fs-sm); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.resultPreview   { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); margin-top: 0.15em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.resultMeta      { display: flex; flex-direction: column; align-items: flex-end; gap: 0.2em; flex-shrink: 0; }
+.resultProject   { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--cyan); opacity: 0.8; }
+.resultKind      { font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+
+/* highlight mark */
+:global(.search-highlight) {
+  background: rgba(0,255,255,0.22); color: var(--cyan);
+  border-radius: 1px; padding: 0 1px;
+}
+[data-theme="light"] :global(.search-highlight) {
+  background: rgba(0,104,184,0.18); color: var(--cyan);
+}

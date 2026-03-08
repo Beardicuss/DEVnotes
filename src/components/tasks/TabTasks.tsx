@@ -5,6 +5,7 @@ import { createEvent, taskToGCalEvent, updateEvent, deleteEvent } from "@/integr
 import { generateICS, exportICS } from "@/integrations/calendar/ics";
 import type { Task, Priority, TaskStatus } from "@/types";
 import s from "./TabTasks.module.css";
+import ExportDialog from "@/components/export/ExportDialog";
 
 type ViewMode = "list" | "kanban";
 const STATUSES: TaskStatus[] = ["backlog","todo","in-progress","done","archived"];
@@ -31,6 +32,7 @@ export default function TabTasks() {
   const [view, setView]         = useState<ViewMode>("list");
   const [editId, setEditId]     = useState<string | null>(null);
   const [calPushing, setCalPushing] = useState<string | null>(null);
+  const [exportOpen, setExportOpen] = useState(false);
   if (!project) return null;
 
   const visible = useMemo(() => {
@@ -73,6 +75,7 @@ export default function TabTasks() {
   return (
     <div className={s.root}>
       <div className={s.toolbar}>
+        <button className="btn" onClick={() => setExportOpen(true)} title="Export tasks">⬇ Export</button>
         <button className="btn btn-primary" onClick={() => { const id = addTask({}); setEditId(id); }}>+ New Task</button>
         <div className={s.filters}>
           <input className={`input ${s.search}`} placeholder="Search tasks…"
@@ -177,6 +180,7 @@ export default function TabTasks() {
           </div>
         </div>
       )}
+      {exportOpen && <ExportDialog target="tasks" onClose={() => setExportOpen(false)} />}
     </div>
   );
 }

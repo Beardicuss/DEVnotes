@@ -202,7 +202,7 @@ export type Theme              = "softcurse-dark" | "light" | "system";
 export type NoteViewMode       = "edit" | "split" | "preview";
 export type DateFormat         = "DD/MM/YYYY" | "MM/DD/YYYY" | "YYYY-MM-DD";
 export type TimeFormat         = "24h" | "12h";
-export type Locale             = "en" | "ru" | string;
+export type Locale             = "en" | "ru" | "ge" | string;
 export type CalendarProvider   = "google" | "outlook" | "ics" | null;
 export type CalendarSyncScope  = "all" | "high-and-critical" | "none";
 export type TerminalType       = "windows-terminal" | "powershell" | "cmd";
@@ -302,6 +302,53 @@ export interface AppSettings {
 //                @capacitor/preferences         (Android)
 //                GitHub Gist (optional sync)
 
+// ─── DECISION LOG ─────────────────────────────────────────────────
+
+export type DecisionStatus = "proposed" | "accepted" | "rejected" | "deferred";
+
+export interface Decision {
+  id:          ID;
+  projectId:   ID;
+  title:       string;
+  context:     string;       // what problem we are solving
+  options:     string;       // options considered
+  outcome:     string;       // decision taken + rationale
+  status:      DecisionStatus;
+  decisionDate: ISODate | null;
+  decidedBy:   string;
+  tags:        string[];
+  linkedTaskId: ID | null;
+  createdAt:   ISODateTime;
+  updatedAt:   ISODateTime;
+}
+
+// ─── DAILY STANDUP ────────────────────────────────────────────────
+
+export interface StandupEntry {
+  id:        ID;
+  projectId: ID;
+  date:      ISODate;         // "YYYY-MM-DD"
+  yesterday: string;
+  today:     string;
+  blockers:  string;
+  mood:      1 | 2 | 3 | 4 | 5;
+  createdAt: ISODateTime;
+}
+
+// ─── POMODORO ─────────────────────────────────────────────────────
+
+export interface PomodoroSession {
+  id:        ID;
+  projectId: ID;
+  taskId:    ID | null;
+  startedAt: ISODateTime;
+  endedAt:   ISODateTime | null;
+  duration:  number;           // minutes (usually 25)
+  completed: boolean;
+}
+
+// ─── ROOT DATA SHAPE ──────────────────────────────────────────────
+
 export interface AppData {
   version:   2;
   projects:  Project[];
@@ -311,14 +358,19 @@ export interface AppData {
   tasks:     Task[];
   mindMaps:  MindMap[];
   tools:     Tools[];
+  decisions: Decision[];
+  standups:  StandupEntry[];
+  pomodoros: PomodoroSession[];
   settings:  AppSettings;
 }
 
 // ─── UI STATE (never persisted) ───────────────────────────────────
 
 export type ProjectTab =
-  | "dashboard" | "plan" | "notes" | "todos"
-  | "tasks"     | "mindmap" | "tools";
+  | "dashboard" | "plan"     | "notes"    | "todos"
+  | "tasks"     | "mindmap"  | "tools"
+  | "gantt"     | "standup"  | "decisions"
+  | "settings";
 
 export interface TaskFilter {
   search:   string;

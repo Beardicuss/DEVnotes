@@ -5,6 +5,9 @@ import { RESOLUTIONS, applyResolution, type ResolutionKey } from "@/utils/resolu
 import { syncWithGitHub } from "@/integrations/github";
 import CalendarSettings from "./CalendarSettings";
 import s from "./TabSettings.module.css";
+import BackupDialog from "@/components/backup/BackupDialog";
+import HotkeyInput from "./HotkeyInput";
+import UpdateChecker from "./UpdateChecker";
 
 const SECTIONS = [
   "General", "Window / Resolution", "Appearance", "Fonts",
@@ -187,9 +190,10 @@ export default function TabSettings() {
             <Row label="Language">
               <select className="input" style={{ width: "12em" }}
                 value={settings.locale}
-                onChange={(e) => set({ locale: e.target.value as any })}>
+                onChange={(e) => { set({ locale: e.target.value as any }); import("@/i18n").then(m => m.setLocale(e.target.value)); }}>
                 <option value="en">English</option>
                 <option value="ru">Русский</option>
+                <option value="ge">ქართული</option>
               </select>
             </Row>
             <Row label="Date format">
@@ -285,24 +289,32 @@ export default function TabSettings() {
         {active === "Hotkeys" && (
           <>
             <h2 className={s.title}>KEYBOARD SHORTCUTS</h2>
+            <p className={s.desc} style={{ marginBottom:"1em" }}>
+              Click a shortcut field and press your desired key combination to customise.
+            </p>
             <table className={s.hotkeyTable}>
               <tbody>
-                {[
-                  ["Ctrl + Shift + D",     "Show / hide DevNotes (global)"],
-                  ["Ctrl + Shift + Space", "Quick Capture popup"],
-                  ["Ctrl + N",             "New note in current project"],
-                  ["Ctrl + T",             "Go to Tasks tab"],
-                  ["Ctrl + 1 – 7",         "Switch tab (Dashboard → Tools)"],
-                  ["Ctrl + S",             "Force save"],
-                  ["Escape",               "Close modal / Quick Capture"],
-                ].map(([key, desc]) => (
-                  <tr key={key}>
+                {([
+                  ["hotkeyGlobalShow",   "Show / hide DevNotes (global)"],
+                  ["hotkeyQuickCapture", "Quick Capture popup"],
+                  ["hotkeyNewNote",      "New note in current project"],
+                  ["hotkeyNewTask",      "New task in current project"],
+                ] as [keyof typeof settings, string][]).map(([field, desc]) => (
+                  <tr key={field}>
                     <td className={s.keyAction}>{desc}</td>
-                    <td><kbd className={s.kbd}>{key}</kbd></td>
+                    <td>
+                      <HotkeyInput
+                        value={(settings[field] as string) ?? ""}
+                        onChange={(v) => set({ [field]: v } as any)}
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            <p className={s.desc} style={{ marginTop:"1em" }}>
+              Fixed shortcuts: <kbd className={s.kbd}>Ctrl+1–9</kbd> switch tabs · <kbd className={s.kbd}>Ctrl+S</kbd> save · <kbd className={s.kbd}>Esc</kbd> close modal
+            </p>
           </>
         )}
 
@@ -319,9 +331,13 @@ export default function TabSettings() {
                 {[3,5,10,20].map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
             </Row>
+            <Row label="Backup / Restore">
+              <button className="btn" onClick={() => setBackupOpen(true)}>⬇ Open Backup Manager</button>
+            </Row>
             <p className={s.desc} style={{ marginTop: "1em" }}>
               Data file: <code style={{ color: "var(--cyan)" }}>%APPDATA%\DevNotes\data.json</code>
             </p>
+            {backupOpen && <BackupDialog onClose={() => setBackupOpen(false)} />}
           </>
         )}
 
@@ -335,6 +351,7 @@ export default function TabSettings() {
               <div className={s.aboutStack}>Tauri 2 · React 18 · TypeScript · Zustand</div>
               <div className={s.aboutStack} style={{ marginTop: "0.4em" }}>Softcurse Studio</div>
             </div>
+            <UpdateChecker />
           </>
         )}
 

@@ -1,0 +1,248 @@
+{
+  "app": {
+    "name": "DevNotes",
+    "tagline": "Softcurse Studio"
+  },
+  "nav": {
+    "projects": "პროექტები",
+    "dashboard": "მთავარი",
+    "plan": "გეგმა",
+    "notes": "ჩანაწერები",
+    "todos": "სია",
+    "tasks": "დავალებები",
+    "mindmap": "გონების რუკა",
+    "tools": "ინსტრუმენტები",
+    "settings": "პარამეტრები",
+    "archive": "არქივი"
+  },
+  "projects": {
+    "title": "პროექტები",
+    "new": "ახალი პროექტი",
+    "import": "IDE-დან იმპორტი",
+    "open": "გახსნა",
+    "edit": "რედაქტირება",
+    "delete": "წაშლა",
+    "archive": "არქივი",
+    "pin": "დამაგრება",
+    "unpin": "მოხსნა",
+    "status": {
+      "active": "აქტიური",
+      "on-hold": "შეჩერებული",
+      "completed": "დასრულებული",
+      "archived": "დაარქივებული"
+    },
+    "empty": "პროექტები არ არის. შექმენით პირველი.",
+    "searchPlaceholder": "პროექტების ძებნა…",
+    "deadline": "ვადა",
+    "lastUpdated": "ბოლო განახლება"
+  },
+  "plan": {
+    "title": "პროექტის გეგმა",
+    "milestones": "მილსტოუნები",
+    "addMilestone": "მილსტოუნის დამატება",
+    "placeholder": "დაწერეთ პროექტის გეგმა Markdown-ში…",
+    "export": "PDF-ად ექსპორტი",
+    "template": "შაბლონის გამოყენება"
+  },
+  "notes": {
+    "title": "ჩანაწერები",
+    "new": "+ ახალი ჩანაწერი",
+    "untitled": "სათაურის გარეშე",
+    "searchPlaceholder": "ჩანაწერების ძებნა…",
+    "empty": "ჩანაწერები არ არის.",
+    "pin": "დამაგრება",
+    "archive": "არქივი",
+    "delete": "წაშლა",
+    "export": ".md ექსპორტი",
+    "viewMode": {
+      "edit": "რედაქტირება",
+      "split": "გაყოფა",
+      "preview": "გადახედვა"
+    }
+  },
+  "todos": {
+    "title": "სამუშაო სიები",
+    "newList": "ახალი სია",
+    "newItem": "ელემენტის დამატება…",
+    "clearDone": "დასრულებულის გასუფთავება",
+    "empty": "აქ არაფერია. დაამატეთ პირველი ელემენტი.",
+    "promote": "დავალებად გადაყვანა"
+  },
+  "tasks": {
+    "title": "დავალებები",
+    "new": "+ დავალების დამატება",
+    "searchPlaceholder": "დავალებების ძებნა…",
+    "empty": "ფილტრს არ შეესაბამება.",
+    "status": {
+      "backlog": "ბექლოგი",
+      "todo": "შესასრულებელი",
+      "in-progress": "მიმდინარე",
+      "done": "დასრულებული",
+      "archived": "დაარქივებული"
+    },
+    "priority": {
+      "low": "დაბალი",
+      "medium": "საშუალო",
+      "high": "მაღალი",
+      "critical": "კრიტიკული"
+    },
+    "dueDate": "შესრულების თარიღი",
+    "reminder": "შეხსენება",
+    "overdue": "ვადაგადაცილებული",
+    "dueToday": "დღეს ვადა",
+    "archive": "არქივი",
+    "delete": "წაშლა",
+    "view": {
+      "list": "სია",
+      "kanban": "კანბანი"
+    }
+  },
+  "mindmap": {
+    "title": "გონების რუკა",
+    "addNode": "კვანძის დამატება",
+    "deleteNode": "კვანძის წაშლა",
+    "editNode": "რედაქტირება",
+    "export": "PNG-ად ექსპორტი",
+    "autoLayout": "ავტო განლაგება",
+    "zoomIn": "გადიდება",
+    "zoomOut": "დაპატარავება",
+    "fitView": "მორგება"
+  },
+  "tools": {
+    "title": "ინსტრუმენტები",
+    "links": "პროექტის ბმულები",
+    "commands": "ბრძანებები",
+    "snippets": "სნიპეტები",
+    "openVSCode": "VS Code-ში გახსნა",
+    "openVS": "Visual Studio-ში გახსნა",
+    "openFolder": "საქაღალდის გახსნა",
+    "openTerminal": "ტერმინალის გახსნა",
+    "gitBranch": "ფილიალი",
+    "gitDirty": "შეუნახავი ცვლილებები",
+    "run": "გაშვება",
+    "copy": "კოპირება",
+    "addLink": "ბმულის დამატება",
+    "addCommand": "ბრძანების დამატება",
+    "addSnippet": "სნიპეტის დამატება"
+  },
+  "settings": {
+    "title": "პარამეტრები",
+    "sections": {
+      "general": "ზოგადი",
+      "appearance": "გარეგნობა",
+      "fonts": "შრიფტები",
+      "language": "ენა",
+      "notifications": "შეტყობინებები",
+      "calendar": "კალენდრის სინქრონიზაცია",
+      "ide": "IDE ინტეგრაცია",
+      "github": "GitHub სინქრონიზაცია",
+      "hotkeys": "კლავიატურის მალსახმობები",
+      "data": "მონაცემები და სარეზერვო",
+      "about": "შესახებ"
+    },
+    "general": {
+      "launchAtStartup": "Windows-ის გაშვებისას ავტოგახსნა",
+      "minimizeToTray": "დახურვისას ტრეიში",
+      "startMinimized": "მინიმიზებულად გაშვება",
+      "autoDetectIDE": "IDE პროექტის ავტოამოცნობა",
+      "confirmDelete": "წაშლამდე დადასტურება"
+    },
+    "appearance": {
+      "theme": "თემა",
+      "themes": {
+        "softcurse-dark": "Softcurse მუქი",
+        "light": "ღია",
+        "system": "სისტემური"
+      },
+      "accentColour": "აქცენტის ფერი",
+      "opacity": "ფანჯრის გამჭვირვალობა",
+      "gridBg": "ბადის ფონი",
+      "glowEffects": "განათების ეფექტები",
+      "animations": "ანიმაციები"
+    },
+    "fonts": {
+      "uiFont": "UI შრიფტი",
+      "editorFont": "რედაქტორის შრიფტი",
+      "codeFont": "კოდის შრიფტი",
+      "fontSize": "შრიფტის ზომა",
+      "lineHeight": "სტრიქონთაშორისი",
+      "lineHeights": {
+        "compact": "კომპაქტური",
+        "normal": "ნორმალური",
+        "relaxed": "გაშლილი"
+      }
+    },
+    "language": {
+      "locale": "ენა",
+      "dateFormat": "თარიღის ფორმატი",
+      "timeFormat": "დროის ფორმატი",
+      "firstDayOfWeek": "კვირის პირველი დღე"
+    },
+    "github": {
+      "title": "GitHub Gist სინქრონიზაცია",
+      "description": "DevNotes-ის მონაცემების სინქრონიზაცია პირად GitHub Gist-ზე.",
+      "enableSync": "GitHub სინქრონიზაციის ჩართვა",
+      "token": "პირადი წვდომის ტოკენი",
+      "tokenHelp": "შექმენით ტოკენი github.com/settings/tokens-ზე 'gist' სკოუპით.",
+      "gistId": "Gist ID",
+      "gistIdHelp": "დატოვეთ ცარიელი პირველ სინქრონიზაციაზე ახლის შესაქმნელად.",
+      "syncNow": "ახლავე სინქრ.",
+      "lastSync": "ბოლო სინქრ.",
+      "status": {
+        "idle": "მზად",
+        "syncing": "სინქრონიზაცია…",
+        "success": "სინქრ. დასრულდა",
+        "error": "სინქრ. შეცდომა"
+      },
+      "frequency": {
+        "on-save": "შენახვისას",
+        "hourly": "ყოველ საათში",
+        "manual": "მხოლოდ ხელით"
+      }
+    },
+    "save": "შენახვა",
+    "saved": "შენახულია"
+  },
+  "quickcapture": {
+    "placeholder": "სწრაფი ჩანაწერი ან დავალება… (Enter შესანახად)",
+    "asNote": "ჩანაწერი",
+    "asTask": "დავალება",
+    "asTodo": "სია"
+  },
+  "sync": {
+    "syncing": "GitHub-თან სინქრონიზაცია…",
+    "success": "სინქრ. წარმატებულია",
+    "error": "სინქრ. შეცდომა",
+    "lastSync": "ბოლო სინქრ."
+  },
+  "common": {
+    "save": "შენახვა",
+    "cancel": "გაუქმება",
+    "delete": "წაშლა",
+    "edit": "რედაქტირება",
+    "add": "დამატება",
+    "close": "დახურვა",
+    "search": "ძებნა",
+    "filter": "ფილტრი",
+    "sort": "დალაგება",
+    "loading": "იტვირთება…",
+    "empty": "აქ ჯერ არაფერია.",
+    "confirm": "დადასტურება",
+    "yes": "დიახ",
+    "no": "არა",
+    "or": "ან",
+    "new": "ახალი",
+    "open": "გახსნა",
+    "copy": "კოპირება",
+    "copied": "დაკოპირდა!",
+    "export": "ექსპორტი",
+    "import": "იმპორტი",
+    "all": "ყველა"
+  },
+  "errors": {
+    "loadFailed": "მონაცემების ჩატვირთვა ვერ მოხერხდა",
+    "saveFailed": "შენახვა ვერ მოხერხდა",
+    "syncFailed": "GitHub სინქრ. ვერ მოხერხდა",
+    "genericError": "რაღაც შეცდომა მოხდა"
+  }
+}

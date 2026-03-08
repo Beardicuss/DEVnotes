@@ -99,26 +99,101 @@
 }
 
 /* ── Light theme ── */
+/* Warm paper / studio light — readable, calm, zero eye-strain */
 [data-theme="light"] {
-  --bg-root:       #eef2f8;
-  --bg-panel:      #e2e8f2;
-  --bg-editor:     #ffffff;
-  --bg-card:       rgba(255,255,255,0.95);
-  --bg-hover:      rgba(0,90,170,0.05);
-  --bg-selected:   rgba(0,90,170,0.10);
-  --bg-input:      rgba(255,255,255,0.95);
-  --bg-overlay:    rgba(0,0,0,0.45);
-  --border:        rgba(0,90,160,0.16);
-  --border-bright: rgba(0,90,160,0.45);
-  --border-dim:    rgba(0,90,160,0.07);
-  --border-focus:  rgba(0,90,160,0.65);
-  --cyan:          #0060a8;
-  --blue:          #0050cc;
-  --text:          #182838;
-  --text-bright:   #080e18;
-  --text-dim:      #5a7898;
+  /* Backgrounds — warm off-white, NOT pure white */
+  --bg-root:       #f0ede8;
+  --bg-panel:      #e8e4de;
+  --bg-editor:     #faf8f5;
+  --bg-card:       #f5f2ed;
+  --bg-hover:      rgba(0,80,150,0.06);
+  --bg-selected:   rgba(0,80,150,0.11);
+  --bg-input:      #faf8f5;
+  --bg-overlay:    rgba(30,20,10,0.50);
+
+  /* Borders — warm grey, visible but not loud */
+  --border:        rgba(80,60,40,0.18);
+  --border-bright: rgba(80,60,40,0.45);
+  --border-dim:    rgba(80,60,40,0.09);
+  --border-focus:  #0068b8;
+
+  /* Accent colours — shifted for light bg: darker, more saturated */
+  --cyan:          #0068b8;
+  --blue:          #1a4fcc;
+  --green:         #1a8a44;
+  --yellow:        #a06000;
+  --red:           #cc2233;
+  --magenta:       #9900bb;
+  --orange:        #c05800;
+
+  /* Text — dark ink on paper, NOT black-on-white */
+  --text:          #1e1a14;
+  --text-bright:   #0a0806;
+  --text-dim:      #6b5e4e;
+  --text-muted:    #b0a090;
+  --text-on-accent:#faf8f5;
+
+  /* Font families — same stack */
+  --font-display:  'Orbitron', 'Share Tech Mono', monospace;
+  --font-mono:     'Share Tech Mono', 'Courier New', monospace;
+  --font-ui:       'Inter', 'Segoe UI', sans-serif;
+  --font-code:     'Fira Code', 'Consolas', monospace;
+
+  /* Chip overrides for legibility on light bg */
+  --chip-critical-bg:   rgba(204,34,51,0.12);
+  --chip-high-bg:       rgba(192,88,0,0.12);
+  --chip-medium-bg:     rgba(0,104,184,0.10);
+  --chip-low-bg:        rgba(107,94,78,0.10);
+
+  /* Disable glows entirely in light mode */
   --glow-cyan: none; --glow-blue: none; --glow-magenta: none;
-  --glow-red: none;  --glow-green: none;
+  --glow-red:  none; --glow-green: none;
+
+  /* Scrollbar */
+  --scrollbar-track: #e0dbd4;
+  --scrollbar-thumb: #b8b0a4;
+}
+
+/* Light-mode chip overrides */
+[data-theme="light"] .chip-critical { background: var(--chip-critical-bg); color: var(--red);    border-color: var(--red); }
+[data-theme="light"] .chip-high     { background: var(--chip-high-bg);     color: var(--orange); border-color: var(--orange); }
+[data-theme="light"] .chip-medium   { background: var(--chip-medium-bg);   color: var(--cyan);   border-color: var(--cyan); }
+[data-theme="light"] .chip-low      { background: var(--chip-low-bg);      color: var(--text-dim); border-color: var(--text-dim); }
+
+/* Light-mode code/pre blocks */
+[data-theme="light"] pre,
+[data-theme="light"] .cmdPre,
+[data-theme="light"] code {
+  background: #e8e4de !important;
+  color: #1e1a14 !important;
+  border-color: rgba(80,60,40,0.20) !important;
+}
+
+/* Light-mode scrollbars */
+[data-theme="light"] ::-webkit-scrollbar-track { background: #e0dbd4; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: #b8b0a4; }
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #9a9088; }
+
+/* Light-mode grid background */
+[data-theme="light"] .grid-bg {
+  background-image:
+    linear-gradient(rgba(80,60,40,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80,60,40,0.07) 1px, transparent 1px);
+}
+
+/* Light-mode titlebar / statusbar */
+[data-theme="light"] [class*="titlebar"],
+[data-theme="light"] [class*="TitleBar"],
+[data-theme="light"] [class*="statusBar"],
+[data-theme="light"] [class*="StatusBar"] {
+  background: #dedad4;
+  border-color: rgba(80,60,40,0.18);
+}
+
+/* Light-mode sidebar / project picker */
+[data-theme="light"] [class*="sidebar"],
+[data-theme="light"] [class*="Sidebar"] {
+  background: #e4e0da;
 }
 
 /* ════════════════════════════════════════════════

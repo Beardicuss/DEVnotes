@@ -90,14 +90,17 @@ export async function setAutostart(enable: boolean): Promise<void> {
   } catch { /* plugin not installed */ }
 }
 
-export async function sendNotification(title: string, body: string): Promise<void> {
+/** Fire a notification (Tauri or Web). */
+export async function sendNotification(title: string, body?: string): Promise<void> {
   if (isTauri) {
     try {
-      const { sendNotification: notify } =
+      const { sendNotification: sn, isPermissionGranted, requestPermission } =
         await import(/* @vite-ignore */ "@tauri-apps/plugin-notification");
-      await notify({ title, body });
-    } catch { /* non-fatal */ }
-    return;
+      let ok = await isPermissionGranted();
+      if (!ok) { const p = await requestPermission(); ok = p === "granted"; }
+      if (ok) await sn({ title, body });
+      return;
+    } catch {}
   }
   if ("Notification" in window && Notification.permission === "granted") {
     new Notification(title, { body });

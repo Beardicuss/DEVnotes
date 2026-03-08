@@ -3,17 +3,21 @@ import { isTauri } from "@/utils/platform";
 import type { ProjectTab } from "@/types";
 import s from "./TitleBar.module.css";
 
-const TABS: { id: ProjectTab; label: string }[] = [
-  { id: "dashboard", label: "Dashboard" },
-  { id: "plan",      label: "Plan" },
-  { id: "notes",     label: "Notes" },
-  { id: "todos",     label: "Todo" },
-  { id: "tasks",     label: "Tasks" },
-  { id: "mindmap",   label: "Mind Map" },
-  { id: "tools",     label: "Tools" },
+const TABS: { id: ProjectTab; label: string; hotkey?: string }[] = [
+  { id: "dashboard", label: "Dashboard",  hotkey: "1" },
+  { id: "plan",      label: "Plan",       hotkey: "2" },
+  { id: "notes",     label: "Notes",      hotkey: "3" },
+  { id: "todos",     label: "Todo",       hotkey: "4" },
+  { id: "tasks",     label: "Tasks",      hotkey: "5" },
+  { id: "mindmap",   label: "Mind Map",   hotkey: "6" },
+  { id: "tools",     label: "Tools",      hotkey: "7" },
+  { id: "gantt",     label: "Gantt" },
+  { id: "decisions", label: "Decisions" },
+  { id: "standup",   label: "Standup" },
 ];
 
-export default function TitleBar() {
+interface TitleBarProps { onPomodoroToggle?: () => void; pomodoroOpen?: boolean; onSearchOpen?: () => void; onShareOpen?: () => void; }
+export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen, onShareOpen }: TitleBarProps = {}) {
   const activeProjectId = useAppStore((s) => s.activeProjectId);
   const activeTab       = useAppStore((s) => s.activeTab);
   const setTab          = useAppStore((s) => s.setTab);
@@ -69,6 +73,22 @@ export default function TitleBar() {
         )}
 
         {/* Settings */}
+        {onSearchOpen && (
+          <button className={s.settingsBtn} onClick={onSearchOpen} title="Global Search (Ctrl+K)">
+            ⌕
+          </button>
+        )}
+        {onShareOpen && activeProjectId && (
+          <button className={s.settingsBtn} onClick={onShareOpen} title="Share / Export Project">
+            ↑ Share
+          </button>
+        )}
+        {onPomodoroToggle && (
+          <button className={`${s.settingsBtn} ${pomodoroOpen ? s.pomodoroActive : ""}`}
+            onClick={onPomodoroToggle} title="Pomodoro Timer">
+            🍅
+          </button>
+        )}
         <button className={s.settingsBtn} onClick={() => setTab("settings")} title="Settings">
           ⚙
         </button>
