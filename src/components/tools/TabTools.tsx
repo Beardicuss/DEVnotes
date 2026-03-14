@@ -72,7 +72,7 @@ export default function TabTools() {
     if (!isTauri || !project.rootPath) return;
     setRunning(id);
     try {
-      const { invoke } = await import(/* @vite-ignore */ "@tauri-apps/api/core");
+      const { invoke } = await import("@tauri-apps/api/core");
       const resolved = cmd.replace("{projectRoot}", project.rootPath).replace("{projectName}", project.name);
       const out = await invoke<string>("run_shell_command", { command: resolved, cwd: project.rootPath });
       setCmdOut((p) => ({ ...p, [id]: (out || "(no output)").trim().slice(0, 500) }));

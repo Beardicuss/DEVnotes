@@ -248,7 +248,7 @@ export async function waitForOAuthCallback(): Promise<{ code: string; state: str
     }
 
     // In Tauri: invoke the Rust command that starts the local listener
-    const { invoke } = await import(/* @vite-ignore */ "@tauri-apps/api/core");
+    const { invoke } = await import("@tauri-apps/api/core");
     const result = await invoke<{ code: string; state: string }>("wait_oauth_callback");
     return result;
   } catch (e) {

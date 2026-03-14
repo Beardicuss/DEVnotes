@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/stores/useAppStore";
 import { isTauri } from "@/utils/platform";
+import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { ProjectTab } from "@/types";
 import s from "./TitleBar.module.css";
 
@@ -17,32 +18,32 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
   // Tabs defined inside component so t() is available
   const TABS: { id: ProjectTab; label: string; hotkey?: string }[] = [
     { id: "dashboard", label: t("nav.dashboard"), hotkey: "1" },
-    { id: "plan",      label: t("nav.plan"),      hotkey: "2" },
-    { id: "notes",     label: t("nav.notes"),     hotkey: "3" },
-    { id: "todos",     label: t("nav.todos"),     hotkey: "4" },
-    { id: "tasks",     label: t("nav.tasks"),     hotkey: "5" },
-    { id: "mindmap",   label: t("nav.mindmap"),   hotkey: "6" },
-    { id: "tools",     label: t("nav.tools"),     hotkey: "7" },
-    { id: "gantt",     label: t("nav.gantt",     "Gantt") },
+    { id: "plan", label: t("nav.plan"), hotkey: "2" },
+    { id: "notes", label: t("nav.notes"), hotkey: "3" },
+    { id: "todos", label: t("nav.todos"), hotkey: "4" },
+    { id: "tasks", label: t("nav.tasks"), hotkey: "5" },
+    { id: "mindmap", label: t("nav.mindmap"), hotkey: "6" },
+    { id: "tools", label: t("nav.tools"), hotkey: "7" },
+    { id: "gantt", label: t("nav.gantt", "Gantt") },
     { id: "decisions", label: t("nav.decisions", "Decisions") },
-    { id: "standup",   label: t("nav.standup",   "Standup") },
+    { id: "standup", label: t("nav.standup", "Standup") },
   ];
 
   const activeProjectId = useAppStore((s) => s.activeProjectId);
-  const activeTab       = useAppStore((s) => s.activeTab);
-  const setTab          = useAppStore((s) => s.setTab);
-  const isSaving        = useAppStore((s) => s.isSaving);
-  const syncState       = useAppStore((s) => s.syncState);
-  const ghEnabled       = useAppStore((s) => s.data.settings.githubSyncEnabled);
-  const projects        = useAppStore((s) => s.data.projects);
-  const activeProject   = projects.find((p) => p.id === activeProjectId);
+  const activeTab = useAppStore((s) => s.activeTab);
+  const setTab = useAppStore((s) => s.setTab);
+  const isSaving = useAppStore((s) => s.isSaving);
+  const syncState = useAppStore((s) => s.syncState);
+  const ghEnabled = useAppStore((s) => s.data.settings.githubSyncEnabled);
+  const projects = useAppStore((s) => s.data.projects);
+  const activeProject = projects.find((p) => p.id === activeProjectId);
 
-  const handleMin   = async () => { try { const { getCurrentWindow } = await import(/* @vite-ignore */"@tauri-apps/api/window"); await getCurrentWindow().minimize(); } catch {} };
-  const handleMax   = async () => { try { const { getCurrentWindow } = await import(/* @vite-ignore */"@tauri-apps/api/window"); await getCurrentWindow().toggleMaximize(); } catch {} };
-  const handleClose = async () => { try { const { getCurrentWindow } = await import(/* @vite-ignore */"@tauri-apps/api/window"); await getCurrentWindow().hide(); } catch { window.close(); } };
+  const handleMin = async () => { try { await getCurrentWindow().minimize(); } catch (e: any) { alert("Min failed: " + String(e)); } };
+  const handleMax = async () => { try { await getCurrentWindow().toggleMaximize(); } catch (e: any) { alert("Max failed: " + String(e)); } };
+  const handleClose = async () => { try { await getCurrentWindow().hide(); } catch (e: any) { alert("Close failed: " + String(e)); window.close(); } };
 
   return (
-    <header className={s.bar} data-tauri-drag-region>
+    <header className={s.bar}>
       {/* Logo */}
       <div className={s.logo}>
         <span className={s.logoCyan}>DEV</span>
@@ -68,7 +69,14 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
               {tab.label}
             </button>
           ))}
+          {/* Draggable blank space next to tabs */}
+          <div data-tauri-drag-region style={{ flex: 1, minWidth: "20px" }} />
         </nav>
+      )}
+
+      {!activeProjectId && (
+        /* Draggable blank space when no project is selected */
+        <div data-tauri-drag-region style={{ flex: 1 }} />
       )}
 
       <div className={s.right}>
@@ -94,9 +102,15 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
 
         {isTauri && (
           <div className={s.winBtns}>
-            <button className={s.winBtn} onClick={handleMin} title="Minimise">─</button>
-            <button className={s.winBtn} onClick={handleMax} title="Maximise">□</button>
-            <button className={`${s.winBtn} ${s.close}`} onClick={handleClose} title="Close">✕</button>
+            <button className={s.winBtn} onClick={handleMin} title="Minimise">
+              <svg viewBox="0 0 10 10" width="10" height="10" style={{ pointerEvents: 'none' }}><path d="M 0,5 10,5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" /></svg>
+            </button>
+            <button className={s.winBtn} onClick={handleMax} title="Maximise">
+              <svg viewBox="0 0 10 10" width="10" height="10" style={{ pointerEvents: 'none' }}><path d="M 1,1 9,1 9,9 1,9 Z" fill="none" stroke="currentColor" strokeWidth="1" /></svg>
+            </button>
+            <button className={`${s.winBtn} ${s.close}`} onClick={handleClose} title="Close">
+              <svg viewBox="0 0 10 10" width="10" height="10" style={{ pointerEvents: 'none' }}><path d="M 0,0 10,10 M 10,0 0,10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
+            </button>
           </div>
         )}
       </div>

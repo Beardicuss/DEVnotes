@@ -29,12 +29,12 @@ export async function watchProject(
   activeWatchers.add(projectId);
 
   try {
-    const { invoke } = await import(/* @vite-ignore */ "@tauri-apps/api/core");
+    const { invoke } = await import("@tauri-apps/api/core");
     await invoke("watch_project_dir", { projectId, dirPath });
 
     // Subscribe to events once (shared listener for all watchers)
     if (!unlisten) {
-      const { listen } = await import(/* @vite-ignore */ "@tauri-apps/api/event");
+      const { listen } = await import("@tauri-apps/api/event");
       unlisten = await listen<{ projectId: string; path: string }>(
         "project-file-changed",
         (event) => {
@@ -55,7 +55,7 @@ export async function unwatchProject(projectId: string): Promise<void> {
   if (!isTauri) return;
   activeWatchers.delete(projectId);
   try {
-    const { invoke } = await import(/* @vite-ignore */ "@tauri-apps/api/core");
+    const { invoke } = await import("@tauri-apps/api/core");
     await invoke("stop_watching", { dirPath: "" });
   } catch {}
 }

@@ -75,7 +75,7 @@ async function fireNotification(task: Task): Promise<void> {
   if (isTauri) {
     try {
       const { sendNotification, isPermissionGranted, requestPermission } =
-        await import(/* @vite-ignore */ "@tauri-apps/plugin-notification");
+        await import("@tauri-apps/plugin-notification");
       let granted = await isPermissionGranted();
       if (!granted) {
         const perm = await requestPermission();

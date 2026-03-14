@@ -19,7 +19,7 @@ export default function UpdateChecker() {
 
     if (isTauri) {
       try {
-        const { check } = await import(/* @vite-ignore */ "@tauri-apps/plugin-updater");
+        const { check } = await import("@tauri-apps/plugin-updater");
         const update = await check();
         if (update?.available) {
           setState("available");
@@ -45,7 +45,7 @@ export default function UpdateChecker() {
   const installUpdate = async () => {
     setInstalling(true);
     try {
-      const { check } = await import(/* @vite-ignore */ "@tauri-apps/plugin-updater");
+      const { check } = await import("@tauri-apps/plugin-updater");
       const update = await check();
       if (update?.available) {
         await update.downloadAndInstall();

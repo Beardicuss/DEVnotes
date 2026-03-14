@@ -29,7 +29,7 @@ export interface GitStatus {
 export async function detectProjectAtPath(folderPath: string): Promise<DetectedProject | null> {
   if (!isTauri) return null;
   try {
-    const { readDir } = await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
+    const { readDir } = await import("@tauri-apps/plugin-fs");
     const entries = await readDir(folderPath);
     const names   = entries.map((e: any) => e.name ?? "");
     const folder  = folderPath.split(/[\\/]/).pop() ?? folderPath;
@@ -84,7 +84,7 @@ export async function autoDetectIDEPaths(): Promise<{
   };
 
   try {
-    const { exists } = await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
+    const { exists } = await import("@tauri-apps/plugin-fs");
     for (const [key, paths] of Object.entries(candidates)) {
       for (const p of paths) {
         try {
@@ -122,7 +122,7 @@ export async function openInJetBrains(path: string, jbPath?: string | null): Pro
 export async function openInExplorer(folderPath: string): Promise<void> {
   if (!isTauri) return;
   try {
-    const { invoke } = await import(/* @vite-ignore */ "@tauri-apps/api/core");
+    const { invoke } = await import("@tauri-apps/api/core");
     await invoke("open_path_in_explorer", { path: folderPath });
   } catch {
     await shellCommand(`explorer "${folderPath}"`);
@@ -174,7 +174,7 @@ export async function scanWorkspaceForProjects(
   if (!isTauri || depth < 0) return [];
   const results: DetectedProject[] = [];
   try {
-    const { readDir } = await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
+    const { readDir } = await import("@tauri-apps/plugin-fs");
     const entries = await readDir(rootPath);
     for (const entry of entries as any[]) {
       if (!entry.children && entry.name && !entry.name.startsWith(".")) {

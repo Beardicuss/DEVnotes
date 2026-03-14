@@ -26,8 +26,8 @@ export default function BackupDialog({ onClose }: { onClose: () => void }) {
       const filename = `devnotes-backup-${new Date().toISOString().slice(0,19).replace(/:/g,"-")}.json`;
 
       if (isTauri) {
-        const { save }          = await import(/* @vite-ignore */ "@tauri-apps/plugin-dialog");
-        const { writeTextFile } = await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
+        const { save }          = await import("@tauri-apps/plugin-dialog");
+        const { writeTextFile } = await import("@tauri-apps/plugin-fs");
         const path = await save({ defaultPath: filename, filters: [{ name: "JSON", extensions: ["json"] }] });
         if (path) { await writeTextFile(path, json); setMsg({ text: `Saved to ${path}`, ok: true }); }
       } else {
@@ -58,8 +58,8 @@ export default function BackupDialog({ onClose }: { onClose: () => void }) {
 
       // Save to storage
       if (isTauri) {
-        const { writeTextFile } = await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
-        const { invoke } = await import(/* @vite-ignore */ "@tauri-apps/api/core");
+        const { writeTextFile } = await import("@tauri-apps/plugin-fs");
+        const { invoke } = await import("@tauri-apps/api/core");
         const dataPath: string = await invoke("get_app_data_path");
         await writeTextFile(`${dataPath}\\data.json`, JSON.stringify(parsed));
       } else {

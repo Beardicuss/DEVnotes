@@ -18,8 +18,8 @@ async function saveFile(content: string, filename: string, mimeType: string): Pr
   const isTauri = "__TAURI_INTERNALS__" in window;
   if (isTauri) {
     try {
-      const { save } = await import(/* @vite-ignore */ "@tauri-apps/plugin-dialog");
-      const { writeTextFile } = await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
+      const { save } = await import("@tauri-apps/plugin-dialog");
+      const { writeTextFile } = await import("@tauri-apps/plugin-fs");
       const path = await save({
         defaultPath: filename,
         filters: [{ name: "Document", extensions: [filename.split(".").pop() ?? "txt"] }],

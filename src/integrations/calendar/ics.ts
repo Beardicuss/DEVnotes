@@ -171,10 +171,10 @@ export async function exportICS(content: string, filename = "devnotes.ics"): Pro
   const isTauri = "__TAURI_INTERNALS__" in window;
   if (isTauri) {
     try {
-      const { save } = await import(/* @vite-ignore */ "@tauri-apps/plugin-dialog");
+      const { save } = await import("@tauri-apps/plugin-dialog");
       const path = await save({ defaultPath: filename, filters: [{ name: "Calendar", extensions: ["ics"] }] });
       if (path) {
-        const { writeTextFile } = await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
+        const { writeTextFile } = await import("@tauri-apps/plugin-fs");
         await writeTextFile(path, content);
         return;
       }
