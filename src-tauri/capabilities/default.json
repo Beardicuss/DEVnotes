@@ -14,7 +14,6 @@
     "core:window:allow-set-focus",
     "core:window:allow-show",
     "core:window:allow-hide",
-    "core:window:allow-set-zoom",
     "core:event:allow-listen",
     "core:event:allow-emit",
     "fs:allow-read-text-file",

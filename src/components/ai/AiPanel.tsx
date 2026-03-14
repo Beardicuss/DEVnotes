@@ -130,7 +130,7 @@ function ApiKeyPrompt({ onSave }: { onSave: (key: string) => void }) {
   );
 }
 
-function ModeButton({ mode, active, icon, label, onClick }: {
+function ModeButton({ mode: _mode, active, icon, label, onClick }: {
   mode: Mode; active: boolean; icon: string; label: string; onClick: () => void;
 }) {
   return (

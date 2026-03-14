@@ -6,7 +6,6 @@
  */
 import { useMemo } from "react";
 import { useAppStore } from "@/stores/useAppStore";
-import type { Task, Note } from "@/types";
 
 // Tasks filtered + sorted — only recomputes when tasks array reference changes
 export function useProjectTasks(projectId: string | null) {

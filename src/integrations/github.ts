@@ -64,7 +64,7 @@ export async function createGist(token: string, data: AppData): Promise<string> 
     description: "DevNotes backup — Softcurse Studio",
     public: false,
     files: {
-      [GIST_FILENAME]: { content: JSON.stringify(data, null, 2) },
+      [GIST_FILENAME]: { content: JSON.stringify(redactForSync(data), null, 2) },
     },
   });
   if (!res.ok) throw new Error(`Failed to create Gist: ${res.status}`);
@@ -72,15 +72,34 @@ export async function createGist(token: string, data: AppData): Promise<string> 
   return gist.id;
 }
 
-/** Push local data to an existing Gist. */
+/**
+ * Redact sensitive settings fields before uploading to GitHub Gist.
+ * API keys, tokens, and OAuth credentials must never leave the local device.
+ */
+function redactForSync(data: AppData): AppData {
+  return {
+    ...data,
+    settings: {
+      ...data.settings,
+      aiApiKey:             null,   // never sync AI key to cloud
+      githubToken:          null,   // never sync the token that grants Gist access
+      calendarAccessToken:  null,
+      calendarRefreshToken: null,
+      calendarTokens:       null,
+    },
+  };
+}
+
+/** Push local data to an existing Gist. Sensitive fields are redacted. */
 export async function pushToGist(
   token: string,
   gistId: string,
   data: AppData
 ): Promise<void> {
+  const safe = redactForSync(data);
   const res = await gistFetch("PATCH", `/gists/${gistId}`, token, {
     files: {
-      [GIST_FILENAME]: { content: JSON.stringify(data, null, 2) },
+      [GIST_FILENAME]: { content: JSON.stringify(safe, null, 2) },
     },
   });
   if (!res.ok) throw new Error(`Failed to push to Gist: ${res.status}`);
@@ -127,21 +146,35 @@ export function mergeData(local: AppData, remote: AppData): AppData {
     return Array.from(map.values());
   };
 
+  // Helper for entities that have projectId as key instead of id
+  const mergeByProjectId = <T extends { projectId: string; updatedAt?: string }>(
+    localArr: T[], remoteArr: T[]
+  ): T[] =>
+    mergeArray(
+      localArr.map(p => ({ ...p, id: p.projectId })),
+      remoteArr.map(p => ({ ...p, id: p.projectId }))
+    ).map(({ id: _id, ...rest }) => rest) as unknown as T[];
+
   return {
     ...local,
     projects:  mergeArray(local.projects,  remote.projects),
-    plans:     mergeArray(
-      local.plans.map(p => ({ ...p, id: p.projectId, updatedAt: p.updatedAt })),
-      remote.plans.map(p => ({ ...p, id: p.projectId, updatedAt: p.updatedAt }))
-    ).map(({ id: _id, ...rest }) => rest) as typeof local.plans,
+    plans:     mergeByProjectId(local.plans, remote.plans ?? []),
     notes:     mergeArray(local.notes,     remote.notes),
     todoLists: mergeArray(local.todoLists, remote.todoLists),
     tasks:     mergeArray(local.tasks,     remote.tasks),
-    mindMaps:  remote.mindMaps, // mind map: remote wins entirely (last edit)
-    tools:     mergeArray(local.tools.map(t => ({ ...t, id: t.projectId })),
-                          remote.tools.map(t => ({ ...t, id: t.projectId })))
-                .map(({ id: _id, ...rest }) => rest) as typeof local.tools,
-    // Settings: always keep local
+    mindMaps:  remote.mindMaps ?? local.mindMaps, // mind map: remote wins (last edit)
+    tools:     mergeByProjectId(local.tools, remote.tools ?? []),
+    // Phase 4+ entities — merge by id + updatedAt
+    decisions: mergeArray(local.decisions ?? [], remote.decisions ?? []),
+    standups:  mergeArray(
+      (local.standups ?? []).map(e => ({ ...e, updatedAt: e.createdAt })),
+      (remote.standups ?? []).map(e => ({ ...e, updatedAt: e.createdAt }))
+    ).map(({ updatedAt: _u, ...rest }) => rest) as typeof local.standups,
+    pomodoros: mergeArray(
+      (local.pomodoros ?? []).map(p => ({ ...p, updatedAt: p.startedAt })),
+      (remote.pomodoros ?? []).map(p => ({ ...p, updatedAt: p.startedAt }))
+    ).map(({ updatedAt: _u, ...rest }) => rest) as typeof local.pomodoros,
+    // Settings: always keep local (never overwrite from remote)
     settings: local.settings,
   };
 }

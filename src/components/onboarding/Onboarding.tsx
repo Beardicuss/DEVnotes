@@ -6,12 +6,11 @@ import s from "./Onboarding.module.css";
 const STEPS = ["Welcome", "Resolution", "Theme", "First Project", "Done"] as const;
 type Step = typeof STEPS[number];
 
-const THEMES = [
-  { id: "dark",    label: "Dark",     preview: "#020202" },
-  { id: "darker",  label: "Darker",   preview: "#000000" },
-  { id: "dracula", label: "Dracula",  preview: "#282a36" },
-  { id: "nord",    label: "Nord",     preview: "#2e3440" },
-] as const;
+const THEMES: { id: import("@/types").Theme; label: string; preview: string }[] = [
+  { id: "softcurse-dark", label: "Softcurse Dark", preview: "#020202" },
+  { id: "light",          label: "Light",          preview: "#f5f5f5" },
+  { id: "system",         label: "System",         preview: "#333333" },
+];
 
 const PROJECT_TEMPLATES = [
   { id: "blank",    label: "Blank",         icon: "◻", desc: "Empty project, you decide the structure." },
@@ -29,7 +28,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
 
   const [step,         setStep]         = useState<Step>("Welcome");
   const [resolution,   setResolution]   = useState<ResolutionKey>("fhd");
-  const [theme,        setTheme]        = useState("dark");
+  const [theme, setTheme] = useState<import("@/types").Theme>("softcurse-dark");
   const [projectName,  setProjectName]  = useState("");
   const [template,     setTemplate]     = useState("blank");
   const [githubToken,  setGithubToken]  = useState("");
@@ -137,13 +136,13 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
             <h2 className={s.heading}>Choose Your Screen Resolution</h2>
             <p className={s.subheading}>This scales the entire UI to fit your monitor perfectly.</p>
             <div className={s.resGrid}>
-              {(Object.entries(RESOLUTIONS) as [ResolutionKey, typeof RESOLUTIONS[ResolutionKey]][]).map(([key, preset]) => (
-                <button key={key}
-                  className={`${s.resCard} ${resolution === key ? s.resActive : ""}`}
-                  onClick={() => handleResolutionChange(key)}>
+              {RESOLUTIONS.map((preset) => (
+                <button key={preset.key}
+                  className={`${s.resCard} ${resolution === preset.key ? s.resActive : ""}`}
+                  onClick={() => handleResolutionChange(preset.key)}>
                   <span className={s.resLabel}>{preset.label}</span>
                   <span className={s.resDim}>{preset.width}×{preset.height}</span>
-                  <span className={s.resNote}>{key === "fhd" ? "Recommended" : key === "hd" ? "Laptop" : key === "qhd" ? "Hi-DPI" : "Large"}</span>
+                  <span className={s.resNote}>{preset.key === "fhd" ? "Recommended" : preset.key === "hd" ? "Laptop" : preset.key === "qhd" ? "Hi-DPI" : "Large"}</span>
                 </button>
               ))}
             </div>
@@ -180,8 +179,11 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
         {/* ── First Project ── */}
         {step === "First Project" && (
           <div className={s.stepContent}>
-            <h2 className={s.heading}>Create Your First Project</h2>
-            <p className={s.subheading}>You can always add more later.</p>
+            <div className={s.headingRow}>
+              <h2 className={s.heading}>Create Your First Project</h2>
+              <button className={s.skipStepBtn} onClick={handleNext}>Skip for now →</button>
+            </div>
+            <p className={s.subheading}>You can always create a project later from the sidebar.</p>
 
             <div className={s.field}>
               <label className={s.fieldLabel}>Project Name</label>
@@ -258,8 +260,8 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
           <div style={{ flex: 1 }} />
           {step !== "Done" ? (
             <button className="btn btn-primary" onClick={handleNext}
-              disabled={step === "First Project" && !projectName.trim()}>
-              {step === "First Project" ? "Create Project →" : "Next →"}
+              disabled={step === "First Project" && projectName.trim().length > 0 && projectName.trim().length < 2}>
+              {step === "First Project" && projectName.trim() ? "Create Project →" : step === "First Project" ? "Skip →" : "Next →"}
             </button>
           ) : (
             <button className="btn btn-primary" style={{ padding: "0.7em 2.5em" }} onClick={handleFinish}>

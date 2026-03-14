@@ -44,14 +44,34 @@ export async function storageWrite(json: string): Promise<void> {
   localStorage.setItem(STORAGE_KEY, json);
 }
 
-export async function storageBackup(json: string): Promise<void> {
+export async function storageBackup(json: string, maxCount = 10): Promise<void> {
   if (!isTauri) return;
   try {
-    const { writeTextFile, mkdir, BaseDirectory } =
+    const { writeTextFile, mkdir, readDir, remove, BaseDirectory } =
       await import(/* @vite-ignore */ "@tauri-apps/plugin-fs");
+    const baseDir = BaseDirectory.AppData;
+    await mkdir("DevNotes/backups", { baseDir, recursive: true });
+
+    // Write new backup
     const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-    await mkdir("DevNotes/backups", { baseDir: BaseDirectory.AppData, recursive: true });
-    await writeTextFile(`DevNotes/backups/data-${ts}.json`, json, { baseDir: BaseDirectory.AppData });
+    await writeTextFile(`DevNotes/backups/data-${ts}.json`, json, { baseDir });
+
+    // Prune oldest backups beyond maxCount
+    try {
+      const entries = await readDir("DevNotes/backups", { baseDir });
+      const backups = entries
+        .filter((e) => e.name?.endsWith(".json"))
+        .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")); // oldest first (ISO names sort lexicographically)
+      if (backups.length > maxCount) {
+        const toDelete = backups.slice(0, backups.length - maxCount);
+        for (const entry of toDelete) {
+          if (entry.name) {
+            // Use the same baseDir option so Tauri resolves relative to AppData
+            await remove(`DevNotes/backups/${entry.name}`, { baseDir }).catch(() => {});
+          }
+        }
+      }
+    } catch { /* pruning non-fatal */ }
   } catch { /* non-fatal */ }
 }
 

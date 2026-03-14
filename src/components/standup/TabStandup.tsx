@@ -52,11 +52,10 @@ export default function TabStandup() {
     }
   };
 
-  const pendingTasks = tasks.filter(
-    (t) => t.projectId === project.id && t.status === "in-progress"
-  );
+  // selTasks already filtered by active project — no need to re-check projectId
+  const pendingTasks = tasks.filter((t) => t.status === "in-progress");
   const overdueTasks = tasks.filter(
-    (t) => t.projectId === project.id && t.dueDate && t.dueDate < today() && t.status !== "done" && t.status !== "archived"
+    (t) => t.dueDate && t.dueDate < today() && t.status !== "done" && t.status !== "archived"
   );
 
   // Copy to clipboard as formatted text

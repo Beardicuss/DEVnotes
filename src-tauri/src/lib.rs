@@ -55,6 +55,8 @@ async fn wait_oauth_callback() -> Result<serde_json::Value, String> {
 }
 
 // ── File watcher ──────────────────────────────────────────────────
+use serde::Serialize;
+use tauri::{AppHandle, Emitter, Listener};
 #[tauri::command]
 async fn watch_project_dir(app: tauri::AppHandle, project_id: String, dir_path: String) -> Result<(), String> {
     use std::collections::HashMap;

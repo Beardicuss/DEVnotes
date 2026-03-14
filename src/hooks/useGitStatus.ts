@@ -18,8 +18,13 @@ export function useGitStatus(): GitStatus | null {
 
     let cancelled = false;
     const fetch = async () => {
-      const s = await getGitStatus(project.rootPath!);
-      if (!cancelled) setStatus(s);
+      try {
+        const s = await getGitStatus(project.rootPath!);
+        if (!cancelled) setStatus(s);
+      } catch {
+        // git not available or repo not found — silently clear status
+        if (!cancelled) setStatus(null);
+      }
     };
 
     fetch();

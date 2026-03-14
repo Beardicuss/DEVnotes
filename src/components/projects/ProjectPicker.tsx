@@ -91,12 +91,11 @@ export default function ProjectPicker() {
 }
 
 function ProjectCard({ project, onOpen }: { project: Project; onOpen: () => void }) {
-  const taskCount = useAppStore((s) =>
-    s.data.tasks.filter((t) => t.projectId === project.id && t.status !== "archived").length
-  );
-  const doneCount = useAppStore((s) =>
-    s.data.tasks.filter((t) => t.projectId === project.id && t.status === "done").length
-  );
+  // Single selector for both counts — avoids scanning all tasks twice on every render
+  const { taskCount, doneCount } = useAppStore((s) => {
+    const proj = s.data.tasks.filter((t) => t.projectId === project.id && t.status !== "archived");
+    return { taskCount: proj.length, doneCount: proj.filter((t) => t.status === "done").length };
+  });
 
   return (
     <div className={s.card} onClick={onOpen}>

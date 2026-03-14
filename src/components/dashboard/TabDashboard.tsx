@@ -177,7 +177,12 @@ export default function TabDashboard() {
   const todayStandup   = standups.find(e => e.projectId === project.id && e.date === todayStr());
   const projDecisions  = decisions.filter(d => d.projectId === project.id);
   const todayPomos     = pomodoros.filter(p => p.projectId === project.id && p.startedAt.slice(0, 10) === todayStr() && p.completed);
-  const totalFocusMins = todayPomos.reduce((a, p) => a + p.duration, 0);
+  const totalFocusMins    = todayPomos.reduce((a, p) => a + p.duration, 0);
+  // Memoize expensive all-project scans
+  const _allTimePomos = useMemo(
+    () => pomodoros.filter(p => p.projectId === project.id && p.completed).length,
+    [pomodoros, project.id]
+  );
   const circumference  = 2 * Math.PI * 26;
 
   return (

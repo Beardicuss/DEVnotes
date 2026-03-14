@@ -127,10 +127,11 @@ export function scheduleDailyDigest(
 
     fireNotification({
       id: "digest", title,
+      projectId: "",
       description: lines.join(" · "),
       dueDate: today, dueTime: null,
       reminder: { enabled: true, offsetMinutes: 0, notificationId: null },
-    } as Partial<Task> & Pick<Task, "id"|"title"|"dueDate"|"dueTime"|"reminder">);
+    } as unknown as Task);
 
     // Reschedule for next day — useReminders hook will re-call this
     // when tasks change, so we don't need to recurse with stale data.

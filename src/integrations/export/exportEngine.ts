@@ -10,7 +10,7 @@
  */
 
 import type { Note, Task, Plan, Decision, StandupEntry, Project } from "@/types";
-import { exportICS } from "@/integrations/calendar/ics";   // re-export convenience
+import { exportICS as _exportICS } from "@/integrations/calendar/ics";   // re-export convenience
 
 // ─── Save helpers ─────────────────────────────────────────────────
 

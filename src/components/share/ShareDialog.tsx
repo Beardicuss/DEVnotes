@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAppStore, selActiveProject } from "@/stores/useAppStore";
+import { uid } from "@/utils/id";
 import { exportHTMLReport, exportProjectJSON } from "@/integrations/export/htmlReport";
 import s from "./ShareDialog.module.css";
 
@@ -12,10 +13,8 @@ export default function ShareDialog({ onClose }: { onClose: () => void }) {
   const standups  = useAppStore((s) => s.data.standups ?? []);
   const pomodoros = useAppStore((s) => s.data.pomodoros ?? []);
   const addProject   = useAppStore((s) => s.addProject);
-  const addNote      = useAppStore((s) => s.addNote);
-  const updateNote   = useAppStore((s) => s.updateNote);
+  const importNotes  = useAppStore((s) => s.importNotes);
   const addTask      = useAppStore((s) => s.addTask);
-  const addDecision  = useAppStore((s) => s.addDecision);
 
   const [loading,  setLoading]  = useState<string | null>(null);
   const [done,     setDone]     = useState<string | null>(null);
@@ -55,18 +54,25 @@ export default function ShareDialog({ onClose }: { onClose: () => void }) {
       // Create new project (with suffix to avoid collision)
       const newId = addProject({ ...data.project, id: undefined, name: data.project.name + " (imported)" });
 
-      // Import notes
-      for (const n of data.notes ?? []) {
-        const noteId = addNote();
-        useAppStore.getState().updateNote(noteId, { ...n, id: noteId, projectId: newId });
-      }
-      // Import tasks
+      // Import notes as a batch — no flash, no selectedNoteId side-effect
+      const importedNotes = (data.notes ?? []).map((n: any) => ({
+        ...n,
+        id: uid(),
+        projectId: newId,
+        createdAt: n.createdAt ?? new Date().toISOString(),
+        updatedAt: n.updatedAt ?? new Date().toISOString(),
+      }));
+      if (importedNotes.length) importNotes(importedNotes);
+      // Import tasks — pass projectId explicitly, don't rely on store's activeProjectId
       for (const t of data.tasks ?? []) {
         addTask({ ...t, id: undefined, projectId: newId });
       }
-      // Import decisions
+      // Import decisions — pass projectId explicitly after partial so it can't be overridden
+      const store = useAppStore.getState();
       for (const d of data.decisions ?? []) {
-        addDecision({ ...d, id: undefined, projectId: newId });
+        // Bypass store action's activeProjectId lookup by calling updateDecision after addDecision
+        const decId = store.addDecision({ projectId: newId });
+        store.updateDecision(decId, { ...d, id: decId, projectId: newId });
       }
 
       setImportMsg(`✓ Imported "${data.project.name}" — ${data.notes?.length ?? 0} notes, ${data.tasks?.length ?? 0} tasks`);

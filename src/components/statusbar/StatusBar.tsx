@@ -20,7 +20,7 @@ export default function StatusBar() {
   }, []);
 
   const project = projects.find((p) => p.id === activeId);
-  const preset  = getPreset(resolution);
+  const preset  = getPreset(resolution as import("@/utils/resolution").ResolutionKey);
 
   return (
     <footer className={s.bar}>

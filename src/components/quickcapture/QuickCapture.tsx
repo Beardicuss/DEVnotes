@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/stores/useAppStore";
 import type { QuickCaptureType } from "@/types";
@@ -11,13 +11,8 @@ export default function QuickCapture() {
   const capture  = useAppStore((st) => st.quickCapture);
   const [text, setText]   = useState("");
   const [type, setType]   = useState<QuickCaptureType>("task");
-  const inputRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
-    if (open) {
-      setText("");
-      setTimeout(() => inputRef.current?.focus(), 50);
-    }
+    if (open) setText("");
   }, [open]);
 
   if (!open) return null;
@@ -46,7 +41,7 @@ export default function QuickCapture() {
           </div>
         </div>
         <input
-          ref={inputRef}
+          autoFocus
           className={`input ${s.input}`}
           placeholder={t("quickcapture.placeholder")}
           value={text}

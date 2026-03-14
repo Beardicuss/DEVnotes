@@ -1,5 +1,4 @@
-import { useTranslation } from "react-i18next";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useAppStore, selTasks, selActiveProject } from "@/stores/useAppStore";
 import { isOverdue, shortDate } from "@/utils/date";
 import { createEvent, taskToGCalEvent, updateEvent, deleteEvent } from "@/integrations/calendar/google";
@@ -36,13 +35,9 @@ export default function TabTasks() {
   const [exportOpen, setExportOpen] = useState(false);
   if (!project) return null;
 
-  const visible = useMemo(() => {
-    let list = tasks.filter((t) => t.projectId === project.id);
-    if (taskFilter.status !== "all")   list = list.filter((t) => t.status   === taskFilter.status);
-    if (taskFilter.priority !== "all") list = list.filter((t) => t.priority === taskFilter.priority);
-    if (taskFilter.search)             list = list.filter((t) => t.title.toLowerCase().includes(taskFilter.search.toLowerCase()));
-    return list;
-  }, [tasks, project.id, taskFilter]);
+  // selTasks already applies all taskFilter criteria (search, priority, status, projectId)
+  // so `tasks` here is the correctly filtered list — no memo needed
+  const visible = tasks;
 
   const handleExportICS = async () => {
     const content = generateICS({ tasks: visible });

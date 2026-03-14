@@ -8,7 +8,7 @@ export default function BackupDialog({ onClose }: { onClose: () => void }) {
   const data           = useAppStore((s) => s.data);
   const settings       = useAppStore((s) => s.data.settings);
   const updateSettings = useAppStore((s) => s.updateSettings);
-  const init           = useAppStore((s) => s.init);
+  const _init           = useAppStore((s) => s.init);
 
   const [tab,     setTab]     = useState<Tab>("backup");
   const [msg,     setMsg]     = useState<{ text: string; ok: boolean } | null>(null);

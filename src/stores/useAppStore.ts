@@ -57,8 +57,9 @@ interface AppStore {
   updatePlan: (projectId: ID, patch: Partial<Omit<Plan, "projectId">>) => void;
 
   // ── Notes ──
-  selectNote:  (id: ID | null) => void;
-  addNote:     () => ID;
+  selectNote:   (id: ID | null) => void;
+  addNote:      () => ID;
+  importNotes:  (notes: import("@/types").Note[]) => void;
   updateNote:  (id: ID, patch: Partial<Note>) => void;
   deleteNote:  (id: ID) => void;
   archiveNote: (id: ID) => void;
@@ -202,10 +203,25 @@ export const useAppStore = create<AppStore>()(
       if (raw) {
         try {
           const loaded = JSON.parse(raw) as AppData;
-          // Migrate: add new fields if missing (Phase 4)
+          // Migrate: add new fields if missing (Phase 2–5)
+          if (!loaded.mindMaps)  loaded.mindMaps  = [];
+          if (!loaded.tools)     loaded.tools     = [];
           if (!loaded.decisions) loaded.decisions = [];
           if (!loaded.standups)  loaded.standups  = [];
           if (!loaded.pomodoros) loaded.pomodoros = [];
+          // Ensure every project has a plan, mindMap, and tools scaffold
+          for (const proj of loaded.projects ?? []) {
+            if (!loaded.plans?.find((p: any) => p.projectId === proj.id)) {
+              if (!loaded.plans) loaded.plans = [];
+              loaded.plans.push({ projectId: proj.id, body: "# Project Plan\n\n", milestones: [], templateId: null, updatedAt: proj.updatedAt });
+            }
+            if (!loaded.mindMaps.find((m: any) => m.projectId === proj.id)) {
+              loaded.mindMaps.push({ projectId: proj.id, nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 }, updatedAt: proj.updatedAt });
+            }
+            if (!loaded.tools.find((t: any) => t.projectId === proj.id)) {
+              loaded.tools.push({ projectId: proj.id, links: [], commands: [], snippets: [] });
+            }
+          }
           const data: AppData = {
             ...DEFAULT_DATA,
             ...loaded,
@@ -234,14 +250,14 @@ export const useAppStore = create<AppStore>()(
     // ── Save ──────────────────────────────────────────────────────
     save: async () => {
       set({ isSaving: true });
-      const { data, syncState } = get();
+      const { data } = get();
 
       // Persist locally
       const json = JSON.stringify(data, null, 2);
       await storageWrite(json);
 
       // Auto-backup (Windows only)
-      if (data.settings.autoBackup) await storageBackup(json);
+      if (data.settings.autoBackup) await storageBackup(json, data.settings.backupCount ?? 10);
 
       // GitHub auto-sync if configured
       const { githubSyncEnabled, githubToken, githubGistId, githubSyncFrequency } = data.settings;
@@ -320,6 +336,9 @@ export const useAppStore = create<AppStore>()(
           tasks:     s.data.tasks.filter((t) => t.projectId !== id),
           mindMaps:  s.data.mindMaps.filter((m) => m.projectId !== id),
           tools:     s.data.tools.filter((t) => t.projectId !== id),
+          decisions: (s.data.decisions ?? []).filter((d) => d.projectId !== id),
+          standups:  (s.data.standups  ?? []).filter((e) => e.projectId !== id),
+          pomodoros: (s.data.pomodoros ?? []).filter((p) => p.projectId !== id),
         },
         activeProjectId: s.activeProjectId === id
           ? (s.data.projects.find((p) => p.id !== id)?.id ?? null)
@@ -347,15 +366,23 @@ export const useAppStore = create<AppStore>()(
     selectNote: (id) => set({ selectedNoteId: id }),
 
     addNote: () => {
+      const projectId = get().activeProjectId;
+      if (!projectId) return "";   // guard: no active project
       const id = uid();
       const note: Note = {
-        id, projectId: get().activeProjectId!, title: "New Note", body: "",
+        id, projectId, title: "New Note", body: "",
         tags: [], pinned: false, archived: false,
         createdAt: nowISO(), updatedAt: nowISO(),
       };
       set((s) => ({ data: { ...s.data, notes: [note, ...s.data.notes] }, selectedNoteId: id }));
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
       return id;
+    },
+
+    // importNotes: batch-insert notes without touching selectedNoteId
+    importNotes: (notes: Note[]) => {
+      set((s) => ({ data: { ...s.data, notes: [...notes, ...s.data.notes] } }));
+      scheduleSave(get().save, get().data.settings.autosaveDelayMs);
     },
 
     updateNote: (id, patch) => {
@@ -368,14 +395,16 @@ export const useAppStore = create<AppStore>()(
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
     },
 
-    deleteNote:  (id) => { set((s) => ({ data: { ...s.data, notes: s.data.notes.filter((n) => n.id !== id) } })); scheduleSave(get().save, 400); },
-    archiveNote: (id) => get().updateNote(id, { archived: true }),
+    deleteNote:  (id) => { set((s) => ({ data: { ...s.data, notes: s.data.notes.filter((n) => n.id !== id) }, selectedNoteId: s.selectedNoteId === id ? null : s.selectedNoteId })); scheduleSave(get().save, 400); },
+    archiveNote: (id) => { get().updateNote(id, { archived: true }); set((s) => ({ selectedNoteId: s.selectedNoteId === id ? null : s.selectedNoteId })); },
     restoreNote: (id) => get().updateNote(id, { archived: false }),
     setNoteFilter: (patch) => set((s) => ({ noteFilter: { ...s.noteFilter, ...patch } })),
 
     // ── Todos ─────────────────────────────────────────────────────
     addTodoList: (name) => {
-      const list: TodoList = { id: uid(), projectId: get().activeProjectId!, name, items: [], createdAt: nowISO() };
+      const projectId = get().activeProjectId;
+      if (!projectId) return;
+      const list: TodoList = { id: uid(), projectId, name, items: [], createdAt: nowISO() };
       set((s) => ({ data: { ...s.data, todoLists: [...s.data.todoLists, list] } }));
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
     },
@@ -457,9 +486,10 @@ export const useAppStore = create<AppStore>()(
 
     // ── Tasks ─────────────────────────────────────────────────────
     addTask: (partial) => {
+      const projectId = partial.projectId ?? get().activeProjectId;
+      if (!projectId) return "";   // guard: no active project
       const id = uid();
       const task: Task = {
-        id, projectId: get().activeProjectId!,
         title: "New Task", description: "", priority: "medium", tag: "feature",
         status: "todo", dueDate: null, dueTime: null,
         reminder: { enabled: false, offsetMinutes: 1440, notificationId: null },
@@ -467,6 +497,7 @@ export const useAppStore = create<AppStore>()(
         calendarEventId: null, timeTrackedMinutes: 0,
         createdAt: nowISO(), updatedAt: nowISO(),
         ...partial,
+        id, projectId,   // always wins — overrides anything in partial
       };
       set((s) => ({ data: { ...s.data, tasks: [task, ...s.data.tasks] } }));
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
@@ -503,14 +534,14 @@ export const useAppStore = create<AppStore>()(
 
     // ── Tools ─────────────────────────────────────────────────────
     updateTools: (projectId, patch) => {
-      set((s) => ({
-        data: {
-          ...s.data,
-          tools: s.data.tools.map((t) =>
-            t.projectId === projectId ? { ...t, ...patch } : t
-          ),
-        },
-      }));
+      set((s) => {
+        const exists = s.data.tools.some((t) => t.projectId === projectId);
+        const updated = exists
+          ? s.data.tools.map((t) => t.projectId === projectId ? { ...t, ...patch } : t)
+          // Upsert: create record if missing (e.g. race on first write)
+          : [...s.data.tools, { projectId, links: [], commands: [], snippets: [], ...patch }];
+        return { data: { ...s.data, tools: updated } };
+      });
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
     },
 
@@ -528,8 +559,9 @@ export const useAppStore = create<AppStore>()(
     addDecision: (partial) => {
       const id = uid();
       const now = nowISO();
-      const proj = get().activeProjectId!;
-      const item = { id, projectId: proj, title:"New Decision", context:"", options:"", outcome:"", status:"proposed" as const, decisionDate:null, decidedBy:"", tags:[], linkedTaskId:null, createdAt:now, updatedAt:now, ...partial };
+      const proj = get().activeProjectId;
+      if (!proj) return id;
+      const item = { title:"New Decision", context:"", options:"", outcome:"", status:"proposed" as const, decisionDate:null, decidedBy:"", tags:[], linkedTaskId:null, createdAt:now, updatedAt:now, ...partial, projectId: proj, id };
       set((s) => ({ data: { ...s.data, decisions: [item, ...(s.data.decisions??[])] } }));
       scheduleSave(get().save, 800);
       return id;
@@ -591,9 +623,11 @@ export const useAppStore = create<AppStore>()(
 
       set((s) => ({
         data: {
+          // Merge remote content (notes, tasks, etc.) but always preserve
+          // local settings — result.data.settings has redacted sensitive fields
           ...result.data,
           settings: {
-            ...result.data.settings,
+            ...s.data.settings,                                // local settings win
             githubGistId: result.gistId || s.data.settings.githubGistId,
             githubLastSyncAt: result.state.lastSyncAt,
           },

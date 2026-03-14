@@ -7,26 +7,30 @@ import {
 } from "@/integrations/calendar/reminders";
 
 /**
- * Keeps the reminder scheduler in sync with the current task list.
+ * Keeps the reminder scheduler in sync with the current task list and settings.
+ * Uses a SINGLE effect to avoid the double-clearAllReminders race where a second
+ * effect's cleanup would wipe reminders scheduled by the first effect.
  * Run once at app root level.
  */
 export function useReminders() {
   const tasks    = useAppStore((s) => s.data.tasks);
-  const settings = useAppStore((s) => s.data.settings);
+  // Select only the fields we need — avoids re-running on every settings change
+  const dailyDigest     = useAppStore((s) => s.data.settings.dailyDigest);
+  const dailyDigestTime = useAppStore((s) => s.data.settings.dailyDigestTime);
 
-  // Re-schedule whenever tasks change
   useEffect(() => {
+    // Always schedule task reminders first
     scheduleAllReminders(tasks);
-    return () => clearAllReminders();
-  }, [tasks]);
 
-  // Daily digest
-  useEffect(() => {
-    if (settings.dailyDigest) {
+    // Optionally layer on daily digest
+    if (dailyDigest) {
       const hour = parseInt(
-        (settings.dailyDigestTime ?? "08:00").split(":")[0] ?? "8"
+        (dailyDigestTime ?? "08:00").split(":")[0] ?? "8"
       );
       scheduleDailyDigest(tasks, hour);
     }
-  }, [tasks, settings.dailyDigest, settings.dailyDigestTime]);
+
+    // Single cleanup clears everything — no race with a second effect
+    return () => clearAllReminders();
+  }, [tasks, dailyDigest, dailyDigestTime]);
 }

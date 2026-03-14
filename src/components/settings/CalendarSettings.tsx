@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import {
-  startOAuthFlow, exchangeCode, waitForOAuthCallback,
+  startOAuthFlow, exchangeCode as _exchangeCode, waitForOAuthCallback,
   listUpcomingEvents,
 } from "@/integrations/calendar/google";
 import { generateICS, exportICS } from "@/integrations/calendar/ics";

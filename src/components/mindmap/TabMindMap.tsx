@@ -19,7 +19,7 @@ let addEdge: any    = null;
 let rfCss           = "";
 
 try {
-  const rf = require("reactflow");
+  const rf = (globalThis as any).require?.("reactflow") ?? null;
   ReactFlow      = rf.default ?? rf.ReactFlow;
   Controls       = rf.Controls;
   Background     = rf.Background;
@@ -41,7 +41,7 @@ try {
   // ReactFlow not installed yet — show placeholder
 }
 
-const NODE_COLOURS: Record<string, string> = {
+const _NODE_COLOURS: Record<string, string> = {
   root:     "#00ffff",
   idea:     "#0088ff",
   task:     "#00ff88",
@@ -51,7 +51,7 @@ const NODE_COLOURS: Record<string, string> = {
 };
 
 export default function TabMindMap() {
-  const { t }     = useTranslation();
+  const { t } = useTranslation();
   const project   = useAppStore(selActiveProject);
   const mindMap   = useAppStore(selMindMap);
   const updateMap = useAppStore((s) => s.updateMindMap);

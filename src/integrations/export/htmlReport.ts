@@ -57,7 +57,7 @@ const DECISION_COLOUR: Record<string, string> = {
 
 // ─── Section builders ──────────────────────────────────────────────
 
-function buildPlan(plan: Plan | undefined, projectName: string): string {
+function buildPlan(plan: Plan | undefined, _projectName: string): string {
   if (!plan) return "";
   const milestones = (plan.milestones ?? []).map((ms) => `
     <div class="milestone ${ms.status==="done"?"done":""}">

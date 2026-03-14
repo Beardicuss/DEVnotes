@@ -18,7 +18,7 @@ const SECTIONS = [
 type Section = typeof SECTIONS[number];
 
 export default function TabSettings() {
-  const { t }        = useTranslation();
+  const { t: _t }        = useTranslation();
   const settings     = useAppStore((st) => st.data.settings);
   const updateSettings = useAppStore((st) => st.updateSettings);
   const [active, setActive] = useState<Section>("General");
@@ -281,7 +281,7 @@ export default function TabSettings() {
               <input className="input" placeholder="devenv" value={settings.vstudioPath ?? ""} onChange={(e) => set({ vstudioPath: e.target.value })} />
             </Row>
             <Row label="Terminal emulator">
-              <input className="input" placeholder="cmd" value={settings.terminal ?? ""} onChange={(e) => set({ terminal: e.target.value })} />
+              <input className="input" placeholder="cmd" value={settings.terminal ?? ""} onChange={(e) => set({ terminal: e.target.value as import("@/types").TerminalType })} />
             </Row>
             <Row label="Git executable">
               <input className="input" placeholder="git" value={settings.gitPath ?? ""} onChange={(e) => set({ gitPath: e.target.value })} />

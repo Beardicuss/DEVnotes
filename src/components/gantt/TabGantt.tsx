@@ -40,12 +40,10 @@ export default function TabGantt() {
   const project   = useAppStore(selActiveProject);
   const tasks     = useAppStore(selTasks);
   const plans     = useAppStore((s) => s.data.plans);
-  const updateTask = useAppStore((s) => s.updateTask);
+  const _updateTask = useAppStore((s) => s.updateTask);
 
   const [zoom, setZoom]         = useState<"week"|"month"|"quarter">("month");
   const [showDone, setShowDone] = useState(false);
-  const [dragging, setDragging] = useState<{ id: string; startX: number; origStart: string; origEnd: string } | null>(null);
-
   if (!project) return null;
 
   const plan = plans.find((p) => p.projectId === project.id);
@@ -54,9 +52,9 @@ export default function TabGantt() {
   const items = useMemo<GanttItem[]>(() => {
     const list: GanttItem[] = [];
 
-    // Tasks with due dates
+    // Tasks with due dates — selTasks already filtered by active project
     const projTasks = tasks.filter(
-      (t) => t.projectId === project.id && t.dueDate && (showDone || t.status !== "done")
+      (t) => t.dueDate && (showDone || t.status !== "done")
     );
     for (const t of projTasks) {
       list.push({
@@ -92,9 +90,9 @@ export default function TabGantt() {
   const viewDays = zoom === "week" ? 14 : zoom === "month" ? 60 : 120;
   const viewStart = useMemo(() => {
     const earliest = items[0]?.start ?? today();
-    // Start a few days before earliest
+    // Start a few days before earliest item; zoom changes may alter desired anchor
     return addDays(earliest, -3);
-  }, [items]);
+  }, [items, zoom]);
   const viewEnd = addDays(viewStart, viewDays);
 
   // Day columns
@@ -124,7 +122,7 @@ export default function TabGantt() {
       prevMonth = m;
       const end = cols.findIndex((c, j) => j > i && !c.startsWith(m));
       const span = (end === -1 ? cols.length : end) - i;
-      months.push({ label: new Date(cols[i]).toLocaleDateString("en", { month: "short", year: "2-digit" }), left: i * pxPerDay, width: span * pxPerDay });
+      months.push({ label: new Date(cols[i]).toLocaleDateString(undefined, { month: "short", year: "2-digit" }), left: i * pxPerDay, width: span * pxPerDay });
     }
   }
 

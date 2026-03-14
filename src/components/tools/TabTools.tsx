@@ -15,7 +15,7 @@ export default function TabTools() {
   const settings = useAppStore((s) => s.data.settings);
   const updateTools    = useAppStore((s) => s.updateTools);
   const updateSettings = useAppStore((s) => s.updateSettings);
-  const updateProject  = useAppStore((s) => s.updateProject);
+  const _updateProject  = useAppStore((s) => s.updateProject);
 
   const [git,        setGit]       = useState<GitStatus | null>(null);
   const [gitLoading, setGitLoading]= useState(false);
@@ -39,6 +39,12 @@ export default function TabTools() {
     setGitLoading(false);
   }, [project.id, project.rootPath]);
   useEffect(() => { refreshGit(); }, [refreshGit]);
+
+  // Reset scan results AND command output when switching projects
+  useEffect(() => {
+    setScanResults([]);
+    setCmdOut({});
+  }, [project.id]);
 
   // ── Auto-detect IDE paths ──
   const handleAutoDetect = async () => {
@@ -82,7 +88,7 @@ export default function TabTools() {
     setTimeout(() => setCopied(null), 1500);
   };
 
-  const addLink    = () => updateTools(project.id, { links:    [...t.links,    { id: uid(), label: "New Link",    url: "https://"                }] });
+  const addLink    = () => updateTools(project.id, { links:    [...t.links,    { id: uid(), label: "New Link",    url: "https://", icon: "custom" as const  }] });
   const addCmd     = () => updateTools(project.id, { commands: [...t.commands, { id: uid(), label: "New Command", command: "echo {projectRoot}", runInTerminal: false }] });
   const addSnippet = () => updateTools(project.id, { snippets: [...t.snippets, { id: uid(), label: "New Snippet", content: "", language: "bash"  }] });
 

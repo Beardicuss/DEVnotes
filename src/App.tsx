@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAppStore } from "@/stores/useAppStore";
 import { useHotkeys }  from "@/hooks/useHotkeys";
 import { useAutoSync } from "@/hooks/useAutoSync";
@@ -38,6 +38,10 @@ export default function App() {
   const [pomodoroOpen,  setPomodoroOpen]  = useState(false);
   const [searchOpen,    setSearchOpen]    = useState(false);
   const [shareOpen,     setShareOpen]     = useState(false);
+
+  const handleOnboardingComplete = useCallback(() => {
+    useAppStore.getState().updateSettings({ onboardingComplete: true });
+  }, []);
 
   useHotkeys();
   useAutoSync();
@@ -145,14 +149,12 @@ export default function App() {
               </ErrorBoundary>
             </>
           )}
-          {/* Settings accessible from anywhere via TitleBar ⚙ button */}
-          {activeTab === "settings" && !activeProjectId && <TabSettings />}
         </main>
 
         <StatusBar />
         <QuickCapture />
         {pomodoroOpen && <ErrorBoundary tabName="pomodoro"><Pomodoro onClose={() => setPomodoroOpen(false)} /></ErrorBoundary>}
-        {showOnboarding && <ErrorBoundary tabName="onboarding"><Onboarding onComplete={() => {}} /></ErrorBoundary>}
+        {showOnboarding && <ErrorBoundary tabName="onboarding"><Onboarding onComplete={handleOnboardingComplete} /></ErrorBoundary>}
         {searchOpen && <ErrorBoundary tabName="search"><GlobalSearch onClose={() => setSearchOpen(false)} /></ErrorBoundary>}
         {shareOpen  && <ErrorBoundary tabName="share"><ShareDialog  onClose={() => setShareOpen(false)}  /></ErrorBoundary>}
       </div>

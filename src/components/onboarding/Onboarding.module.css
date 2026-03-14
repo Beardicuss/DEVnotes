@@ -85,3 +85,9 @@
 
 /* Nav */
 .nav { display: flex; align-items: center; padding: 1em 1.5em; border-top: 1px solid var(--border); flex-shrink: 0; gap: 0.75em; }
+
+/* Skip project creation */
+.headingRow     { display: flex; align-items: baseline; justify-content: center; gap: 1em; flex-wrap: wrap; }
+.headingRow .heading { text-align: left; }
+.skipStepBtn    { background: none; border: none; font-family: var(--font-mono); font-size: var(--fs-xxs); color: var(--text-dim); cursor: pointer; text-decoration: underline; white-space: nowrap; padding: 0; }
+.skipStepBtn:hover  { color: var(--cyan); }

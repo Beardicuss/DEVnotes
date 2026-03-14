@@ -103,12 +103,16 @@ export default function GlobalSearch({ onClose }: { onClose: () => void }) {
           projectId: d.projectId, projectName: projectName(d.projectId), score: sc });
       }
     }
-    // Standups
+    // Standups — guard potentially undefined fields in old data
     if (filter === "all" || filter === "standup") {
       for (const e of standups) {
-        const sc = Math.max(score(e.today, q), score(e.yesterday, q), score(e.blockers, q));
+        const sc = Math.max(
+          score(e.today     ?? "", q),
+          score(e.yesterday ?? "", q),
+          score(e.blockers  ?? "", q)
+        );
         if (sc > 0) out.push({ id: e.id, kind: "standup", title: `Standup ${e.date}`,
-          preview: e.today.slice(0, 100),
+          preview: (e.today ?? "").slice(0, 100),
           projectId: e.projectId, projectName: projectName(e.projectId), score: sc });
       }
     }

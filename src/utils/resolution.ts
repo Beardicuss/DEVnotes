@@ -84,10 +84,10 @@ export async function applyResolution(key: ResolutionKey): Promise<void> {
 
   // 3. Resize Tauri window (desktop only — silently skipped in browser)
   try {
-    const { getCurrentWindow } =
+    const { getCurrentWindow, LogicalSize } =
       await import(/* @vite-ignore */ "@tauri-apps/api/window");
     const win = getCurrentWindow();
-    await win.setSize({ type: "Logical", width: p.width, height: p.height });
+    await win.setSize(new LogicalSize(p.width, p.height));
     await win.center();
   } catch {
     // Running in browser — no-op

@@ -77,13 +77,11 @@ function taskToVEvent(task: Task): string {
   // Recurrence rule
   if (task.recurring) {
     const freqMap: Record<string, string> = {
-      daily: "DAILY", weekly: "WEEKLY", biweekly: "WEEKLY",
-      monthly: "MONTHLY", yearly: "YEARLY",
+      daily: "DAILY", weekly: "WEEKLY",
+      monthly: "MONTHLY",
     };
     const freq  = freqMap[task.recurring.frequency] ?? "WEEKLY";
-    const count = task.recurring.count ? `;COUNT=${task.recurring.count}` : "";
-    const inter = task.recurring.frequency === "biweekly" ? ";INTERVAL=2" : "";
-    lines.push(`RRULE:FREQ=${freq}${inter}${count}`);
+    lines.push(`RRULE:FREQ=${freq}`);
   }
 
   lines.push("END:VEVENT");

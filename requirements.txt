@@ -1,0 +1,8 @@
+# Build Requirements
+Here is the environment required to build this project from scratch:
+
+- Node.js (v18+)
+- Rust (`rustup` component) + Cargo
+- Tauri CLI (`npm install -g @tauri-apps/cli`)
+- Visual Studio Build Tools (C++) with Windows 10/11 SDK installed
+- Inno Setup Compiler (for building the `dev.iss` installer script)

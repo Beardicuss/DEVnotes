@@ -23,7 +23,7 @@ const MODE_COLOURS: Record<Mode, string> = {
   "long-break":  "var(--blue)",
 };
 
-export default function Pomodoro({ onClose }: { onClose?: () => void }) {
+export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }) {
   const project      = useAppStore(selActiveProject);
   const tasks        = useAppStore(selTasks);
   const addPomodoro    = useAppStore((s) => s.addPomodoro);
@@ -43,8 +43,9 @@ export default function Pomodoro({ onClose }: { onClose?: () => void }) {
   const startedAt = useRef<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // selTasks already filters by active project and excludes archived
   const projectTasks = tasks.filter(
-    (t) => t.projectId === project?.id && t.status !== "done" && t.status !== "archived"
+    (t) => t.status !== "done"
   );
 
   // Today's stats

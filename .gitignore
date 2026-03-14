@@ -1,5 +1,35 @@
+# Node & Vite output
 node_modules/
 dist/
-src-tauri/target/
-.tauri/
+dist-ssr/
 *.local
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Tauri build artifacts
+src-tauri/target/
+src-tauri/gen/
+.tauri/
+
+# Custom project artifacts
+publish/
+dev.iss
+src-tauri/*.log
+src-tauri/*.txt
+src-tauri/*.bak
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
