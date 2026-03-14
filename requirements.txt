@@ -1,8 +1,23 @@
-# Build Requirements
-Here is the environment required to build this project from scratch:
+DevNotes Desktop - System Prerequisites
+---------------------------------------
 
-- Node.js (v18+)
-- Rust (`rustup` component) + Cargo
-- Tauri CLI (`npm install -g @tauri-apps/cli`)
-- Visual Studio Build Tools (C++) with Windows 10/11 SDK installed
-- Inno Setup Compiler (for building the `dev.iss` installer script)
+To successfully build and compile this Tauri v2 application on Windows, you will need the following dependencies installed on your system:
+
+1. Node.js & npm
+   - Node.js v18.0.0 or higher
+   - npm v9.0.0 or higher
+
+2. Rust (via rustup)
+   - Rustc Version: 1.77.0 or higher
+   - Cargo Package Manager
+
+3. C++ Build Tools (Required by Tauri for Windows)
+   - Install "Desktop development with C++" workload via the Visual Studio Build Tools installer.
+   - Includes the Windows 10/11 SDK.
+
+4. Microsoft Edge WebView2
+   - Pre-installed on Windows 11. 
+   - Required for the Tauri runtime environment to render the React frontend.
+
+5. Inno Setup (Optional)
+   - Required only if you intend to compile the `.iss` installer script inside the root directory into a distributable `setup.exe` file.

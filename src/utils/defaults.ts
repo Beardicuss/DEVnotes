@@ -95,10 +95,10 @@ export const DEFAULT_SETTINGS: AppSettings = {
   onboardingComplete: false,
 
   // Calendar OAuth
-  calendarTokens:     null,
-  googleClientId:     "",
+  calendarTokens: null,
+  googleClientId: "",
   googleClientSecret: "",
-  calendarAutoPush:   false,
+  calendarAutoPush: false,
 };
 
 export const DEMO_PROJECT: Project = {
@@ -108,7 +108,7 @@ export const DEMO_PROJECT: Project = {
   colour: "#00ffff",
   icon: "⬡",
   status: "active",
-  techStack: ["TypeScript", "React"],
+  techStack: ["Softcurse Lab"],
   rootPath: null,
   ideType: null,
   idePath: null,
@@ -151,10 +151,10 @@ export const DEFAULT_DATA: AppData = {
       projectId: "demo",
       name: "Getting Started",
       items: [
-        { id: "ti-1", text: "Create your first project", done: true,  dueDate: null, parentId: null, order: 0 },
-        { id: "ti-2", text: "Write a project plan",     done: false, dueDate: null, parentId: null, order: 1 },
-        { id: "ti-3", text: "Add tasks and deadlines",  done: false, dueDate: null, parentId: null, order: 2 },
-        { id: "ti-4", text: "Connect to VS Code",       done: false, dueDate: null, parentId: null, order: 3 },
+        { id: "ti-1", text: "Create your first project", done: true, dueDate: null, parentId: null, order: 0 },
+        { id: "ti-2", text: "Write a project plan", done: false, dueDate: null, parentId: null, order: 1 },
+        { id: "ti-3", text: "Add tasks and deadlines", done: false, dueDate: null, parentId: null, order: 2 },
+        { id: "ti-4", text: "Connect to VS Code", done: false, dueDate: null, parentId: null, order: 3 },
       ],
       createdAt: nowISO(),
     },
@@ -184,11 +184,11 @@ export const DEFAULT_DATA: AppData = {
     {
       projectId: "demo",
       nodes: [
-        { id: "n-root", text: "My Project",  x: 400, y: 300, type: "root",     colour: "#00ffff", parentId: null },
-        { id: "n-1",    text: "Frontend",    x: 200, y: 180, type: "idea",     colour: "#0088ff", parentId: "n-root" },
-        { id: "n-2",    text: "Backend",     x: 600, y: 180, type: "idea",     colour: "#0088ff", parentId: "n-root" },
-        { id: "n-3",    text: "Design",      x: 150, y: 380, type: "decision", colour: "#ff00ff", parentId: "n-root" },
-        { id: "n-4",    text: "Deploy",      x: 640, y: 400, type: "task",     colour: "#00ff88", parentId: "n-root" },
+        { id: "n-root", text: "My Project", x: 400, y: 300, type: "root", colour: "#00ffff", parentId: null },
+        { id: "n-1", text: "Frontend", x: 200, y: 180, type: "idea", colour: "#0088ff", parentId: "n-root" },
+        { id: "n-2", text: "Backend", x: 600, y: 180, type: "idea", colour: "#0088ff", parentId: "n-root" },
+        { id: "n-3", text: "Design", x: 150, y: 380, type: "decision", colour: "#ff00ff", parentId: "n-root" },
+        { id: "n-4", text: "Deploy", x: 640, y: 400, type: "task", colour: "#00ff88", parentId: "n-root" },
       ],
       edges: [
         { id: "e-1", fromId: "n-root", toId: "n-1", label: null },
@@ -204,18 +204,18 @@ export const DEFAULT_DATA: AppData = {
     {
       projectId: "demo",
       links: [
-        { id: "l-1", label: "GitHub Repo",  url: "https://github.com", icon: "git" },
-        { id: "l-2", label: "Docs",         url: "https://docs.example.com", icon: "docs" },
+        { id: "l-1", label: "GitHub Repo", url: "https://github.com", icon: "git" },
+        { id: "l-2", label: "Docs", url: "https://docs.example.com", icon: "docs" },
       ],
       commands: [
-        { id: "c-1", label: "Dev Server", command: "npm run dev",   cwd: "{projectRoot}", icon: "▶" },
-        { id: "c-2", label: "Build",      command: "npm run build", cwd: "{projectRoot}", icon: "⚙" },
+        { id: "c-1", label: "Dev Server", command: "npm run dev", cwd: "{projectRoot}", icon: "▶" },
+        { id: "c-2", label: "Build", command: "npm run build", cwd: "{projectRoot}", icon: "⚙" },
       ],
       snippets: [],
     },
   ],
   decisions: [],
-  standups:  [],
+  standups: [],
   pomodoros: [],
   settings: DEFAULT_SETTINGS,
 };

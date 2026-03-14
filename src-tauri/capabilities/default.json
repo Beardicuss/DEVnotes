@@ -16,13 +16,62 @@
     "core:window:allow-hide",
     "core:event:allow-listen",
     "core:event:allow-emit",
-    "fs:allow-read-text-file",
-    "fs:allow-write-text-file",
-    "fs:allow-mkdir",
-    "fs:allow-exists",
-    "fs:allow-remove",
-    "fs:allow-rename",
-    "fs:allow-read-dir",
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-write-text-file",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-remove",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-rename",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-dir",
+      "allow": [
+        {
+          "path": "$APPDATA/**"
+        }
+      ]
+    },
     "fs:default",
     "shell:allow-open",
     "shell:allow-execute",
