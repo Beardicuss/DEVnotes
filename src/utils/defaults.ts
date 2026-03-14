@@ -86,7 +86,8 @@ export const DEFAULT_SETTINGS: AppSettings = {
   pomodoroDurationMins: 25,
 
   // AI
-  aiApiKey: null,
+  groqApiKey: null,
+  geminiApiKey: null,
 
   // Appearance extras
   resolution: "fhd",

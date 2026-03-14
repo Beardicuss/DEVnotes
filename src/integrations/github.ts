@@ -14,17 +14,17 @@
 import type { AppData, SyncState } from "@/types";
 
 const GIST_FILENAME = "devnotes-data.json";
-const API_BASE      = "https://api.github.com";
+const API_BASE = "https://api.github.com";
 
 // ─── Types ────────────────────────────────────────────────────────
 
 interface GistFile {
   filename: string;
-  content:  string;
+  content: string;
 }
 
 interface GistResponse {
-  id:    string;
+  id: string;
   files: Record<string, GistFile>;
 }
 
@@ -40,7 +40,7 @@ async function gistFetch(
     method,
     headers: {
       Authorization: `Bearer ${token}`,
-      Accept:        "application/vnd.github+json",
+      Accept: "application/vnd.github+json",
       "Content-Type": "application/json",
       "X-GitHub-Api-Version": "2022-11-28",
     },
@@ -81,11 +81,12 @@ function redactForSync(data: AppData): AppData {
     ...data,
     settings: {
       ...data.settings,
-      aiApiKey:             null,   // never sync AI key to cloud
-      githubToken:          null,   // never sync the token that grants Gist access
-      calendarAccessToken:  null,
+      groqApiKey: null,   // never sync AI key to cloud
+      geminiApiKey: null,
+      githubToken: null,   // never sync the token that grants Gist access
+      calendarAccessToken: null,
       calendarRefreshToken: null,
-      calendarTokens:       null,
+      calendarTokens: null,
     },
   };
 }
@@ -138,7 +139,7 @@ export function mergeData(local: AppData, remote: AppData): AppData {
       if (!existing) {
         map.set(item.id, item);
       } else {
-        const localTs  = existing.updatedAt  ?? "";
+        const localTs = existing.updatedAt ?? "";
         const remoteTs = item.updatedAt ?? "";
         if (remoteTs > localTs) map.set(item.id, item);
       }
@@ -157,16 +158,16 @@ export function mergeData(local: AppData, remote: AppData): AppData {
 
   return {
     ...local,
-    projects:  mergeArray(local.projects,  remote.projects),
-    plans:     mergeByProjectId(local.plans, remote.plans ?? []),
-    notes:     mergeArray(local.notes,     remote.notes),
+    projects: mergeArray(local.projects, remote.projects),
+    plans: mergeByProjectId(local.plans, remote.plans ?? []),
+    notes: mergeArray(local.notes, remote.notes),
     todoLists: mergeArray(local.todoLists, remote.todoLists),
-    tasks:     mergeArray(local.tasks,     remote.tasks),
-    mindMaps:  remote.mindMaps ?? local.mindMaps, // mind map: remote wins (last edit)
-    tools:     mergeByProjectId(local.tools, remote.tools ?? []),
+    tasks: mergeArray(local.tasks, remote.tasks),
+    mindMaps: remote.mindMaps ?? local.mindMaps, // mind map: remote wins (last edit)
+    tools: mergeByProjectId(local.tools, remote.tools ?? []),
     // Phase 4+ entities — merge by id + updatedAt
     decisions: mergeArray(local.decisions ?? [], remote.decisions ?? []),
-    standups:  mergeArray(
+    standups: mergeArray(
       (local.standups ?? []).map(e => ({ ...e, updatedAt: e.createdAt })),
       (remote.standups ?? []).map(e => ({ ...e, updatedAt: e.createdAt }))
     ).map(({ updatedAt: _u, ...rest }) => rest) as typeof local.standups,
@@ -201,13 +202,36 @@ export async function syncWithGitHub(
     }
 
     // Pull remote
-    const remote = await pullFromGist(token, resolvedGistId);
+    let remote: AppData | null = null;
+    try {
+      remote = await pullFromGist(token, resolvedGistId);
+    } catch (e: any) {
+      if (e.message.includes("404")) {
+        // Gist was deleted on GitHub - we must recreate it
+        resolvedGistId = await createGist(token, localData);
+        return {
+          data: localData,
+          gistId: resolvedGistId,
+          state: { status: "success", lastSyncAt: now, errorMessage: null },
+        };
+      }
+      throw e;
+    }
 
     // Merge
     const merged = remote ? mergeData(localData, remote) : localData;
 
     // Push merged back
-    await pushToGist(token, resolvedGistId, merged);
+    try {
+      await pushToGist(token, resolvedGistId, merged);
+    } catch (e: any) {
+      if (e.message.includes("404")) {
+        // Edge case: deleted exactly between pull and push
+        resolvedGistId = await createGist(token, merged);
+      } else {
+        throw e;
+      }
+    }
 
     return {
       data: merged,

@@ -1,4 +1,13 @@
-.panel { display:flex; flex-direction:column; height:100%; background:var(--bg-panel); border-left:1px solid var(--border); overflow:hidden; }
+.panel { 
+  display: flex; 
+  flex-direction: column; 
+  height: 100%; 
+  background: rgba(4, 9, 15, 0.65); /* translucent base for glass effect */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-left: 1px solid rgba(0, 255, 255, 0.15); /* cyan-tinted border */
+  overflow: hidden; 
+}
 
 /* Modes */
 .modes  { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; overflow-x:auto; }

@@ -29,12 +29,12 @@ function StatCard({ label, value, colour, alert, sub }: {
 
 /* ── 7-day burndown ── */
 function BurndownChart({ tasks }: { tasks: any[] }) {
-  const days   = getLast7Days();
+  const days = getLast7Days();
   const counts = days.map(d =>
     tasks.filter(t => t.status === "done" && t.updatedAt?.slice(0, 10) === d).length
   );
   const max = Math.max(...counts, 1);
-  const dow = (iso: string) => ["S","M","T","W","T","F","S"][new Date(iso).getDay()];
+  const dow = (iso: string) => ["S", "M", "T", "W", "T", "F", "S"][new Date(iso).getDay()];
 
   return (
     <div className={s.burndown}>
@@ -42,8 +42,10 @@ function BurndownChart({ tasks }: { tasks: any[] }) {
         <div key={d} className={s.burnCol}>
           <div className={s.burnBarWrap}>
             <div className={s.burnBar}
-              style={{ height: `${Math.max(4, (counts[i] / max) * 100)}%`,
-                background: counts[i] > 0 ? "var(--cyan)" : "var(--border)" }} />
+              style={{
+                height: `${Math.max(4, (counts[i] / max) * 100)}%`,
+                background: counts[i] > 0 ? "var(--cyan)" : "var(--border)"
+              }} />
           </div>
           <div className={s.burnLabel}>{dow(d)}</div>
           {counts[i] > 0 && <div className={s.burnCount}>{counts[i]}</div>}
@@ -96,7 +98,7 @@ function Upcoming({ tasks, onGo }: { tasks: any[]; onGo: () => void }) {
   return (
     <div className={s.upcomingList}>
       {list.map(t => {
-        const days   = daysUntil(t.dueDate);
+        const days = daysUntil(t.dueDate);
         const urgent = days <= 2;
         return (
           <div key={t.id} className={`${s.upcomingRow} ${urgent ? s.upcomingUrgent : ""}`} onClick={onGo}>
@@ -114,10 +116,10 @@ function Upcoming({ tasks, onGo }: { tasks: any[]; onGo: () => void }) {
 
 /* ── Quick add ── */
 function QuickAdd({ projectId }: { projectId: string }) {
-  const [val,  setVal]  = useState("");
+  const [val, setVal] = useState("");
   const [mode, setMode] = useState<"task" | "note">("task");
-  const addTask    = useAppStore(s => s.addTask);
-  const addNote    = useAppStore(s => s.addNote);
+  const addTask = useAppStore(s => s.addTask);
+  const addNote = useAppStore(s => s.addNote);
   const updateNote = useAppStore(s => s.updateNote);
 
   const submit = () => {
@@ -153,37 +155,37 @@ function QuickAdd({ projectId }: { projectId: string }) {
 export default function TabDashboard() {
   const [aiOpen, setAiOpen] = useState(false);
 
-  const project   = useAppStore(selActiveProject);
-  const tasks     = useAppStore(selTasks);
-  const notes     = useAppStore(selNotes);
-  const git       = useGitStatus();
-  const setTab    = useAppStore(s => s.setTab);
-  const plans     = useAppStore(s => s.data.plans);
-  const standups  = useAppStore(s => s.data.standups  ?? []);
+  const project = useAppStore(selActiveProject);
+  const tasks = useAppStore(selTasks);
+  const notes = useAppStore(selNotes);
+  const git = useGitStatus();
+  const setTab = useAppStore(s => s.setTab);
+  const plans = useAppStore(s => s.data.plans);
+  const standups = useAppStore(s => s.data.standups ?? []);
   const decisions = useAppStore(s => s.data.decisions ?? []);
   const pomodoros = useAppStore(s => s.data.pomodoros ?? []);
 
   if (!project) return null;
 
-  const plan           = plans.find(p => p.projectId === project.id);
-  const total          = tasks.length;
-  const done           = tasks.filter(t => t.status === "done").length;
-  const inProg         = tasks.filter(t => t.status === "in-progress").length;
-  const overdue        = tasks.filter(t => isOverdue(t.dueDate) && t.status !== "done").length;
-  const dueToday       = tasks.filter(t => t.dueDate === todayStr() && t.status !== "done").length;
-  const pct            = total ? Math.round(done / total * 100) : 0;
-  const milestones     = plan?.milestones ?? [];
-  const msDone         = milestones.filter(m => m.status === "done").length;
-  const todayStandup   = standups.find(e => e.projectId === project.id && e.date === todayStr());
-  const projDecisions  = decisions.filter(d => d.projectId === project.id);
-  const todayPomos     = pomodoros.filter(p => p.projectId === project.id && p.startedAt.slice(0, 10) === todayStr() && p.completed);
-  const totalFocusMins    = todayPomos.reduce((a, p) => a + p.duration, 0);
+  const plan = plans.find(p => p.projectId === project.id);
+  const total = tasks.length;
+  const done = tasks.filter(t => t.status === "done").length;
+  const inProg = tasks.filter(t => t.status === "in-progress").length;
+  const overdue = tasks.filter(t => isOverdue(t.dueDate) && t.status !== "done").length;
+  const dueToday = tasks.filter(t => t.dueDate === todayStr() && t.status !== "done").length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const milestones = plan?.milestones ?? [];
+  const msDone = milestones.filter(m => m.status === "done").length;
+  const todayStandup = standups.find(e => e.projectId === project.id && e.date === todayStr());
+  const projDecisions = decisions.filter(d => d.projectId === project.id);
+  const todayPomos = pomodoros.filter(p => p.projectId === project.id && p.startedAt.slice(0, 10) === todayStr() && p.completed);
+  const totalFocusMins = todayPomos.reduce((a, p) => a + p.duration, 0);
   // Memoize expensive all-project scans
   const _allTimePomos = useMemo(
     () => pomodoros.filter(p => p.projectId === project.id && p.completed).length,
     [pomodoros, project.id]
   );
-  const circumference  = 2 * Math.PI * 26;
+  const circumference = 2 * Math.PI * 26;
 
   return (
     <div className={s.root}>
@@ -234,12 +236,12 @@ export default function TabDashboard() {
 
       {/* ── Stats ── */}
       <div className={s.statsRow}>
-        <StatCard label="OPEN"       value={total - done}          colour="var(--cyan)"   sub={`${inProg} in progress`} />
-        <StatCard label="DONE"       value={done}                  colour="var(--green)"  sub={`of ${total}`} />
-        <StatCard label="OVERDUE"    value={overdue}               colour="var(--red)"    alert={overdue > 0} />
-        <StatCard label="DUE TODAY"  value={dueToday}              colour="var(--yellow)" />
-        <StatCard label="NOTES"      value={notes.length}          colour="var(--blue)" />
-        <StatCard label="DECISIONS"  value={projDecisions.length}  colour="#9900bb" />
+        <StatCard label="OPEN" value={total - done} colour="var(--cyan)" sub={`${inProg} in progress`} />
+        <StatCard label="DONE" value={done} colour="var(--green)" sub={`of ${total}`} />
+        <StatCard label="OVERDUE" value={overdue} colour="var(--red)" alert={overdue > 0} />
+        <StatCard label="DUE TODAY" value={dueToday} colour="var(--yellow)" />
+        <StatCard label="NOTES" value={notes.length} colour="var(--blue)" />
+        <StatCard label="DECISIONS" value={projDecisions.length} colour="#9900bb" />
         {milestones.length > 0 && (
           <StatCard label="MILESTONES" value={`${msDone}/${milestones.length}`} colour="var(--cyan)" />
         )}
@@ -357,7 +359,7 @@ export default function TabDashboard() {
         {/* AI side drawer */}
         {aiOpen && (
           <div className={s.aiDrawer}>
-            <AiPanel />
+            <AiPanel onClose={() => setAiOpen(false)} />
           </div>
         )}
       </div>

@@ -86,6 +86,27 @@
     "global-shortcut:allow-is-registered",
     "autostart:allow-enable",
     "autostart:allow-disable",
-    "autostart:allow-is-enabled"
+    "autostart:allow-is-enabled",
+    "http:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://api.groq.com/**"
+        },
+        {
+          "url": "https://generativelanguage.googleapis.com/**"
+        },
+        {
+          "url": "https://api.github.com/**"
+        },
+        {
+          "url": "https://*.googleapis.com/**"
+        },
+        {
+          "url": "https://oauth2.googleapis.com/**"
+        }
+      ]
+    }
   ]
 }
