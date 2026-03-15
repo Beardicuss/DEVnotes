@@ -304,7 +304,9 @@ export interface AppSettings {
 
   // AI
   groqApiKey: string | null;
+  groqModel: string;
   geminiApiKey: string | null;
+  geminiModel: string;
 
   // Appearance extras (persisted)
   resolution: string;

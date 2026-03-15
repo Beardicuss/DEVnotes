@@ -17,7 +17,7 @@ export const isTauri = platform === "tauri-windows";
 export const isWeb = platform === "web";
 
 // ─── Storage ─────────────────────────────────────────────────────
-// Tauri   → %APPDATA%\DevNotes\data.json
+// Tauri   → [Executable Dir]\DevNotes\data.json
 // Browser → localStorage
 
 const STORAGE_KEY = "devnotes_desktop_v2";
@@ -27,7 +27,7 @@ export async function storageRead(): Promise<string | null> {
     try {
       const { readTextFile, BaseDirectory } =
         await import("@tauri-apps/plugin-fs");
-      return await readTextFile("DevNotes/data.json", { baseDir: BaseDirectory.AppData });
+      return await readTextFile("DevNotes/data.json", { baseDir: BaseDirectory.Executable });
     } catch { return null; }
   }
   return localStorage.getItem(STORAGE_KEY);
@@ -37,8 +37,8 @@ export async function storageWrite(json: string): Promise<void> {
   if (isTauri) {
     const { writeTextFile, mkdir, BaseDirectory } =
       await import("@tauri-apps/plugin-fs");
-    await mkdir("DevNotes", { baseDir: BaseDirectory.AppData, recursive: true });
-    await writeTextFile("DevNotes/data.json", json, { baseDir: BaseDirectory.AppData });
+    await mkdir("DevNotes", { baseDir: BaseDirectory.Executable, recursive: true });
+    await writeTextFile("DevNotes/data.json", json, { baseDir: BaseDirectory.Executable });
     return;
   }
   localStorage.setItem(STORAGE_KEY, json);
@@ -49,7 +49,7 @@ export async function storageBackup(json: string, maxCount = 10): Promise<void> 
   try {
     const { writeTextFile, mkdir, readDir, remove, BaseDirectory } =
       await import("@tauri-apps/plugin-fs");
-    const baseDir = BaseDirectory.AppData;
+    const baseDir = BaseDirectory.Executable;
     await mkdir("DevNotes/backups", { baseDir, recursive: true });
 
     // Write new backup

@@ -1,5 +1,4 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/schema/acl/capability.schema.json",
   "identifier": "default",
   "description": "Default capabilities for DevNotes Desktop",
   "windows": [
@@ -21,6 +20,9 @@
       "allow": [
         {
           "path": "$APPDATA/**"
+        },
+        {
+          "path": "$EXE/**"
         }
       ]
     },
@@ -29,6 +31,9 @@
       "allow": [
         {
           "path": "$APPDATA/**"
+        },
+        {
+          "path": "$EXE/**"
         }
       ]
     },
@@ -37,6 +42,9 @@
       "allow": [
         {
           "path": "$APPDATA/**"
+        },
+        {
+          "path": "$EXE/**"
         }
       ]
     },
@@ -45,6 +53,9 @@
       "allow": [
         {
           "path": "$APPDATA/**"
+        },
+        {
+          "path": "$EXE/**"
         }
       ]
     },
@@ -53,6 +64,9 @@
       "allow": [
         {
           "path": "$APPDATA/**"
+        },
+        {
+          "path": "$EXE/**"
         }
       ]
     },
@@ -61,6 +75,9 @@
       "allow": [
         {
           "path": "$APPDATA/**"
+        },
+        {
+          "path": "$EXE/**"
         }
       ]
     },
@@ -69,6 +86,9 @@
       "allow": [
         {
           "path": "$APPDATA/**"
+        },
+        {
+          "path": "$EXE/**"
         }
       ]
     },

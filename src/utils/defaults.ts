@@ -87,7 +87,9 @@ export const DEFAULT_SETTINGS: AppSettings = {
 
   // AI
   groqApiKey: null,
+  groqModel: "llama-3.3-70b-versatile",
   geminiApiKey: null,
+  geminiModel: "gemini-1.5-flash",
 
   // Appearance extras
   resolution: "fhd",

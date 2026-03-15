@@ -15,6 +15,7 @@
 import { useState, useRef } from "react";
 import { useAppStore, selActiveProject, selTasks, selNotes } from "@/stores/useAppStore";
 import { isTauri } from "@/utils/platform";
+import { uid } from "@/utils/id";
 import s from "./AiPanel.module.css";
 
 // ─── Types ────────────────────────────────────────────────────────
@@ -150,44 +151,27 @@ Blockers: ${lastStandup?.blockers ?? "none"}`;
 }
 
 // ─── Preset prompts ───────────────────────────────────────────────
-const SYSTEM_BASE = `You are DevNotes AI, a concise and practical assistant embedded inside a developer project management app.
-You have access to the current project's context. Be direct, clear, and formatted for a terminal-style dark UI.
-Keep responses focused and practical. Use markdown formatting (bold, bullets, code blocks) where helpful.`;
+const SYSTEM_BASE = `You are DevNotes AI, a powerful autonomous agent embedded directly inside the user's project management application.
+You have the ability to execute actions on behalf of the user by responding with a specific JSON command block.
 
-// ─── Components ───────────────────────────────────────────────────
-
-function ApiKeyPrompt({ onSave }: { onSave: (groqKey: string, geminiKey: string) => void }) {
-  const [groqVal, setGroqVal] = useState("");
-  const [geminiVal, setGeminiVal] = useState("");
-
-  const isValid = groqVal.startsWith("gsk_") && geminiVal.length > 30;
-
-  return (
-    <div className={s.keyPrompt} style={{ paddingBottom: "3em" }}>
-      <div className={s.keyTitle} style={{ marginBottom: "0.25em" }}>⚙️ AI Engine Setup</div>
-      <p className={s.keyDesc}>
-        DevNotes uses a highly optimized dual-processor design to maximize performance completely for free.
-        All API keys are encrypted and stored purely locally on your device.
-      </p>
-
-      <div style={{ marginTop: "1em", display: "flex", flexDirection: "column", gap: "0.5em" }}>
-        <div style={{ fontSize: "var(--fs-xxs)", color: "var(--cyan)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "1px" }}>1. Primary Engine: Groq Llama 3</div>
-        <div className={s.keyDesc}>Powers instant local execution. Get a free key at <a href="https://console.groq.com/keys" target="_blank" className={s.keyLink}>console.groq.com</a></div>
-        <input className="input" type="password" placeholder="gsk_..." value={groqVal} onChange={e => setGroqVal(e.target.value)} />
-      </div>
-
-      <div style={{ marginTop: "1em", display: "flex", flexDirection: "column", gap: "0.5em" }}>
-        <div style={{ fontSize: "var(--fs-xxs)", color: "var(--purple, #9900bb)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "1px" }}>2. Secondary Engine: Google Gemini</div>
-        <div className={s.keyDesc}>High capacity fallback for large context queries. Get a free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" className={s.keyLink}>aistudio.google.com</a></div>
-        <input className="input" type="password" placeholder="AIza..." value={geminiVal} onChange={e => setGeminiVal(e.target.value)} />
-      </div>
-
-      <button className="btn btn-primary" style={{ marginTop: "1.5em", padding: "0.75em" }} disabled={!isValid} onClick={() => onSave(groqVal.trim(), geminiVal.trim())}>
-        Initialize AI Engines
-      </button>
-    </div>
-  );
+If the user asks you to perform an action (e.g. "create a project", "add a task", "write a note", "add a todo", "create a decision"), you MUST output a JSON block formatted exactly like this:
+\`\`\`json
+{
+  "action": "ACTION_NAME",
+  "params": { ... }
 }
+\`\`\`
+
+Supported actions and their params:
+- "createProject": { "name": string, "description": string }
+- "createNote": { "title": string, "body": string, "tags": string[] }
+- "addTodoList": { "title": string, "items": string[] }
+- "addTask": { "title": string, "priority": "low" | "medium" | "high" }
+- "addDecision": { "title": string, "options": string[] }
+- "createMindmap": { "title": string, "rootNode": string, "childrenNodes": string[] }
+
+Always include a brief, friendly conversational response alongside your JSON command block to confirm you've done it. Wait for the user's explicit request before executing actions. Use markdown. Be concise.`;
+
 
 function ModeButton({ mode: _mode, active, icon, label, onClick }: {
   mode: Mode; active: boolean; icon: string; label: string; onClick: () => void;
@@ -209,8 +193,14 @@ export default function AiPanel({ noteId, onClose }: { noteId?: string, onClose?
   const standups = useAppStore(s => s.data.standups ?? []);
   const settings = useAppStore(s => s.data.settings);
   const updateSettings = useAppStore(s => s.updateSettings);
+  const addProject = useAppStore(s => s.addProject);
   const addTask = useAppStore(s => s.addTask);
+  const addNote = useAppStore(s => s.addNote);
   const updateNote = useAppStore(s => s.updateNote);
+  const addTodoList = useAppStore(s => s.addTodoList);
+  const addTodoItem = useAppStore(s => s.addTodoItem);
+  const addDecision = useAppStore(s => s.addDecision);
+  const updateMindMap = useAppStore(s => s.updateMindMap);
 
   const cancelRef = useRef<AbortController | null>(null);
   const [mode, setMode] = useState<Mode>("ask");
@@ -229,10 +219,6 @@ export default function AiPanel({ noteId, onClose }: { noteId?: string, onClose?
   const groqCooldownUntil = useRef<number>(0);
 
   if (!project) return null;
-
-  const saveApiKeys = (groqKey: string, geminiKey: string) => {
-    updateSettings({ groqApiKey: groqKey, geminiApiKey: geminiKey });
-  };
 
   const clearChat = () => { cancelRef.current?.abort(); cancelRef.current = null; setMessages([]); setError(null); setApplied(null); setLoading(false); };
 
@@ -288,6 +274,60 @@ export default function AiPanel({ noteId, onClose }: { noteId?: string, onClose?
       }
 
       const result = await dispatchAiRequest(system, newMessages, 1024);
+      let replyText = result.text;
+
+      // Parse for execution actions
+      const jsonMatch = replyText.match(/```json\n([\s\S]*?)\n```/);
+      if (jsonMatch) {
+        try {
+          const cmd = JSON.parse(jsonMatch[1]);
+          if (cmd.action === "createProject" && cmd.params.name) {
+            addProject({ name: cmd.params.name, description: cmd.params.description, status: "active" });
+            setApplied(`🚀 Created project: ${cmd.params.name}`);
+
+          } else if (cmd.action === "createNote" && cmd.params.title) {
+            const newNoteId = addNote();
+            if (newNoteId) {
+              updateNote(newNoteId, { title: cmd.params.title, body: cmd.params.body ?? "", tags: cmd.params.tags ?? [] });
+              setApplied(`📝 Created note: ${cmd.params.title}`);
+            }
+
+          } else if (cmd.action === "addTodoList" && cmd.params.title) {
+            const listId = addTodoList(cmd.params.title);
+            if (listId && Array.isArray(cmd.params.items)) {
+              cmd.params.items.forEach((item: string) => addTodoItem(listId, item));
+            }
+            setApplied(`✅ Created To-Do list: ${cmd.params.title}`);
+
+          } else if (cmd.action === "addTask" && cmd.params.title) {
+            addTask({ projectId: project.id, title: cmd.params.title, status: "todo", priority: cmd.params.priority ?? "medium" });
+            setApplied(`☑ Added task: ${cmd.params.title}`);
+
+          } else if (cmd.action === "addDecision" && cmd.params.title) {
+            addDecision({ projectId: project.id, title: cmd.params.title, options: cmd.params.options ?? [], status: "proposed" });
+            setApplied(`⚖ Added decision: ${cmd.params.title}`);
+
+          } else if (cmd.action === "createMindmap" && cmd.params.title) {
+            const rootId = uid();
+            const nodes: any[] = [{ id: rootId, text: cmd.params.rootNode ?? cmd.params.title, x: 0, y: 0, type: "root", colour: "#00eeff", parentId: null }];
+            const edges: any[] = [];
+
+            if (Array.isArray(cmd.params.childrenNodes)) {
+              cmd.params.childrenNodes.forEach((childTxt: string, i: number) => {
+                const childId = uid();
+                nodes.push({ id: childId, text: childTxt, x: (i % 2 === 0 ? 250 : -250), y: (i * 80), type: "idea", colour: "#777777", parentId: rootId });
+                edges.push({ id: uid(), fromId: rootId, toId: childId, label: null });
+              });
+            }
+
+            updateMindMap(project.id, { nodes, edges });
+            setApplied(`🧠 Created mindmap: ${cmd.params.title}`);
+          }
+        } catch (err) {
+          console.error("Agent parsing error:", err);
+        }
+      }
+
       const prefix = result.engine === "groq" ? "⚡ " : "✨ ";
       setMessages(m => [...m, { role: "assistant", content: prefix + result.text }]);
     } catch (e: any) {
@@ -357,7 +397,16 @@ Respond ONLY with a JSON array of task title strings, e.g. ["Set up database sch
     } finally { setLoading(false); }
   };
 
-  if (!groqApiKey || !geminiApiKey) return <ApiKeyPrompt onSave={saveApiKeys} />;
+  if (!groqApiKey || !geminiApiKey) {
+    return (
+      <div className={s.panel} style={{ justifyContent: "center", alignItems: "center", textAlign: "center", padding: "2em" }}>
+        <h2 style={{ fontFamily: "var(--font-display)", color: "var(--cyan)", marginBottom: "1em" }}>AI Engine Not Configured</h2>
+        <p style={{ color: "var(--text-dim)", lineHeight: "1.6" }}>
+          Please go to <strong>Settings → AI Engines</strong> to initialize your Groq and Gemini API Keys.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className={s.panel}>

@@ -10,9 +10,9 @@
  */
 
 import * as vscode from "vscode";
-import * as fs     from "fs";
-import * as path   from "path";
-import * as os     from "os";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
 
 // ─── Types (inline subset of DevNotes types) ──────────────────────
 
@@ -27,8 +27,8 @@ interface Project { id: string; name: string; icon: string; status: string; root
 interface AppData {
   version: number;
   projects: Project[];
-  tasks:    Task[];
-  notes:    Note[];
+  tasks: Task[];
+  notes: Note[];
   todoLists: TodoList[];
   settings: { defaultProjectId: string | null };
 }
@@ -36,7 +36,10 @@ interface AppData {
 // ─── Data path ───────────────────────────────────────────────────
 
 function getDataPath(): string {
-  return path.join(os.homedir(), "AppData", "Roaming", "DevNotes", "data.json");
+  // DevNotes now runs in Portable Mode. It saves data geometrically adjacent to the .exe.
+  // Assuming default installer path. Users installing to D:\ will need to edit this extension setting in the future.
+  const pf = process.env.PROGRAMFILES || "C:\\Program Files";
+  return path.join(pf, "devnotes", "DevNotes", "data.json");
 }
 
 function readData(): AppData | null {
@@ -77,12 +80,12 @@ class DevNotesItem extends vscode.TreeItem {
   ) {
     super(label, collapsible);
     this.description = description;
-    this.iconPath    = iconPath;
-    this.tooltip     = label;
+    this.iconPath = iconPath;
+    this.tooltip = label;
     if (kind !== "section") {
       this.command = {
-        command:   "devnotes.selectItem",
-        title:     "Open",
+        command: "devnotes.selectItem",
+        title: "Open",
         arguments: [this],
       };
     }
@@ -109,11 +112,11 @@ class DevNotesProvider implements vscode.TreeDataProvider<DevNotesItem> {
 
     if (!element) {
       // Root: section headers
-      const tasks   = this.data.tasks.filter((t) => t.projectId === project.id && t.status !== "done" && t.status !== "archived");
-      const overdue = tasks.filter((t) => t.dueDate && t.dueDate < new Date().toISOString().slice(0,10));
-      const notes   = this.data.notes.filter((n) => n.projectId === project.id);
-      const todos   = this.data.todoLists.filter((l) => l.projectId === project.id)
-                        .flatMap((l) => l.items.filter((i) => !i.done));
+      const tasks = this.data.tasks.filter((t) => t.projectId === project.id && t.status !== "done" && t.status !== "archived");
+      const overdue = tasks.filter((t) => t.dueDate && t.dueDate < new Date().toISOString().slice(0, 10));
+      const notes = this.data.notes.filter((n) => n.projectId === project.id);
+      const todos = this.data.todoLists.filter((l) => l.projectId === project.id)
+        .flatMap((l) => l.items.filter((i) => !i.done));
 
       return [
         new DevNotesItem(
@@ -147,15 +150,15 @@ class DevNotesProvider implements vscode.TreeDataProvider<DevNotesItem> {
         (t) => t.projectId === project2.id && t.status !== "done" && t.status !== "archived"
       );
       tasks.sort((a, b) => {
-        const pri = { critical:0, high:1, medium:2, low:3 };
+        const pri = { critical: 0, high: 1, medium: 2, low: 3 };
         return (pri[a.priority as keyof typeof pri] ?? 9) - (pri[b.priority as keyof typeof pri] ?? 9);
       });
       return tasks.map((t) => {
-        const overdue = t.dueDate && t.dueDate < new Date().toISOString().slice(0,10);
+        const overdue = t.dueDate && t.dueDate < new Date().toISOString().slice(0, 10);
         const icon = overdue ? new vscode.ThemeIcon("warning", new vscode.ThemeColor("errorForeground"))
-                             : new vscode.ThemeIcon("circle-outline");
+          : new vscode.ThemeIcon("circle-outline");
         return new DevNotesItem(t.title, "task", t.id, t.projectId,
-          undefined, `[${t.priority}]${t.dueDate ? " 📅"+t.dueDate : ""}`, icon);
+          undefined, `[${t.priority}]${t.dueDate ? " 📅" + t.dueDate : ""}`, icon);
       });
     }
 
@@ -187,8 +190,8 @@ function updateStatusBar(data: AppData | null) {
   if (!data || !statusBarItem) return;
   const project = getActiveProject(data);
   if (!project) { statusBarItem.hide(); return; }
-  const today   = new Date().toISOString().slice(0, 10);
-  const tasks   = data.tasks.filter((t) => t.projectId === project.id && t.status !== "done" && t.status !== "archived");
+  const today = new Date().toISOString().slice(0, 10);
+  const tasks = data.tasks.filter((t) => t.projectId === project.id && t.status !== "done" && t.status !== "archived");
   const overdue = tasks.filter((t) => t.dueDate && t.dueDate < today);
   statusBarItem.text = overdue.length
     ? `$(warning) DevNotes: ${tasks.length} tasks, ${overdue.length} overdue`
@@ -219,7 +222,7 @@ export function activate(context: vscode.ExtensionContext) {
   // File watcher on data.json
   const dataPath = getDataPath();
   if (fs.existsSync(path.dirname(dataPath))) {
-    const watcher = fs.watch(path.dirname(dataPath), (event, filename) => {
+    const watcher = fs.watch(path.dirname(dataPath), (event: string, filename: string | null) => {
       if (filename === "data.json") {
         provider.refresh();
         updateStatusBar(readData());
@@ -315,4 +318,4 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(treeView);
 }
 
-export function deactivate() {}
+export function deactivate() { }

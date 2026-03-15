@@ -43,58 +43,58 @@ interface AppStore {
   quickCaptureOpen: boolean;
 
   // ── Lifecycle ──
-  init:  () => Promise<void>;
-  save:  () => Promise<void>;
+  init: () => Promise<void>;
+  save: () => Promise<void>;
 
   // ── Projects ──
-  openProject:   (id: ID) => void;
-  addProject:    (partial: Partial<Project>) => ID;
+  openProject: (id: ID) => void;
+  addProject: (partial: Partial<Project>) => ID;
   updateProject: (id: ID, patch: Partial<Project>) => void;
   deleteProject: (id: ID) => void;
-  setTab:        (tab: ProjectTab) => void;
+  setTab: (tab: ProjectTab) => void;
 
   // ── Plan ──
   updatePlan: (projectId: ID, patch: Partial<Omit<Plan, "projectId">>) => void;
 
   // ── Notes ──
-  selectNote:   (id: ID | null) => void;
-  addNote:      () => ID;
-  importNotes:  (notes: import("@/types").Note[]) => void;
-  updateNote:  (id: ID, patch: Partial<Note>) => void;
-  deleteNote:  (id: ID) => void;
+  selectNote: (id: ID | null) => void;
+  addNote: () => ID;
+  importNotes: (notes: import("@/types").Note[]) => void;
+  updateNote: (id: ID, patch: Partial<Note>) => void;
+  deleteNote: (id: ID) => void;
   archiveNote: (id: ID) => void;
   restoreNote: (id: ID) => void;
   setNoteFilter: (patch: Partial<NoteFilter>) => void;
 
   // ── Todos ──
-  addTodoList:    (name: string) => void;
+  addTodoList: (name: string) => ID | undefined;
   updateTodoList: (id: ID, name: string) => void;
   deleteTodoList: (id: ID) => void;
-  addTodoItem:    (listId: ID, text: string, parentId?: ID) => void;
+  addTodoItem: (listId: ID, text: string, parentId?: ID) => void;
   toggleTodoItem: (listId: ID, itemId: ID) => void;
   updateTodoItem: (listId: ID, itemId: ID, patch: Partial<TodoItem>) => void;
   deleteTodoItem: (listId: ID, itemId: ID) => void;
   clearDoneTodos: (listId: ID) => void;
 
   // ── Tasks ──
-  addTask:     (partial: Partial<Task>) => ID;
-  updateTask:  (id: ID, patch: Partial<Task>) => void;
-  deleteTask:  (id: ID) => void;
+  addTask: (partial: Partial<Task>) => ID;
+  updateTask: (id: ID, patch: Partial<Task>) => void;
+  deleteTask: (id: ID) => void;
   archiveTask: (id: ID) => void;
   restoreTask: (id: ID) => void;
   setTaskFilter: (patch: Partial<TaskFilter>) => void;
 
   // ── Decisions ──
-  addDecision:    (partial: Partial<import("@/types").Decision>) => string;
+  addDecision: (partial: Partial<import("@/types").Decision>) => string;
   updateDecision: (id: import("@/types").ID, patch: Partial<import("@/types").Decision>) => void;
   deleteDecision: (id: import("@/types").ID) => void;
 
   // ── Standups ──
-  addStandup:    (entry: Omit<import("@/types").StandupEntry, "id"|"createdAt">) => string;
+  addStandup: (entry: Omit<import("@/types").StandupEntry, "id" | "createdAt">) => string;
   updateStandup: (id: import("@/types").ID, patch: Partial<import("@/types").StandupEntry>) => void;
 
   // ── Pomodoros ──
-  addPomodoro:    (session: Omit<import("@/types").PomodoroSession, "id">) => string;
+  addPomodoro: (session: Omit<import("@/types").PomodoroSession, "id">) => string;
   updatePomodoro: (id: import("@/types").ID, patch: Partial<import("@/types").PomodoroSession>) => void;
 
   // ── Git status (for file watcher) ──
@@ -113,9 +113,9 @@ interface AppStore {
   syncNow: () => Promise<void>;
 
   // ── Quick capture ──
-  openQuickCapture:  () => void;
+  openQuickCapture: () => void;
   closeQuickCapture: () => void;
-  quickCapture:      (text: string, type: QuickCaptureType) => void;
+  quickCapture: (text: string, type: QuickCaptureType) => void;
 }
 
 // ─── Selectors (memoize-safe — call in components) ────────────────
@@ -131,12 +131,12 @@ export const selPlan = (id: ID | null) => (s: AppStore) =>
 
 export const selNotes = (s: AppStore) => {
   const pid = s.activeProjectId;
-  const f   = s.noteFilter;
+  const f = s.noteFilter;
   return s.data.notes
     .filter((n) => {
       if (n.projectId !== pid || n.archived) return false;
       if (f.search && !n.title.toLowerCase().includes(f.search.toLowerCase())
-                   && !n.body.toLowerCase().includes(f.search.toLowerCase())) return false;
+        && !n.body.toLowerCase().includes(f.search.toLowerCase())) return false;
       if (f.tag !== "all" && !n.tags.includes(f.tag)) return false;
       return true;
     })
@@ -151,7 +151,7 @@ export const selTodoLists = (s: AppStore) =>
 
 export const selTasks = (s: AppStore) => {
   const pid = s.activeProjectId;
-  const f   = s.taskFilter;
+  const f = s.taskFilter;
   const PRI = { critical: 0, high: 1, medium: 2, low: 3 } as const;
   return s.data.tasks
     .filter((t) => {
@@ -185,16 +185,16 @@ export const selArchivedTasks = (s: AppStore) =>
 
 export const useAppStore = create<AppStore>()(
   subscribeWithSelector((set, get) => ({
-    data:            DEFAULT_DATA,
-    platform:        getPlatform(),
+    data: DEFAULT_DATA,
+    platform: getPlatform(),
     activeProjectId: null,
-    activeTab:       "dashboard",
-    selectedNoteId:  null,
-    taskFilter:      { search: "", priority: "all", tag: "all", status: "all" },
-    noteFilter:      { search: "", tag: "all" },
-    isSaving:        false,
-    isInitialized:   false,
-    syncState:       { status: "idle", lastSyncAt: null, errorMessage: null },
+    activeTab: "dashboard",
+    selectedNoteId: null,
+    taskFilter: { search: "", priority: "all", tag: "all", status: "all" },
+    noteFilter: { search: "", tag: "all" },
+    isSaving: false,
+    isInitialized: false,
+    syncState: { status: "idle", lastSyncAt: null, errorMessage: null },
     quickCaptureOpen: false,
 
     // ── Init ──────────────────────────────────────────────────────
@@ -204,10 +204,10 @@ export const useAppStore = create<AppStore>()(
         try {
           const loaded = JSON.parse(raw) as AppData;
           // Migrate: add new fields if missing (Phase 2–5)
-          if (!loaded.mindMaps)  loaded.mindMaps  = [];
-          if (!loaded.tools)     loaded.tools     = [];
+          if (!loaded.mindMaps) loaded.mindMaps = [];
+          if (!loaded.tools) loaded.tools = [];
           if (!loaded.decisions) loaded.decisions = [];
-          if (!loaded.standups)  loaded.standups  = [];
+          if (!loaded.standups) loaded.standups = [];
           if (!loaded.pomodoros) loaded.pomodoros = [];
           // Ensure every project has a plan, mindMap, and tools scaffold
           for (const proj of loaded.projects ?? []) {
@@ -294,19 +294,19 @@ export const useAppStore = create<AppStore>()(
         createdAt: now, updatedAt: now, ...partial,
       };
       // Scaffold all sub-documents for the new project
-      const plan   = { projectId: id, body: "# Project Plan\n\n", milestones: [], templateId: null, updatedAt: now };
-      const todos  = { id: uid(), projectId: id, name: "Tasks", items: [], createdAt: now };
-      const mm     = { projectId: id, nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 }, updatedAt: now };
-      const tools  = { projectId: id, links: [], commands: [], snippets: [] };
+      const plan = { projectId: id, body: "# Project Plan\n\n", milestones: [], templateId: null, updatedAt: now };
+      const todos = { id: uid(), projectId: id, name: "Tasks", items: [], createdAt: now };
+      const mm = { projectId: id, nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 }, updatedAt: now };
+      const tools = { projectId: id, links: [], commands: [], snippets: [] };
 
       set((s) => ({
         data: {
           ...s.data,
-          projects:  [...s.data.projects, project],
-          plans:     [...s.data.plans, plan],
+          projects: [...s.data.projects, project],
+          plans: [...s.data.plans, plan],
           todoLists: [...s.data.todoLists, todos],
-          mindMaps:  [...s.data.mindMaps, mm],
-          tools:     [...s.data.tools, tools],
+          mindMaps: [...s.data.mindMaps, mm],
+          tools: [...s.data.tools, tools],
         },
       }));
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
@@ -329,15 +329,15 @@ export const useAppStore = create<AppStore>()(
       set((s) => ({
         data: {
           ...s.data,
-          projects:  s.data.projects.filter((p) => p.id !== id),
-          plans:     s.data.plans.filter((p) => p.projectId !== id),
-          notes:     s.data.notes.filter((n) => n.projectId !== id),
+          projects: s.data.projects.filter((p) => p.id !== id),
+          plans: s.data.plans.filter((p) => p.projectId !== id),
+          notes: s.data.notes.filter((n) => n.projectId !== id),
           todoLists: s.data.todoLists.filter((l) => l.projectId !== id),
-          tasks:     s.data.tasks.filter((t) => t.projectId !== id),
-          mindMaps:  s.data.mindMaps.filter((m) => m.projectId !== id),
-          tools:     s.data.tools.filter((t) => t.projectId !== id),
+          tasks: s.data.tasks.filter((t) => t.projectId !== id),
+          mindMaps: s.data.mindMaps.filter((m) => m.projectId !== id),
+          tools: s.data.tools.filter((t) => t.projectId !== id),
           decisions: (s.data.decisions ?? []).filter((d) => d.projectId !== id),
-          standups:  (s.data.standups  ?? []).filter((e) => e.projectId !== id),
+          standups: (s.data.standups ?? []).filter((e) => e.projectId !== id),
           pomodoros: (s.data.pomodoros ?? []).filter((p) => p.projectId !== id),
         },
         activeProjectId: s.activeProjectId === id
@@ -395,7 +395,7 @@ export const useAppStore = create<AppStore>()(
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
     },
 
-    deleteNote:  (id) => { set((s) => ({ data: { ...s.data, notes: s.data.notes.filter((n) => n.id !== id) }, selectedNoteId: s.selectedNoteId === id ? null : s.selectedNoteId })); scheduleSave(get().save, 400); },
+    deleteNote: (id) => { set((s) => ({ data: { ...s.data, notes: s.data.notes.filter((n) => n.id !== id) }, selectedNoteId: s.selectedNoteId === id ? null : s.selectedNoteId })); scheduleSave(get().save, 400); },
     archiveNote: (id) => { get().updateNote(id, { archived: true }); set((s) => ({ selectedNoteId: s.selectedNoteId === id ? null : s.selectedNoteId })); },
     restoreNote: (id) => get().updateNote(id, { archived: false }),
     setNoteFilter: (patch) => set((s) => ({ noteFilter: { ...s.noteFilter, ...patch } })),
@@ -403,10 +403,11 @@ export const useAppStore = create<AppStore>()(
     // ── Todos ─────────────────────────────────────────────────────
     addTodoList: (name) => {
       const projectId = get().activeProjectId;
-      if (!projectId) return;
+      if (!projectId) return undefined;
       const list: TodoList = { id: uid(), projectId, name, items: [], createdAt: nowISO() };
       set((s) => ({ data: { ...s.data, todoLists: [...s.data.todoLists, list] } }));
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
+      return list.id;
     },
 
     updateTodoList: (id, name) => {
@@ -514,7 +515,7 @@ export const useAppStore = create<AppStore>()(
       scheduleSave(get().save, get().data.settings.autosaveDelayMs);
     },
 
-    deleteTask:  (id) => { set((s) => ({ data: { ...s.data, tasks: s.data.tasks.filter((t) => t.id !== id) } })); scheduleSave(get().save, 400); },
+    deleteTask: (id) => { set((s) => ({ data: { ...s.data, tasks: s.data.tasks.filter((t) => t.id !== id) } })); scheduleSave(get().save, 400); },
     archiveTask: (id) => get().updateTask(id, { status: "archived" }),
     restoreTask: (id) => get().updateTask(id, { status: "todo" }),
     setTaskFilter: (patch) => set((s) => ({ taskFilter: { ...s.taskFilter, ...patch } })),
@@ -561,17 +562,17 @@ export const useAppStore = create<AppStore>()(
       const now = nowISO();
       const proj = get().activeProjectId;
       if (!proj) return id;
-      const item = { title:"New Decision", context:"", options:"", outcome:"", status:"proposed" as const, decisionDate:null, decidedBy:"", tags:[], linkedTaskId:null, createdAt:now, updatedAt:now, ...partial, projectId: proj, id };
-      set((s) => ({ data: { ...s.data, decisions: [item, ...(s.data.decisions??[])] } }));
+      const item = { title: "New Decision", context: "", options: "", outcome: "", status: "proposed" as const, decisionDate: null, decidedBy: "", tags: [], linkedTaskId: null, createdAt: now, updatedAt: now, ...partial, projectId: proj, id };
+      set((s) => ({ data: { ...s.data, decisions: [item, ...(s.data.decisions ?? [])] } }));
       scheduleSave(get().save, 800);
       return id;
     },
     updateDecision: (id, patch) => {
-      set((s) => ({ data: { ...s.data, decisions: (s.data.decisions??[]).map((d) => d.id===id ? {...d,...patch,updatedAt:nowISO()} : d) } }));
+      set((s) => ({ data: { ...s.data, decisions: (s.data.decisions ?? []).map((d) => d.id === id ? { ...d, ...patch, updatedAt: nowISO() } : d) } }));
       scheduleSave(get().save, 800);
     },
     deleteDecision: (id) => {
-      set((s) => ({ data: { ...s.data, decisions: (s.data.decisions??[]).filter((d) => d.id!==id) } }));
+      set((s) => ({ data: { ...s.data, decisions: (s.data.decisions ?? []).filter((d) => d.id !== id) } }));
       scheduleSave(get().save, 400);
     },
 
@@ -579,12 +580,12 @@ export const useAppStore = create<AppStore>()(
     addStandup: (entry) => {
       const id = uid();
       const item = { id, createdAt: nowISO(), ...entry };
-      set((s) => ({ data: { ...s.data, standups: [item, ...(s.data.standups??[])] } }));
+      set((s) => ({ data: { ...s.data, standups: [item, ...(s.data.standups ?? [])] } }));
       scheduleSave(get().save, 800);
       return id;
     },
     updateStandup: (id, patch) => {
-      set((s) => ({ data: { ...s.data, standups: (s.data.standups??[]).map((e) => e.id===id ? {...e,...patch} : e) } }));
+      set((s) => ({ data: { ...s.data, standups: (s.data.standups ?? []).map((e) => e.id === id ? { ...e, ...patch } : e) } }));
       scheduleSave(get().save, 800);
     },
 
@@ -605,7 +606,7 @@ export const useAppStore = create<AppStore>()(
       return id;
     },
     updatePomodoro: (id, patch) => {
-      set((s) => ({ data: { ...s.data, pomodoros: (s.data.pomodoros??[]).map((p) => p.id===id ? {...p,...patch} : p) } }));
+      set((s) => ({ data: { ...s.data, pomodoros: (s.data.pomodoros ?? []).map((p) => p.id === id ? { ...p, ...patch } : p) } }));
       scheduleSave(get().save, 400);
     },
 
@@ -639,7 +640,7 @@ export const useAppStore = create<AppStore>()(
     },
 
     // ── Quick capture ─────────────────────────────────────────────
-    openQuickCapture:  () => set({ quickCaptureOpen: true }),
+    openQuickCapture: () => set({ quickCaptureOpen: true }),
     closeQuickCapture: () => set({ quickCaptureOpen: false }),
 
     quickCapture: (text, type) => {

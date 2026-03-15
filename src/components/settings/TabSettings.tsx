@@ -13,19 +13,19 @@ import UpdateChecker from "./UpdateChecker";
 
 const SECTIONS = [
   "General", "Window / Resolution", "Appearance", "Fonts",
-  "Language", "Calendar", "GitHub Sync", "IDE", "Hotkeys", "Data", "About",
+  "Language", "Calendar", "GitHub Sync", "IDE", "Hotkeys", "Data", "AI Engines", "About",
 ] as const;
 type Section = typeof SECTIONS[number];
 
 export default function TabSettings() {
-  const { t: _t }        = useTranslation();
-  const settings     = useAppStore((st) => st.data.settings);
+  const { t: _t } = useTranslation();
+  const settings = useAppStore((st) => st.data.settings);
   const updateSettings = useAppStore((st) => st.updateSettings);
   const [active, setActive] = useState<Section>("General");
   const [tokenInput, setTokenInput] = useState(settings.githubToken ?? "");
-  const [verifying, setVerifying]   = useState(false);
-  const [verified, setVerified]     = useState<boolean | null>(null);
-  const [syncing, setSyncing]       = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [verified, setVerified] = useState<boolean | null>(null);
+  const [syncing, setSyncing] = useState(false);
   const [backupOpen, setBackupOpen] = useState(false);
 
   const set = (patch: Partial<typeof settings>) => updateSettings(patch);
@@ -50,7 +50,7 @@ export default function TabSettings() {
   const storeSyncNow = useAppStore((st) => st.syncNow);
   const syncNow = async () => {
     setSyncing(true);
-    try { await storeSyncNow(); } catch {}
+    try { await storeSyncNow(); } catch { }
     setSyncing(false);
   };
 
@@ -95,7 +95,7 @@ export default function TabSettings() {
               <select className="input" style={{ width: "10em" }}
                 value={settings.autosaveDelayMs}
                 onChange={(e) => set({ autosaveDelayMs: Number(e.target.value) })}>
-                {[500,800,1500,3000].map((v) => <option key={v} value={v}>{v}ms</option>)}
+                {[500, 800, 1500, 3000].map((v) => <option key={v} value={v}>{v}ms</option>)}
               </select>
             </Row>
           </>
@@ -175,7 +175,7 @@ export default function TabSettings() {
             <Row label="Line height">
               <select className="input" style={{ width: "10em" }}
                 value={settings.lineHeight}
-                onChange={(e) => set({ lineHeight: e.target.value as "compact"|"normal"|"relaxed" })}>
+                onChange={(e) => set({ lineHeight: e.target.value as "compact" | "normal" | "relaxed" })}>
                 <option value="compact">Compact</option>
                 <option value="normal">Normal</option>
                 <option value="relaxed">Relaxed</option>
@@ -245,8 +245,8 @@ export default function TabSettings() {
                 </button>
               </div>
             </Row>
-            {verified === true  && <p style={{ color: "var(--green)",  fontFamily: "var(--font-mono)", fontSize: "var(--fs-xs)", marginTop: "0.5em" }}>✓ Token valid</p>}
-            {verified === false && <p style={{ color: "var(--red)",    fontFamily: "var(--font-mono)", fontSize: "var(--fs-xs)", marginTop: "0.5em" }}>✗ Token invalid or no gist scope</p>}
+            {verified === true && <p style={{ color: "var(--green)", fontFamily: "var(--font-mono)", fontSize: "var(--fs-xs)", marginTop: "0.5em" }}>✓ Token valid</p>}
+            {verified === false && <p style={{ color: "var(--red)", fontFamily: "var(--font-mono)", fontSize: "var(--fs-xs)", marginTop: "0.5em" }}>✗ Token invalid or no gist scope</p>}
             <Row label="Gist ID (auto-filled after first sync)">
               <input className="input"
                 placeholder="leave empty — auto-created on first sync"
@@ -293,16 +293,16 @@ export default function TabSettings() {
         {active === "Hotkeys" && (
           <>
             <h2 className={s.title}>KEYBOARD SHORTCUTS</h2>
-            <p className={s.desc} style={{ marginBottom:"1em" }}>
+            <p className={s.desc} style={{ marginBottom: "1em" }}>
               Click a shortcut field and press your desired key combination to customise.
             </p>
             <table className={s.hotkeyTable}>
               <tbody>
                 {([
-                  ["hotkeyGlobalShow",   "Show / hide DevNotes (global)"],
+                  ["hotkeyGlobalShow", "Show / hide DevNotes (global)"],
                   ["hotkeyQuickCapture", "Quick Capture popup"],
-                  ["hotkeyNewNote",      "New note in current project"],
-                  ["hotkeyNewTask",      "New task in current project"],
+                  ["hotkeyNewNote", "New note in current project"],
+                  ["hotkeyNewTask", "New task in current project"],
                 ] as [keyof typeof settings, string][]).map(([field, desc]) => (
                   <tr key={field}>
                     <td className={s.keyAction}>{desc}</td>
@@ -316,7 +316,7 @@ export default function TabSettings() {
                 ))}
               </tbody>
             </table>
-            <p className={s.desc} style={{ marginTop:"1em" }}>
+            <p className={s.desc} style={{ marginTop: "1em" }}>
               Fixed shortcuts: <kbd className={s.kbd}>Ctrl+1–9</kbd> switch tabs · <kbd className={s.kbd}>Ctrl+S</kbd> save · <kbd className={s.kbd}>Esc</kbd> close modal
             </p>
           </>
@@ -332,16 +332,51 @@ export default function TabSettings() {
             <Row label="Keep last N backups">
               <select className="input" style={{ width: "8em" }} value={settings.backupCount}
                 onChange={(e) => set({ backupCount: Number(e.target.value) })}>
-                {[3,5,10,20].map((n) => <option key={n} value={n}>{n}</option>)}
+                {[3, 5, 10, 20].map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
             </Row>
             <Row label="Backup / Restore">
               <button className="btn" onClick={() => setBackupOpen(true)}>⬇ Open Backup Manager</button>
             </Row>
             <p className={s.desc} style={{ marginTop: "1em" }}>
-              Data file: <code style={{ color: "var(--cyan)" }}>%APPDATA%\DevNotes\data.json</code>
+              Data file: <code style={{ color: "var(--cyan)" }}>[Install Directory]\DevNotes\data.json</code>
             </p>
             {backupOpen && <BackupDialog onClose={() => setBackupOpen(false)} />}
+          </>
+        )}
+
+        {/* ── AI Engines ── */}
+        {active === "AI Engines" && (
+          <>
+            <h2 className={s.title}>AI ENGINES</h2>
+            <p className={s.desc} style={{ marginBottom: "1.5em" }}>
+              Configure your primary (fast) and secondary (high-capacity) AI models.
+              Keys are encrypted and stored locally.
+            </p>
+
+            <h3 style={{ fontSize: "var(--fs-xs)", color: "var(--cyan)", marginTop: "1em", marginBottom: "0.5em" }}>Primary: Groq</h3>
+            <Row label="API Key">
+              <input className="input" style={{ width: "24em" }} type="password"
+                placeholder="gsk_..." value={settings.groqApiKey ?? ""}
+                onChange={(e) => set({ groqApiKey: e.target.value })} />
+            </Row>
+            <Row label="Model ID">
+              <input className="input" style={{ width: "24em" }}
+                placeholder="llama-3.3-70b-versatile" value={settings.groqModel ?? ""}
+                onChange={(e) => set({ groqModel: e.target.value })} />
+            </Row>
+
+            <h3 style={{ fontSize: "var(--fs-xs)", color: "var(--purple)", marginTop: "2em", marginBottom: "0.5em" }}>Fallback: Google Gemini</h3>
+            <Row label="API Key">
+              <input className="input" style={{ width: "24em" }} type="password"
+                placeholder="AIza..." value={settings.geminiApiKey ?? ""}
+                onChange={(e) => set({ geminiApiKey: e.target.value })} />
+            </Row>
+            <Row label="Model ID">
+              <input className="input" style={{ width: "24em" }}
+                placeholder="gemini-1.5-flash" value={settings.geminiModel ?? ""}
+                onChange={(e) => set({ geminiModel: e.target.value })} />
+            </Row>
           </>
         )}
 
