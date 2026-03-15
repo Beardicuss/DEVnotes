@@ -32,6 +32,7 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
   const activeProjectId = useAppStore((s) => s.activeProjectId);
   const activeTab = useAppStore((s) => s.activeTab);
   const setTab = useAppStore((s) => s.setTab);
+  const openProject = useAppStore((s) => s.openProject);
   const isSaving = useAppStore((s) => s.isSaving);
   const syncState = useAppStore((s) => s.syncState);
   const ghEnabled = useAppStore((s) => s.data.settings.githubSyncEnabled);
@@ -63,7 +64,9 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
         {activeProject && (
           <>
             <span className={s.sep}>›</span>
-            <span className={s.projName}>{activeProject.name}</span>
+            <button className={s.projNameBtn} onClick={() => openProject("")} title="Switch Project">
+              {activeProject.name} <span style={{ opacity: 0.5, fontSize: "0.8em", marginLeft: "4px" }}>▾</span>
+            </button>
           </>
         )}
       </div>

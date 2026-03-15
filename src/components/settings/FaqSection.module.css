@@ -1,0 +1,139 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 4em;
+}
+
+.title {
+    font-family: var(--font-mono);
+    font-size: var(--fs-lg);
+    color: var(--cyan);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.desc {
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: var(--fs-sm);
+    max-width: 600px;
+    line-height: var(--lh);
+    margin: 0;
+    margin-top: 0.4em;
+}
+
+.categoryGroup {
+    margin-bottom: 2.5em;
+    animation: fadein 0.3s ease-out;
+}
+
+.categoryTitle {
+    font-family: var(--font-mono);
+    font-size: var(--fs-md);
+    color: var(--purple);
+    margin: 0 0 1em 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.4em;
+}
+
+.accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.item {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all var(--t-base);
+}
+
+.item:hover {
+    border-color: var(--cyan);
+}
+
+.itemOpen {
+    border-color: var(--cyan);
+    box-shadow: 0 4px 12px rgba(0, 255, 255, 0.05);
+}
+
+.questionBtn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2em 1.5em;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-on-accent);
+    text-align: left;
+    transition: all var(--t-base);
+}
+
+.questionBtn:hover {
+    background: rgba(0, 255, 255, 0.04);
+}
+
+.qText {
+    font-family: var(--font-ui);
+    font-size: var(--fs-md);
+    font-weight: 500;
+}
+
+.chevron {
+    font-family: var(--font-mono);
+    font-size: var(--fs-lg);
+    color: var(--cyan);
+    width: 24px;
+    text-align: center;
+}
+
+.answer {
+    padding: 0 1.5em 1.5em 1.5em;
+    color: var(--text-dim);
+    font-family: var(--font-ui);
+    font-size: var(--fs-sm);
+    line-height: var(--lh);
+    animation: slideDown 0.2s ease-out;
+}
+
+.answer code {
+    background: var(--bg-input);
+    padding: 0.1em 0.3em;
+    border-radius: 2px;
+    font-family: var(--font-code);
+    color: var(--cyan);
+    font-size: 0.9em;
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        padding-top: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        padding-top: 0;
+        transform: translateY(0);
+    }
+}

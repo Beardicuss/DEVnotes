@@ -8,38 +8,43 @@ type Step = typeof STEPS[number];
 
 const THEMES: { id: import("@/types").Theme; label: string; preview: string }[] = [
   { id: "softcurse-dark", label: "Softcurse Dark", preview: "#020202" },
-  { id: "light",          label: "Light",          preview: "#f5f5f5" },
-  { id: "system",         label: "System",         preview: "#333333" },
+  { id: "light", label: "Light", preview: "#f5f5f5" },
+  { id: "system", label: "System", preview: "#333333" },
 ];
 
 const PROJECT_TEMPLATES = [
-  { id: "blank",    label: "Blank",         icon: "◻", desc: "Empty project, you decide the structure." },
-  { id: "webapp",   label: "Web App",        icon: "🌐", desc: "Frontend/backend, sprints, deployment tasks." },
-  { id: "mobile",   label: "Mobile App",     icon: "📱", desc: "iOS/Android, QA checklists, store releases." },
-  { id: "library",  label: "Library / SDK",  icon: "📦", desc: "Versioning, changelog, docs, package publishing." },
-  { id: "personal", label: "Personal",       icon: "🧑", desc: "Side project or solo dev work." },
+  { id: "blank", label: "Blank", icon: "◻", desc: "Empty project, you decide the structure." },
+  { id: "webapp", label: "Web App", icon: "🌐", desc: "Frontend/backend, sprints, deployment tasks." },
+  { id: "mobile", label: "Mobile App", icon: "📱", desc: "iOS/Android, QA checklists, store releases." },
+  { id: "library", label: "Library / SDK", icon: "📦", desc: "Versioning, changelog, docs, package publishing." },
+  { id: "personal", label: "Personal", icon: "🧑", desc: "Side project or solo dev work." },
 ];
 
 export default function Onboarding({ onComplete }: { onComplete: () => void }) {
   const updateSettings = useAppStore((s) => s.updateSettings);
-  const addProject     = useAppStore((s) => s.addProject);
-  const addTask        = useAppStore((s) => s.addTask);
-  const openProject    = useAppStore((s) => s.openProject);
+  const addProject = useAppStore((s) => s.addProject);
+  const addTask = useAppStore((s) => s.addTask);
+  const openProject = useAppStore((s) => s.openProject);
 
-  const [step,         setStep]         = useState<Step>("Welcome");
-  const [resolution,   setResolution]   = useState<ResolutionKey>("fhd");
+  const [step, setStep] = useState<Step>("Welcome");
+  const [resolution, setResolution] = useState<ResolutionKey>("fhd");
   const [theme, setTheme] = useState<import("@/types").Theme>("softcurse-dark");
-  const [projectName,  setProjectName]  = useState("");
-  const [template,     setTemplate]     = useState("blank");
-  const [githubToken,  setGithubToken]  = useState("");
-  const [skipGithub,   setSkipGithub]   = useState(false);
+  const [projectName, setProjectName] = useState("");
+  const [template, setTemplate] = useState("blank");
+  const [githubToken, setGithubToken] = useState("");
+  const [skipGithub, setSkipGithub] = useState(false);
 
   const stepIndex = STEPS.indexOf(step);
-  const progress  = (stepIndex / (STEPS.length - 1)) * 100;
+  const progress = (stepIndex / (STEPS.length - 1)) * 100;
 
   const handleResolutionChange = (key: ResolutionKey) => {
     setResolution(key);
     applyResolution(key);
+  };
+
+  const handleThemeChange = (newTheme: import("@/types").Theme) => {
+    setTheme(newTheme);
+    document.documentElement.setAttribute("data-theme", newTheme);
   };
 
   const handleNext = () => {
@@ -114,11 +119,11 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
             <div className={s.featureGrid}>
               {[
                 ["📋", "Tasks & Kanban", "Track work with priorities, due dates, and reminders"],
-                ["📝", "Notes",          "Markdown notes linked to your projects"],
-                ["🗺", "Mind Maps",      "Visual brainstorming canvas"],
-                ["📅", "Calendar",       "Sync to Google Calendar or export .ics"],
-                ["🍅", "Pomodoro",       "Focus timer with session tracking"],
-                ["📊", "Gantt",          "Timeline view of tasks and milestones"],
+                ["📝", "Notes", "Markdown notes linked to your projects"],
+                ["🗺", "Mind Maps", "Visual brainstorming canvas"],
+                ["📅", "Calendar", "Sync to Google Calendar or export .ics"],
+                ["🍅", "Pomodoro", "Focus timer with session tracking"],
+                ["📊", "Gantt", "Timeline view of tasks and milestones"],
               ].map(([icon, label, desc]) => (
                 <div key={label} className={s.featureCard}>
                   <span className={s.featureIcon}>{icon}</span>
@@ -158,7 +163,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
               {THEMES.map((t) => (
                 <button key={t.id}
                   className={`${s.themeCard} ${theme === t.id ? s.themeActive : ""}`}
-                  onClick={() => setTheme(t.id)}>
+                  onClick={() => handleThemeChange(t.id)}>
                   <div className={s.themePreview} style={{ background: t.preview }}>
                     <div className={s.previewTitlebar} />
                     <div className={s.previewSidebar} />
@@ -236,12 +241,12 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
             <p className={s.subheading}>DevNotes is ready. Here are a few tips to get started:</p>
             <div className={s.tipsList}>
               {[
-                ["Ctrl+Shift+D",       "Show / hide DevNotes from anywhere"],
-                ["Ctrl+Shift+Space",   "Quick Capture — add a task or note instantly"],
-                ["Ctrl+1 through 7",   "Switch between tabs"],
-                ["Ctrl+S",             "Force save"],
-                ["Settings → Calendar","Connect Google Calendar or export .ics"],
-                ["Tools → Pomodoro",   "Start a focus session"],
+                ["Ctrl+Shift+D", "Show / hide DevNotes from anywhere"],
+                ["Ctrl+Shift+Space", "Quick Capture — add a task or note instantly"],
+                ["Ctrl+1 through 7", "Switch between tabs"],
+                ["Ctrl+S", "Force save"],
+                ["Settings → Calendar", "Connect Google Calendar or export .ics"],
+                ["Tools → Pomodoro", "Start a focus session"],
               ].map(([key, desc]) => (
                 <div key={key} className={s.tip}>
                   <kbd className={s.kbd}>{key}</kbd>

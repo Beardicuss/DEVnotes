@@ -23,6 +23,15 @@
   font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim);
   max-width: 14em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
+.projNameBtn {
+  font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-dim);
+  max-width: 16em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  background: transparent; border: none; cursor: pointer; padding: 0.2em 0.5em;
+  border-radius: 4px; transition: all 0.2s; display: flex; align-items: center;
+}
+.projNameBtn:hover {
+  background: rgba(255, 255, 255, 0.08); color: var(--text);
+}
 
 /* Tabs */
 .tabs { display: flex; flex: 1; height: 100%; overflow-x: hidden; }

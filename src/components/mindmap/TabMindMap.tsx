@@ -63,15 +63,45 @@ function MindMapCanvas({ project, mindMap, updateMap }: {
   const [rfNodes, setRFNodes, onNodesChange] = useNodesState(initialRFNodes);
   const [rfEdges, setRFEdges, onEdgesChange] = useEdgesState(initialRFEdges);
 
-  // Persist node position changes back to store
-  const onNodeDragStop = useCallback((_: any, node: any) => {
+  const onNodesChangeRF = useCallback((changes: any[]) => {
+    onNodesChange(changes);
     if (!project || !mindMap) return;
-    updateMap(project.id, {
-      nodes: mindMap.nodes.map((n) =>
-        n.id === node.id ? { ...n, x: node.position.x, y: node.position.y } : n
-      ),
-    });
-  }, [project, mindMap, updateMap]);
+
+    // Convert RF nodes back to our schema any time they move, resize, or delete
+    setTimeout(() => {
+      setRFNodes((currentNodes) => {
+        const updatedNodes = currentNodes.map(n => ({
+          id: n.id,
+          text: n.data.label,
+          x: n.position.x,
+          y: n.position.y,
+          type: n.data.type || "idea",
+          colour: n.data.colour || "#0088ff",
+          parentId: null,
+        }));
+        updateMap(project.id, { nodes: updatedNodes });
+        return currentNodes;
+      });
+    }, 0);
+  }, [project, mindMap, updateMap, onNodesChange, setRFNodes]);
+
+  const onEdgesChangeRF = useCallback((changes: any[]) => {
+    onEdgesChange(changes);
+    if (!project || !mindMap) return;
+
+    setTimeout(() => {
+      setRFEdges((currentEdges) => {
+        const updatedEdges = currentEdges.map(e => ({
+          id: e.id,
+          fromId: e.source,
+          toId: e.target,
+          label: e.label || null,
+        }));
+        updateMap(project.id, { edges: updatedEdges });
+        return currentEdges;
+      });
+    }, 0);
+  }, [project, mindMap, updateMap, onEdgesChange, setRFEdges]);
 
   const onConnect = useCallback((params: any) => {
     if (!project || !mindMap) return;
@@ -152,10 +182,9 @@ function MindMapCanvas({ project, mindMap, updateMap }: {
       <ReactFlow
         nodes={rfNodes}
         edges={rfEdges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
+        onNodesChange={onNodesChangeRF}
+        onEdgesChange={onEdgesChangeRF}
         onConnect={onConnect}
-        onNodeDragStop={onNodeDragStop}
         fitView
         style={{ background: "var(--bg-root)" }}
         defaultViewport={mindMap?.viewport ?? { x: 0, y: 0, zoom: 1 }}

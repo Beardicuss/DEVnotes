@@ -11,9 +11,11 @@ import BackupDialog from "@/components/backup/BackupDialog";
 import HotkeyInput from "./HotkeyInput";
 import UpdateChecker from "./UpdateChecker";
 
+import FaqSection from "./FaqSection";
+
 const SECTIONS = [
   "General", "Window / Resolution", "Appearance", "Fonts",
-  "Language", "Calendar", "GitHub Sync", "IDE", "Hotkeys", "Data", "AI Engines", "About",
+  "Language", "Calendar", "GitHub Sync", "IDE", "Hotkeys", "Data", "AI Engines", "FAQ", "About",
 ] as const;
 type Section = typeof SECTIONS[number];
 
@@ -393,6 +395,9 @@ export default function TabSettings() {
             <UpdateChecker />
           </>
         )}
+
+        {/* ── FAQ ── */}
+        {active === "FAQ" && <FaqSection />}
 
       </div>
     </div>
