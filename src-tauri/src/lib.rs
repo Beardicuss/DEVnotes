@@ -84,8 +84,7 @@ async fn wait_oauth_callback() -> Result<serde_json::Value, String> {
 }
 
 // ── File watcher ──────────────────────────────────────────────────
-use serde::Serialize;
-use tauri::{AppHandle, Emitter, Listener};
+use tauri::Emitter;
 #[tauri::command]
 async fn watch_project_dir(
     app: tauri::AppHandle,

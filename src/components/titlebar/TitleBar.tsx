@@ -42,8 +42,20 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
   const handleMax = async () => { try { await getCurrentWindow().toggleMaximize(); } catch (e: any) { alert("Max failed: " + String(e)); } };
   const handleClose = async () => { try { await getCurrentWindow().hide(); } catch (e: any) { alert("Close failed: " + String(e)); window.close(); } };
 
+  const handleDrag = (e: React.PointerEvent<HTMLElement>) => {
+    if (!isTauri) return;
+    const target = e.target as HTMLElement;
+    // Prevent dragging if the user clicked a button or a tab inside the navigation
+    if (target.closest('button') || target.closest('nav')) return;
+    try {
+      getCurrentWindow().startDragging();
+    } catch (err) {
+      console.warn("Failed to drag window:", err);
+    }
+  };
+
   return (
-    <header className={s.bar}>
+    <header className={s.bar} onPointerDown={handleDrag}>
       {/* Logo */}
       <div className={s.logo}>
         <span className={s.logoCyan}>DEV</span>
@@ -70,13 +82,13 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
             </button>
           ))}
           {/* Draggable blank space next to tabs */}
-          <div data-tauri-drag-region style={{ flex: 1, minWidth: "20px" }} />
+          <div style={{ flex: 1, minWidth: "20px" }} />
         </nav>
       )}
 
       {!activeProjectId && (
         /* Draggable blank space when no project is selected */
-        <div data-tauri-drag-region style={{ flex: 1 }} />
+        <div style={{ flex: 1 }} />
       )}
 
       <div className={s.right}>
