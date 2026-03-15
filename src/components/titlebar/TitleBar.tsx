@@ -24,9 +24,9 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
     { id: "tasks", label: t("nav.tasks"), hotkey: "5" },
     { id: "mindmap", label: t("nav.mindmap"), hotkey: "6" },
     { id: "tools", label: t("nav.tools"), hotkey: "7" },
-    { id: "gantt", label: t("nav.gantt", "Gantt") },
-    { id: "decisions", label: t("nav.decisions", "Decisions") },
-    { id: "standup", label: t("nav.standup", "Standup") },
+    { id: "gantt", label: t("nav.gantt") },
+    { id: "decisions", label: t("nav.decisions") },
+    { id: "standup", label: t("nav.standup") },
   ];
 
   const activeProjectId = useAppStore((s) => s.activeProjectId);
@@ -64,7 +64,7 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
         {activeProject && (
           <>
             <span className={s.sep}>›</span>
-            <button className={s.projNameBtn} onClick={() => openProject("")} title="Switch Project">
+            <button className={s.projNameBtn} onClick={() => openProject("")} title={t("nav.switchProject")}>
               {activeProject.name} <span style={{ opacity: 0.5, fontSize: "0.8em", marginLeft: "4px" }}>▾</span>
             </button>
           </>
@@ -104,26 +104,26 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
         )}
 
         {onSearchOpen && (
-          <button className={s.settingsBtn} onClick={onSearchOpen} title="Global Search (Ctrl+K)">⌕</button>
+          <button className={s.settingsBtn} onClick={onSearchOpen} title={t("nav.globalSearch")}>⌕</button>
         )}
         {onShareOpen && activeProjectId && (
-          <button className={s.settingsBtn} onClick={onShareOpen} title="Share / Export Project">↑ Share</button>
+          <button className={s.settingsBtn} onClick={onShareOpen} title={t("nav.shareProject")}>↑ {t("nav.share")}</button>
         )}
         {onPomodoroToggle && (
           <button className={`${s.settingsBtn} ${pomodoroOpen ? s.pomodoroActive : ""}`}
-            onClick={onPomodoroToggle} title="Pomodoro Timer">🍅</button>
+            onClick={onPomodoroToggle} title={t("nav.pomodoro")}>🍅</button>
         )}
         <button className={s.settingsBtn} onClick={() => setTab("settings")} title={t("nav.settings")}>⚙</button>
 
         {isTauri && (
           <div className={s.winBtns}>
-            <button className={s.winBtn} onClick={handleMin} title="Minimise">
+            <button className={s.winBtn} onClick={handleMin} title={t("nav.minimise")}>
               <svg viewBox="0 0 10 10" width="10" height="10" style={{ pointerEvents: 'none' }}><path d="M 0,5 10,5" stroke="currentColor" strokeWidth="1" strokeLinecap="round" /></svg>
             </button>
-            <button className={s.winBtn} onClick={handleMax} title="Maximise">
+            <button className={s.winBtn} onClick={handleMax} title={t("nav.maximise")}>
               <svg viewBox="0 0 10 10" width="10" height="10" style={{ pointerEvents: 'none' }}><path d="M 1,1 9,1 9,9 1,9 Z" fill="none" stroke="currentColor" strokeWidth="1" /></svg>
             </button>
-            <button className={`${s.winBtn} ${s.close}`} onClick={handleClose} title="Close">
+            <button className={`${s.winBtn} ${s.close}`} onClick={handleClose} title={t("nav.close")}>
               <svg viewBox="0 0 10 10" width="10" height="10" style={{ pointerEvents: 'none' }}><path d="M 0,0 10,10 M 10,0 0,10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" /></svg>
             </button>
           </div>

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useAppStore, selTasks, selActiveProject } from "@/stores/useAppStore";
 import { sendNotification } from "@/utils/platform";
 import s from "./Pomodoro.module.css";
@@ -6,37 +7,44 @@ import s from "./Pomodoro.module.css";
 type Mode = "work" | "short-break" | "long-break";
 
 const DURATIONS: Record<Mode, number> = {
-  "work":        25 * 60,
-  "short-break":  5 * 60,
-  "long-break":  15 * 60,
+  "work": 25 * 60,
+  "short-break": 5 * 60,
+  "long-break": 15 * 60,
 };
 
 const MODE_LABELS: Record<Mode, string> = {
-  "work":        "Focus",
+  "work": "Focus",
   "short-break": "Short Break",
-  "long-break":  "Long Break",
+  "long-break": "Long Break",
 };
 
 const MODE_COLOURS: Record<Mode, string> = {
-  "work":        "var(--cyan)",
+  "work": "var(--cyan)",
   "short-break": "var(--green)",
-  "long-break":  "var(--blue)",
+  "long-break": "var(--blue)",
 };
 
 export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }) {
-  const project      = useAppStore(selActiveProject);
-  const tasks        = useAppStore(selTasks);
-  const addPomodoro    = useAppStore((s) => s.addPomodoro);
-  const pomodoros      = useAppStore((s) => s.data.pomodoros ?? []);
+  const { t } = useTranslation();
+  const project = useAppStore(selActiveProject);
+  const tasks = useAppStore(selTasks);
+  const addPomodoro = useAppStore((s) => s.addPomodoro);
+  const pomodoros = useAppStore((s) => s.data.pomodoros ?? []);
   const updateSettings = useAppStore((s) => s.updateSettings);
-  const savedDuration  = useAppStore((s) => s.data.settings.pomodoroDurationMins ?? 25);
+  const savedDuration = useAppStore((s) => s.data.settings.pomodoroDurationMins ?? 25);
 
-  const [mode,       setMode]       = useState<Mode>("work");
-  const [timeLeft,   setTimeLeft]   = useState(DURATIONS["work"]);
-  const [running,    setRunning]    = useState(false);
-  const [cycle,      setCycle]      = useState(1);   // pomodoro number
-  const [taskId,     setTaskId]     = useState<string | null>(null);
-  const [minimised,  setMinimised]  = useState(false);
+  const MODE_LABELS: Record<Mode, string> = {
+    "work": t("pomodoro.focus"),
+    "short-break": t("pomodoro.break"),
+    "long-break": t("pomodoro.break"),
+  };
+
+  const [mode, setMode] = useState<Mode>("work");
+  const [timeLeft, setTimeLeft] = useState(DURATIONS["work"]);
+  const [running, setRunning] = useState(false);
+  const [cycle, setCycle] = useState(1);   // pomodoro number
+  const [taskId, setTaskId] = useState<string | null>(null);
+  const [minimised, setMinimised] = useState(false);
   const [customWork, setCustomWork] = useState<number>(savedDuration);
   const [showSettings, setShowSettings] = useState(false);
 
@@ -49,7 +57,7 @@ export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }
   );
 
   // Today's stats
-  const today        = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
   const todaySessions = pomodoros.filter(
     (p) => p.projectId === project?.id && p.startedAt.slice(0, 10) === today && p.completed
   );
@@ -67,8 +75,8 @@ export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }
             projectId: project.id,
             taskId,
             startedAt: startedAt.current ?? new Date().toISOString(),
-            endedAt:   new Date().toISOString(),
-            duration:  customWork,
+            endedAt: new Date().toISOString(),
+            duration: customWork,
             completed: true,
           });
           sendNotification("🍅 Pomodoro complete!", `${customWork} min focus session done. Take a break.`);
@@ -107,9 +115,9 @@ export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }
     setRunning(true);
   };
 
-  const handlePause  = () => setRunning(false);
+  const handlePause = () => setRunning(false);
 
-  const handleReset  = () => {
+  const handleReset = () => {
     setRunning(false);
     setTimeLeft(mode === "work" ? customWork * 60 : DURATIONS[mode]);
   };
@@ -128,7 +136,7 @@ export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }
 
   const mins = Math.floor(timeLeft / 60).toString().padStart(2, "0");
   const secs = (timeLeft % 60).toString().padStart(2, "0");
-  const total    = mode === "work" ? customWork * 60 : DURATIONS[mode];
+  const total = mode === "work" ? customWork * 60 : DURATIONS[mode];
   const progress = ((total - timeLeft) / total) * 100;
 
   const colour = MODE_COLOURS[mode];
@@ -147,7 +155,7 @@ export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }
     <div className={s.root}>
       {/* Header */}
       <div className={s.header}>
-        <span className={s.title}>POMODORO</span>
+        <span className={s.title}>{t("pomodoro.title")}</span>
         <div className={s.headerRight}>
           <button className={s.iconBtn} onClick={() => setShowSettings(!showSettings)} title="Settings">⚙</button>
           <button className={s.iconBtn} onClick={() => setMinimised(true)} title="Minimise">─</button>
@@ -189,11 +197,11 @@ export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }
       <div className={s.controls}>
         {!running ? (
           <button className={s.startBtn} style={{ borderColor: colour, color: colour }} onClick={handleStart}>
-            ▶ Start
+            ▶ {t("pomodoro.start")}
           </button>
         ) : (
           <button className={s.startBtn} style={{ borderColor: colour, color: colour }} onClick={handlePause}>
-            ⏸ Pause
+            ⏸ {t("pomodoro.pause")}
           </button>
         )}
         <button className={s.resetBtn} onClick={handleReset}>↺ Reset</button>
@@ -204,7 +212,7 @@ export default function Pomodoro({ onClose: _onClose }: { onClose?: () => void }
         <label className={s.taskLabel}>FOCUSING ON</label>
         <select className="input" value={taskId ?? ""}
           onChange={(e) => setTaskId(e.target.value || null)}>
-          <option value="">— No specific task —</option>
+          <option value="">— {t("pomodoro.skip")} —</option>
           {projectTasks.map((t) => (
             <option key={t.id} value={t.id}>[{t.priority}] {t.title}</option>
           ))}

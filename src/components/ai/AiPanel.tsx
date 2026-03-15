@@ -13,6 +13,7 @@
  */
 
 import { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { useAppStore, selActiveProject, selTasks, selNotes } from "@/stores/useAppStore";
 import { isTauri } from "@/utils/platform";
 import { uid } from "@/utils/id";
@@ -186,6 +187,7 @@ function ModeButton({ mode: _mode, active, icon, label, onClick }: {
 
 // ─── Main Panel ───────────────────────────────────────────────────
 export default function AiPanel({ noteId, onClose }: { noteId?: string, onClose?: () => void }) {
+  const { t } = useTranslation();
   const project = useAppStore(selActiveProject);
   const tasks = useAppStore(selTasks);
   const notes = useAppStore(selNotes);
@@ -400,9 +402,9 @@ Respond ONLY with a JSON array of task title strings, e.g. ["Set up database sch
   if (!groqApiKey || !geminiApiKey) {
     return (
       <div className={s.panel} style={{ justifyContent: "center", alignItems: "center", textAlign: "center", padding: "2em" }}>
-        <h2 style={{ fontFamily: "var(--font-display)", color: "var(--cyan)", marginBottom: "1em" }}>AI Engine Not Configured</h2>
+        <h2 style={{ fontFamily: "var(--font-display)", color: "var(--cyan)", marginBottom: "1em" }}>{t("ai.notConfigured")}</h2>
         <p style={{ color: "var(--text-dim)", lineHeight: "1.6" }}>
-          Please go to <strong>Settings → AI Engines</strong> to initialize your Groq and Gemini API Keys.
+          {t("ai.configureHint")}
         </p>
       </div>
     );
@@ -412,12 +414,12 @@ Respond ONLY with a JSON array of task title strings, e.g. ["Set up database sch
     <div className={s.panel}>
       {/* Mode tabs */}
       <div className={s.modes} style={{ display: "flex", flexWrap: "wrap", alignItems: "center", position: "relative" }}>
-        <ModeButton mode="ask" active={mode === "ask"} icon="💬" label="Ask" onClick={() => { setMode("ask"); clearChat(); }} />
-        <ModeButton mode="breakdown" active={mode === "breakdown"} icon="🧩" label="Breakdown" onClick={() => { setMode("breakdown"); clearChat(); }} />
-        <ModeButton mode="standup" active={mode === "standup"} icon="🗓" label="Standup" onClick={() => { setMode("standup"); clearChat(); }} />
+        <ModeButton mode="ask" active={mode === "ask"} icon="💬" label={t("ai.modes.ask")} onClick={() => { setMode("ask"); clearChat(); }} />
+        <ModeButton mode="breakdown" active={mode === "breakdown"} icon="🧩" label={t("ai.modes.breakdown")} onClick={() => { setMode("breakdown"); clearChat(); }} />
+        <ModeButton mode="standup" active={mode === "standup"} icon="🗓" label={t("ai.modes.standup")} onClick={() => { setMode("standup"); clearChat(); }} />
         {currentNote && <>
-          <ModeButton mode="summarise" active={mode === "summarise"} icon="📋" label="Summarise" onClick={() => { setMode("summarise"); clearChat(); }} />
-          <ModeButton mode="tags" active={mode === "tags"} icon="🏷" label="Tags" onClick={() => { setMode("tags"); clearChat(); }} />
+          <ModeButton mode="summarise" active={mode === "summarise"} icon="📋" label={t("ai.modes.summarise")} onClick={() => { setMode("summarise"); clearChat(); }} />
+          <ModeButton mode="tags" active={mode === "tags"} icon="🏷" label={t("ai.modes.tags")} onClick={() => { setMode("tags"); clearChat(); }} />
         </>}
         {onClose && (
           <button onClick={onClose} title="Close AI Panel" style={{ marginLeft: "auto", background: "none", border: "none", color: "var(--cyan)", cursor: "pointer", fontSize: "16px", padding: "0 8px" }}>✕</button>
@@ -426,28 +428,28 @@ Respond ONLY with a JSON array of task title strings, e.g. ["Set up database sch
 
       {/* Mode hint */}
       <div className={s.hint}>
-        {mode === "ask" && "Ask anything about your project, tasks, notes, or decisions."}
-        {mode === "breakdown" && "Type a goal below → AI creates subtasks in your project."}
-        {mode === "standup" && "Generate a standup draft from your recent activity."}
-        {mode === "summarise" && "Summarise and get improvement suggestions for the current note."}
-        {mode === "tags" && "Auto-suggest and apply tags to the current note."}
+        {mode === "ask" && t("ai.hints.ask")}
+        {mode === "breakdown" && t("ai.hints.breakdown")}
+        {mode === "standup" && t("ai.hints.standup")}
+        {mode === "summarise" && t("ai.hints.summarise")}
+        {mode === "tags" && t("ai.hints.tags")}
       </div>
 
       {/* Message thread */}
       <div className={s.thread}>
         {messages.length === 0 && (
           <div className={s.threadEmpty}>
-            {mode === "ask" && <button className="btn" onClick={() => send("What should I focus on today based on my tasks?")}>💡 What should I focus on today?</button>}
-            {mode === "ask" && <button className="btn" onClick={() => send("Give me a quick project health summary.")}>📊 Project health summary</button>}
-            {mode === "standup" && <button className="btn btn-primary" onClick={presetStandup}>📝 Generate standup draft</button>}
-            {mode === "summarise" && <button className="btn btn-primary" onClick={presetSummarise}>📋 Summarise this note</button>}
-            {mode === "tags" && <button className="btn btn-primary" onClick={presetTags}>🏷 Suggest & apply tags</button>}
+            {mode === "ask" && <button className="btn" onClick={() => send("What should I focus on today based on my tasks?")}>💡 {t("ai.presets.focus")}</button>}
+            {mode === "ask" && <button className="btn" onClick={() => send("Give me a quick project health summary.")}>📊 {t("ai.presets.health")}</button>}
+            {mode === "standup" && <button className="btn btn-primary" onClick={presetStandup}>📝 {t("ai.presets.standup")}</button>}
+            {mode === "summarise" && <button className="btn btn-primary" onClick={presetSummarise}>📋 {t("ai.presets.summarise")}</button>}
+            {mode === "tags" && <button className="btn btn-primary" onClick={presetTags}>🏷 {t("ai.presets.tags")}</button>}
           </div>
         )}
 
         {messages.map((m, i) => (
           <div key={i} className={`${s.bubble} ${m.role === "user" ? s.bubbleUser : s.bubbleAi}`}>
-            <div className={s.bubbleLabel}>{m.role === "user" ? "You" : "✦ AI"}</div>
+            <div className={s.bubbleLabel}>{m.role === "user" ? t("ai.you") : "✦ AI"}</div>
             <MarkdownRenderer content={m.content} />
           </div>
         ))}
@@ -468,9 +470,9 @@ Respond ONLY with a JSON array of task title strings, e.g. ["Set up database sch
           className={`input ${s.aiInput}`}
           rows={2}
           placeholder={
-            mode === "breakdown" ? "Describe a goal to break into tasks…" :
-              mode === "ask" ? "Ask something about your project…" :
-                "Message…"
+            mode === "breakdown" ? t("ai.inputPh.breakdown") :
+              mode === "ask" ? t("ai.inputPh.ask") :
+                t("ai.inputPh.default")
           }
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -489,8 +491,8 @@ Respond ONLY with a JSON array of task title strings, e.g. ["Set up database sch
 
       <div className={s.footer}>
         <span>⚡ Groq Llama 3 · ✨ Gemini 1.5 Flash</span>
-        <button className={s.clearBtn} onClick={clearChat}>Clear</button>
-        <button className={s.clearBtn} onClick={() => updateSettings({ groqApiKey: null, geminiApiKey: null })}>Remove keys</button>
+        <button className={s.clearBtn} onClick={clearChat}>{t("ai.clear")}</button>
+        <button className={s.clearBtn} onClick={() => updateSettings({ groqApiKey: null, geminiApiKey: null })}>{t("ai.removeKeys")}</button>
       </div>
     </div>
   );

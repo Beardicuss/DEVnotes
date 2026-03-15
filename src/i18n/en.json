@@ -16,7 +16,15 @@
     "archive": "Archive",
     "gantt": "Gantt",
     "decisions": "Decisions",
-    "standup": "Standup"
+    "standup": "Standup",
+    "switchProject": "Switch Project",
+    "globalSearch": "Global Search (Ctrl+K)",
+    "shareProject": "Share / Export Project",
+    "share": "Share",
+    "pomodoro": "Pomodoro Timer",
+    "minimise": "Minimise",
+    "maximise": "Maximise",
+    "close": "Close"
   },
   "projects": {
     "title": "Projects",
@@ -132,6 +140,7 @@
     "title": "Settings",
     "sections": {
       "general": "General",
+      "window": "Window / Resolution",
       "appearance": "Appearance",
       "fonts": "Fonts",
       "language": "Language",
@@ -141,6 +150,8 @@
       "github": "GitHub Sync",
       "hotkeys": "Keyboard Shortcuts",
       "data": "Data & Backup",
+      "ai": "AI Engines",
+      "faq": "FAQ",
       "about": "About"
     },
     "general": {
@@ -203,6 +214,57 @@
         "manual": "Manual only"
       }
     },
+    "ide": {
+      "title": "IDE PATHS",
+      "vscodePath": "VS Code path",
+      "vstudioPath": "Visual Studio path",
+      "terminal": "Terminal emulator",
+      "gitPath": "Git executable",
+      "placeholder": {
+        "code": "code",
+        "devenv": "devenv",
+        "cmd": "cmd",
+        "git": "git"
+      }
+    },
+    "hotkeys": {
+      "title": "KEYBOARD SHORTCUTS",
+      "desc1": "Click a shortcut field and press your desired key combination to customise.",
+      "desc2": "Fixed shortcuts: Ctrl+1–9 switch tabs · Ctrl+S save · Esc close modal",
+      "hotkeyGlobalShow": "Show / hide DevNotes (global)",
+      "hotkeyQuickCapture": "Quick Capture popup",
+      "hotkeyNewNote": "New note in current project",
+      "hotkeyNewTask": "New task in current project"
+    },
+    "data": {
+      "title": "DATA & BACKUP",
+      "autoBackup": "Auto backup",
+      "keepLastN": "Keep last N backups",
+      "backupRestore": "Backup / Restore",
+      "openBackupManager": "⬇ Open Backup Manager",
+      "dataFile": "Data file: [Install Directory]\\DevNotes\\data.json"
+    },
+    "ai": {
+      "title": "AI ENGINES",
+      "desc": "Configure your primary (fast) and secondary (high-capacity) AI models. Keys are encrypted and stored locally.",
+      "primary": "Primary: Groq",
+      "fallback": "Fallback: Google Gemini",
+      "apiKey": "API Key",
+      "modelId": "Model ID"
+    },
+    "about": {
+      "title": "ABOUT",
+      "edition": "Desktop Edition",
+      "stack1": "Tauri 2 · React 18 · TypeScript · Zustand",
+      "stack2": "Softcurse Studio"
+    },
+    "window": {
+      "title": "WINDOW SIZE",
+      "desc": "Choose your monitor resolution. DevNotes will resize the window and scale all fonts and spacing to match perfectly.",
+      "active": "✓ Active",
+      "base": "px base",
+      "hint": "The window will resize immediately. You can also press Ctrl+− / Ctrl+= in the browser to zoom in/out while testing."
+    },
     "save": "Save Settings",
     "saved": "Saved"
   },
@@ -211,6 +273,246 @@
     "asNote": "Note",
     "asTask": "Task",
     "asTodo": "Todo"
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "WELCOME TO DEVNOTES",
+      "subtitle": "The offline-first, terminal-integrated project manager.",
+      "paragraph1": "We need 30 seconds to configure your workspace before you drop in.",
+      "button": "Begin Setup"
+    },
+    "resolution": {
+      "title": "MONITOR SIZE",
+      "subtitle": "DevNotes scales perfectly to any screen. What resolution are you currently using?",
+      "customiseHint": "You can customize the base font size and line-heights later.",
+      "button": "Next"
+    },
+    "theme": {
+      "title": "APPEARANCE",
+      "subtitle": "Choose your aesthetic. Dark mode provides the best contrast for the glowing terminal elements.",
+      "system": "System Default",
+      "button": "Next"
+    },
+    "project": {
+      "title": "YOUR FIRST PROJECT",
+      "subtitle": "Let's create an empty workspace to drop you into.",
+      "inputPlaceholder": "e.g. Portfolio Website, API Refactor...",
+      "templateLabel": "Select a starter template:",
+      "templates": {
+        "empty": "Empty Workspace",
+        "software": "Software Development (Sprint Board, Docs)",
+        "marketing": "Marketing / Content (Kanban, Notes)"
+      },
+      "button": "Launch DevNotes"
+    }
+  },
+  "pomodoro": {
+    "title": "POMODORO",
+    "focus": "Focus",
+    "break": "Break",
+    "start": "Start",
+    "pause": "Pause",
+    "session": "Session",
+    "whatWork": "What did you work on?",
+    "logSession": "Log Session",
+    "skip": "Skip"
+  },
+  "gantt": {
+    "title": "Gantt Chart",
+    "addTasksHint": "Add due dates to tasks or milestones to the Plan to see them here.",
+    "week": "Week",
+    "month": "Month",
+    "quarter": "Quarter",
+    "showDone": "Show Done",
+    "empty": {
+      "title": "No overdue tasks found.",
+      "hint": "Assign due dates to tasks or add milestones in the Plan tab."
+    },
+    "item": "Item",
+    "status": {
+      "todo": "To Do",
+      "in-progress": "In Progress",
+      "done": "Done",
+      "archived": "Archived"
+    },
+    "milestone": "Milestone",
+    "today": "Today"
+  },
+  "standup": {
+    "title": "Daily Standup",
+    "whatDidYouDo": "What did you do yesterday?",
+    "whatWillYouDo": "What are you planning today?",
+    "blocked": "Any blockers?",
+    "save": "Save Log",
+    "history": "History",
+    "moods": {
+      "rough": "😫 Rough",
+      "meh": "😕 Meh",
+      "ok": "😐 OK",
+      "good": "😊 Good",
+      "excellent": "🔥 Excellent"
+    },
+    "yesterdayLabel": "What did you do yesterday?",
+    "yesterdayPh": "— Finished X\n— Reviewed Y\n— Merged PR #42",
+    "todayLabel": "What are you working on today?",
+    "todayPh": "— Starting Z implementation\n— Writing tests for X",
+    "blockersLabel": "Any blockers or dependencies?",
+    "blockersPh": "None — or describe what's holding you up",
+    "none": "None",
+    "moodLabel": "How are you feeling today?",
+    "tabs": {
+      "today": "Today",
+      "history": "History"
+    },
+    "copied": "Copied!",
+    "copy": "Copy",
+    "export": "Export",
+    "exportHint": "Export Standup History",
+    "inProgress": "In Progress",
+    "overdue": "Overdue",
+    "more": "More",
+    "historyEmpty": "No standup records yet. Complete the Today tab to get started."
+  },
+  "decisions": {
+    "title": "Architecture Decisions (ADR)",
+    "new": "+ New Decision",
+    "status": {
+      "proposed": "Proposed",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "deferred": "Deferred"
+    },
+    "context": "Context & Problem",
+    "options": "Considered Options",
+    "decision": "Decision",
+    "consequences": "Consequences",
+    "save": "Save ADR",
+    "export": "Export",
+    "exportHint": "Export as Markdown",
+    "searchPh": "Search decisions…",
+    "all": "All",
+    "count": "decisions",
+    "empty": {
+      "title": "No decisions documented.",
+      "hint": "Record your technical choices, tech stack, and trade-offs.",
+      "btn": "Document first decision"
+    },
+    "untitled": "Untitled Decision",
+    "by": "Decided by:",
+    "delete": "Delete",
+    "recordTitle": "Decision Record",
+    "fields": {
+      "title": "Title",
+      "titlePh": "What decision was made?",
+      "status": "Status",
+      "date": "Date",
+      "by": "Decided by",
+      "byPh": "Your name or team",
+      "context": "Context — What problem are we solving?",
+      "contextPh": "Describe the situation, constraints, and requirements before the decision…",
+      "options": "Considered Options",
+      "optionsPh": "Option A: …\nOption B: …\nOption C: …",
+      "rationale": "Decision & Rationale",
+      "rationalePh": "We chose Option X because…\nTrade-offs accepted: …\nImpact: …",
+      "tags": "Tags (comma separated)",
+      "tagsPh": "architecture, performance, security…",
+      "linked": "Linked Task",
+      "none": "None"
+    },
+    "deleteConfirm": "Delete this decision permanently?",
+    "cancel": "Cancel"
+  },
+  "faq": {
+    "title": "FREQUENTLY ASKED QUESTIONS",
+    "desc": "Everything you need to know about DevNotes, its local-first architecture, and taking full advantage of the workspace tools.",
+    "q1": {
+      "category": "Data & Privacy",
+      "q": "Where is my data saved?",
+      "a": "DevNotes is incredibly strict about privacy. There are absolutely no cloud servers watching you. Your entire workspace is saved as a single JSON file directly inside the `DevNotes/` folder precisely where you installed the application on your computer. Your data never leaves your hard drive."
+    },
+    "q2": {
+      "category": "Data & Privacy",
+      "q": "How do I backup my workspace?",
+      "a": "Because your entire app state is just a single local `.json` file, backup is effortless. Just go to Settings → Data -> Backup / Restore. The app will generate a timestamped snapshot of your exact status. You can store these anywhere. Turn on Auto Backup to have DevNotes automatically rotate through historical snapshots for you every time you save."
+    },
+    "q3": {
+      "category": "Syncing & Cloud",
+      "q": "Can I sync projects across multiple computers?",
+      "a": "Yes! While DevNotes has no central server, it can abuse GitHub's 'Secret Gist' infrastructure to shuttle encrypted data between your laptops. Go to Settings → GitHub Sync, generate a free Personal Access Token, and DevNotes will silently save your latest `data.json` to a hidden Gist on GitHub. Just paste that same token into DevNotes on your other computer, and they'll stay perfectly mirrored."
+    },
+    "q4": {
+      "category": "AI Agent",
+      "q": "How does the AI Assistant work?",
+      "a": "DevNotes contains a unique, agentic framework that doesn't just chat—it can actively press buttons and mutate your workspace. Ask the AI to 'Create a project called Website Refactor with 5 tasks' and it will instantly build the structure for you. You are in complete control of the AI; it only takes action when you explicitly instruct it."
+    },
+    "q5": {
+      "category": "AI Agent",
+      "q": "Why do I need my own API keys?",
+      "a": "Because DevNotes has no subscription fee and no central server! To talk to advanced AI models like LLaMA 3 or Google Gemini, you simply feed the app your own free API keys from Groq or Google. You deal directly with the AI providers, cutting out the middleman entirely."
+    },
+    "q6": {
+      "category": "Pro Navigation",
+      "q": "What is the Quick Capture menu?",
+      "a": "If you have an epiphany while working in another app, press `Ctrl+Shift+Space`. DevNotes will spawn a tiny floating window where you can instantly type out a Note, Task, or Todo. Hit enter, and it will immediately insert the item into your active DevNotes project without breaking your flow."
+    },
+    "q7": {
+      "category": "Pro Navigation",
+      "q": "What are the global hotkeys?",
+      "a": "You can toggle the entire DevNotes window from anywhere on your computer using `Ctrl+Shift+D`. Inside the app, use `Ctrl+1` through `Ctrl+9` to instantly jump between the Dashboard, Plan, Notes, Mind Map, and other tabs. See the full list in Settings → Hotkeys."
+    },
+    "q8": {
+      "category": "Tools & Tabs",
+      "q": "What is the Pomodoro tab?",
+      "a": "A focus timer built on the Pomodoro technique. Start a 25-minute 'Focus' block, and the app will track your session in the background. When time's up, it logs the session to your project history and prompts you to take a 5-minute break."
+    },
+    "q9": {
+      "category": "Tools & Tabs",
+      "q": "What is the Gantt tab?",
+      "a": "A timeline that visually plots all of your tasks in chronological order based on their due dates. Use it to forecast when major milestones will happen and spot bottlenecks in your project timeline."
+    },
+    "q10": {
+      "category": "Tools & Tabs",
+      "q": "What is the Standup tab?",
+      "a": "A tool originally built for team scrums, adapted for solo devs. At the end of the day, use the Standup logger to answer three questions: What did I do today? What am I doing tomorrow? Am I blocked? Over time, this generates an awesome historical log of my momentum."
+    },
+    "q11": {
+      "category": "Tools & Tabs",
+      "q": "What is the Decisions (ADR) tab?",
+      "a": "Architecture Decision Records. Whenever you face a crossroads (e.g., 'Should I use React or Vue?', 'Postgres or SQLite?'), log it here. Write down your options, your criteria, and the final outcome you picked. Months later, when you wonder why you made a weird architectural choice, your ADRs will explain the exact context you were in."
+    }
+  },
+  "ai": {
+    "notConfigured": "AI Engine Not Configured",
+    "configureHint": "Please go to Settings → AI Engines to initialize your Groq and Gemini API Keys.",
+    "modes": {
+      "ask": "Ask",
+      "breakdown": "Breakdown",
+      "standup": "Standup",
+      "summarise": "Summarise",
+      "tags": "Tags"
+    },
+    "hints": {
+      "ask": "Ask anything about your project, tasks, notes, or decisions.",
+      "breakdown": "Type a goal below → AI creates subtasks in your project.",
+      "standup": "Generate a standup draft from your recent activity.",
+      "summarise": "Summarise and get improvement suggestions for the current note.",
+      "tags": "Auto-suggest and apply tags to the current note."
+    },
+    "presets": {
+      "focus": "What should I focus on today?",
+      "health": "Project health summary",
+      "standup": "Generate standup draft",
+      "summarise": "Summarise this note",
+      "tags": "Suggest & apply tags"
+    },
+    "you": "You",
+    "inputPh": {
+      "breakdown": "Describe a goal to break into tasks…",
+      "ask": "Ask something about your project…",
+      "default": "Message…"
+    },
+    "clear": "Clear",
+    "removeKeys": "Remove keys"
   },
   "sync": {
     "syncing": "Syncing with GitHub…",

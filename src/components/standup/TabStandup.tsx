@@ -1,20 +1,30 @@
 import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useAppStore, selActiveProject, selTasks } from "@/stores/useAppStore";
 import type { StandupEntry } from "@/types";
 import ExportDialog from "@/components/export/ExportDialog";
 import s from "./TabStandup.module.css";
 
-const MOOD_LABELS = ["", "😫 Rough", "😕 Meh", "😐 OK", "😊 Good", "🔥 Excellent"];
 const MOOD_COLOURS = ["", "var(--red)", "var(--orange,#ff8800)", "var(--yellow)", "var(--green)", "var(--cyan)"];
 
 function today(): string { return new Date().toISOString().slice(0, 10); }
 
 export default function TabStandup() {
-  const project    = useAppStore(selActiveProject);
-  const tasks      = useAppStore(selTasks);
-  const standups   = useAppStore((s) => s.data.standups ?? []);
-  const addStandup    = useAppStore((s) => s.addStandup);
+  const { t } = useTranslation();
+  const project = useAppStore(selActiveProject);
+  const tasks = useAppStore(selTasks);
+  const standups = useAppStore((s) => s.data.standups ?? []);
+  const addStandup = useAppStore((s) => s.addStandup);
   const updateStandup = useAppStore((s) => s.updateStandup);
+
+  const MOOD_LABELS = [
+    "",
+    t("standup.moods.rough"),
+    t("standup.moods.meh"),
+    t("standup.moods.ok"),
+    t("standup.moods.good"),
+    t("standup.moods.excellent"),
+  ];
 
   const [view, setView] = useState<"today" | "history">("today");
   const [copyMsg, setCopyMsg] = useState(false);
@@ -62,17 +72,17 @@ export default function TabStandup() {
   const handleCopy = () => {
     if (!todayEntry) return;
     const text = [
-      `🗓 Daily Standup — ${todayEntry.date} — ${project.name}`,
+      `🗓 ${t("standup.title")} — ${todayEntry.date} — ${project.name}`,
       "",
-      `✅ Yesterday:\n${todayEntry.yesterday || "—"}`,
+      `✅ ${t("standup.yesterdayLabel")}:\n${todayEntry.yesterday || "—"}`,
       "",
-      `📋 Today:\n${todayEntry.today || "—"}`,
+      `📋 ${t("standup.todayLabel")}:\n${todayEntry.today || "—"}`,
       "",
-      `🚧 Blockers:\n${todayEntry.blockers || "None"}`,
+      `🚧 ${t("standup.blockersLabel")}:\n${todayEntry.blockers || t("standup.none")}`,
       "",
-      `Mood: ${MOOD_LABELS[todayEntry.mood]}`,
+      `${t("standup.moodLabel")}: ${MOOD_LABELS[todayEntry.mood]}`,
     ].join("\n");
-    navigator.clipboard.writeText(text).catch(() => {});
+    navigator.clipboard.writeText(text).catch(() => { });
     setCopyMsg(true);
     setTimeout(() => setCopyMsg(false), 2000);
   };
@@ -84,18 +94,18 @@ export default function TabStandup() {
       {/* Header */}
       <div className={s.header}>
         <div className={s.tabs}>
-          <button className={`${s.tab} ${view==="today"   ? s.tabActive : ""}`} onClick={() => setView("today")}>Today</button>
-          <button className={`${s.tab} ${view==="history" ? s.tabActive : ""}`} onClick={() => setView("history")}>
-            History ({projectStandups.length})
+          <button className={`${s.tab} ${view === "today" ? s.tabActive : ""}`} onClick={() => setView("today")}>{t("standup.tabs.today")}</button>
+          <button className={`${s.tab} ${view === "history" ? s.tabActive : ""}`} onClick={() => setView("history")}>
+            {t("standup.tabs.history")} ({projectStandups.length})
           </button>
         </div>
         {view === "today" && (
           <div style={{ display: "flex", gap: "0.75em", alignItems: "center" }}>
             <span className={s.dateLabel}>📅 {today()}</span>
             <button className="btn" onClick={handleCopy} disabled={!todayEntry}>
-              {copyMsg ? "✓ Copied!" : "⎘ Copy"}
+              {copyMsg ? `✓ ${t("standup.copied")}` : `⎘ ${t("standup.copy")}`}
             </button>
-            <button className="btn" onClick={() => setExportOpen(true)} title="Export standup history">⬇ Export</button>
+            <button className="btn" onClick={() => setExportOpen(true)} title={t("standup.exportHint")}>⬇ {t("standup.export")}</button>
           </div>
         )}
       </div>
@@ -107,19 +117,19 @@ export default function TabStandup() {
             <div className={s.contextCards}>
               {pendingTasks.length > 0 && (
                 <div className={s.contextCard} style={{ borderLeftColor: "var(--yellow)" }}>
-                  <span className={s.contextLabel}>IN PROGRESS</span>
+                  <span className={s.contextLabel}>{t("standup.inProgress")}</span>
                   <ul className={s.contextList}>
                     {pendingTasks.slice(0, 4).map((t) => <li key={t.id}>{t.title}</li>)}
-                    {pendingTasks.length > 4 && <li>+{pendingTasks.length - 4} more</li>}
+                    {pendingTasks.length > 4 && <li>+{pendingTasks.length - 4} {t("standup.more")}</li>}
                   </ul>
                 </div>
               )}
               {overdueTasks.length > 0 && (
                 <div className={s.contextCard} style={{ borderLeftColor: "var(--red)" }}>
-                  <span className={s.contextLabel} style={{ color: "var(--red)" }}>OVERDUE</span>
+                  <span className={s.contextLabel} style={{ color: "var(--red)" }}>{t("standup.overdue")}</span>
                   <ul className={s.contextList}>
                     {overdueTasks.slice(0, 3).map((t) => <li key={t.id} style={{ color: "var(--red)" }}>{t.title}</li>)}
-                    {overdueTasks.length > 3 && <li>+{overdueTasks.length - 3} more</li>}
+                    {overdueTasks.length > 3 && <li>+{overdueTasks.length - 3} {t("standup.more")}</li>}
                   </ul>
                 </div>
               )}
@@ -129,10 +139,10 @@ export default function TabStandup() {
           {/* Form fields */}
           <div className={s.field}>
             <label className={s.fieldLabel}>
-              ✅ What did you accomplish yesterday?
+              ✅ {t("standup.yesterdayLabel")}
             </label>
             <textarea className="input" rows={4}
-              placeholder="— completed X&#10;— reviewed Y&#10;— merged PR #42"
+              placeholder={t("standup.yesterdayPh")}
               value={entry.yesterday}
               onChange={(e) => upd({ yesterday: e.target.value })}
               onFocus={ensureToday} />
@@ -140,10 +150,10 @@ export default function TabStandup() {
 
           <div className={s.field}>
             <label className={s.fieldLabel}>
-              📋 What are you working on today?
+              📋 {t("standup.todayLabel")}
             </label>
             <textarea className="input" rows={4}
-              placeholder="— start implementing Z&#10;— write tests for X&#10;— review team's PRs"
+              placeholder={t("standup.todayPh")}
               value={entry.today}
               onChange={(e) => upd({ today: e.target.value })}
               onFocus={ensureToday} />
@@ -151,10 +161,10 @@ export default function TabStandup() {
 
           <div className={s.field}>
             <label className={s.fieldLabel}>
-              🚧 Any blockers or dependencies?
+              🚧 {t("standup.blockersLabel")}
             </label>
             <textarea className="input" rows={2}
-              placeholder="None — or describe what's blocking you"
+              placeholder={t("standup.blockersPh")}
               value={entry.blockers}
               onChange={(e) => upd({ blockers: e.target.value })}
               onFocus={ensureToday} />
@@ -162,9 +172,9 @@ export default function TabStandup() {
 
           {/* Mood selector */}
           <div className={s.field}>
-            <label className={s.fieldLabel}>How are you feeling today?</label>
+            <label className={s.fieldLabel}>{t("standup.moodLabel")}</label>
             <div className={s.moodRow}>
-              {[1,2,3,4,5].map((m) => (
+              {[1, 2, 3, 4, 5].map((m) => (
                 <button key={m}
                   className={`${s.moodBtn} ${entry.mood === m ? s.moodActive : ""}`}
                   style={entry.mood === m ? { borderColor: MOOD_COLOURS[m], color: MOOD_COLOURS[m] } : {}}
@@ -182,7 +192,7 @@ export default function TabStandup() {
       {view === "history" && (
         <div className={s.history}>
           {!projectStandups.length && (
-            <div className={s.empty}>No standup entries yet. Fill in today's standup to get started.</div>
+            <div className={s.empty}>{t("standup.historyEmpty")}</div>
           )}
           {projectStandups.map((entry) => (
             <div key={entry.id} className={s.historyCard}>
@@ -193,16 +203,16 @@ export default function TabStandup() {
                 </span>
               </div>
               <div className={s.historySection}>
-                <span className={s.historySectionLabel}>Yesterday</span>
+                <span className={s.historySectionLabel}>{t("standup.yesterdayLabel")}</span>
                 <p>{entry.yesterday || "—"}</p>
               </div>
               <div className={s.historySection}>
-                <span className={s.historySectionLabel}>Today</span>
+                <span className={s.historySectionLabel}>{t("standup.todayLabel")}</span>
                 <p>{entry.today || "—"}</p>
               </div>
               {entry.blockers && (
                 <div className={s.historySection}>
-                  <span className={s.historySectionLabel} style={{ color: "var(--red)" }}>Blockers</span>
+                  <span className={s.historySectionLabel} style={{ color: "var(--red)" }}>{t("standup.blockersLabel")}</span>
                   <p style={{ color: "var(--red)" }}>{entry.blockers}</p>
                 </div>
               )}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAppStore } from "@/stores/useAppStore";
 import { RESOLUTIONS, applyResolution, type ResolutionKey } from "@/utils/resolution";
 import s from "./Onboarding.module.css";
@@ -21,6 +22,7 @@ const PROJECT_TEMPLATES = [
 ];
 
 export default function Onboarding({ onComplete }: { onComplete: () => void }) {
+  const { t } = useTranslation();
   const updateSettings = useAppStore((s) => s.updateSettings);
   const addProject = useAppStore((s) => s.addProject);
   const addTask = useAppStore((s) => s.addTask);
@@ -112,9 +114,9 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
         {step === "Welcome" && (
           <div className={s.stepContent}>
             <div className={s.bigIcon}>⌨</div>
-            <h1 className={s.heading}>Welcome to DevNotes</h1>
+            <h1 className={s.heading}>{t("onboarding.welcome.title")}</h1>
             <p className={s.subheading}>
-              Your local-first developer workspace. Let's get you set up in about 60 seconds.
+              {t("onboarding.welcome.subtitle")}
             </p>
             <div className={s.featureGrid}>
               {[
@@ -138,8 +140,8 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
         {/* ── Resolution ── */}
         {step === "Resolution" && (
           <div className={s.stepContent}>
-            <h2 className={s.heading}>Choose Your Screen Resolution</h2>
-            <p className={s.subheading}>This scales the entire UI to fit your monitor perfectly.</p>
+            <h2 className={s.heading}>{t("onboarding.resolution.title")}</h2>
+            <p className={s.subheading}>{t("onboarding.resolution.subtitle")}</p>
             <div className={s.resGrid}>
               {RESOLUTIONS.map((preset) => (
                 <button key={preset.key}
@@ -157,8 +159,8 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
         {/* ── Theme ── */}
         {step === "Theme" && (
           <div className={s.stepContent}>
-            <h2 className={s.heading}>Pick a Theme</h2>
-            <p className={s.subheading}>You can change this any time in Settings → Appearance.</p>
+            <h2 className={s.heading}>{t("onboarding.theme.title")}</h2>
+            <p className={s.subheading}>{t("onboarding.theme.subtitle")}</p>
             <div className={s.themeGrid}>
               {THEMES.map((t) => (
                 <button key={t.id}
@@ -185,10 +187,10 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
         {step === "First Project" && (
           <div className={s.stepContent}>
             <div className={s.headingRow}>
-              <h2 className={s.heading}>Create Your First Project</h2>
+              <h2 className={s.heading}>{t("onboarding.project.title")}</h2>
               <button className={s.skipStepBtn} onClick={handleNext}>Skip for now →</button>
             </div>
-            <p className={s.subheading}>You can always create a project later from the sidebar.</p>
+            <p className={s.subheading}>{t("onboarding.project.subtitle")}</p>
 
             <div className={s.field}>
               <label className={s.fieldLabel}>Project Name</label>
@@ -200,15 +202,15 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
             </div>
 
             <div className={s.field}>
-              <label className={s.fieldLabel}>Template</label>
+              <label className={s.fieldLabel}>{t("onboarding.project.templateLabel")}</label>
               <div className={s.templateGrid}>
-                {PROJECT_TEMPLATES.map((t) => (
-                  <button key={t.id}
-                    className={`${s.templateCard} ${template === t.id ? s.templateActive : ""}`}
-                    onClick={() => setTemplate(t.id)}>
-                    <span className={s.templateIcon}>{t.icon}</span>
-                    <span className={s.templateLabel}>{t.label}</span>
-                    <span className={s.templateDesc}>{t.desc}</span>
+                {PROJECT_TEMPLATES.map((tmpl) => (
+                  <button key={tmpl.id}
+                    className={`${s.templateCard} ${template === tmpl.id ? s.templateActive : ""}`}
+                    onClick={() => setTemplate(tmpl.id)}>
+                    <span className={s.templateIcon}>{tmpl.icon}</span>
+                    <span className={s.templateLabel}>{t(`onboarding.project.templates.${tmpl.id}`) || tmpl.label}</span>
+                    <span className={s.templateDesc}>{tmpl.desc}</span>
                   </button>
                 ))}
               </div>
@@ -270,7 +272,7 @@ export default function Onboarding({ onComplete }: { onComplete: () => void }) {
             </button>
           ) : (
             <button className="btn btn-primary" style={{ padding: "0.7em 2.5em" }} onClick={handleFinish}>
-              Launch DevNotes →
+              {t("onboarding.project.button")} →
             </button>
           )}
         </div>

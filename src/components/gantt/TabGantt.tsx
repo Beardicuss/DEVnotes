@@ -1,29 +1,30 @@
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAppStore, selTasks, selActiveProject } from "@/stores/useAppStore";
 import s from "./TabGantt.module.css";
 
 type GanttItem = {
-  id:       string;
-  label:    string;
-  start:    string;   // ISO date
-  end:      string;   // ISO date
-  colour:   string;
-  kind:     "task" | "milestone";
-  status:   string;
+  id: string;
+  label: string;
+  start: string;   // ISO date
+  end: string;   // ISO date
+  colour: string;
+  kind: "task" | "milestone";
+  status: string;
   priority?: string;
 };
 
 const PRIORITY_COLOURS: Record<string, string> = {
   critical: "var(--red)",
-  high:     "var(--orange, #ff8800)",
-  medium:   "var(--cyan)",
-  low:      "var(--text-dim)",
+  high: "var(--orange, #ff8800)",
+  medium: "var(--cyan)",
+  low: "var(--text-dim)",
 };
 const STATUS_COLOURS: Record<string, string> = {
-  done:        "var(--green)",
-  "in-progress":"var(--yellow)",
-  backlog:     "var(--border)",
-  todo:        "var(--blue)",
+  done: "var(--green)",
+  "in-progress": "var(--yellow)",
+  backlog: "var(--border)",
+  todo: "var(--blue)",
 };
 
 function addDays(iso: string, n: number): string {
@@ -37,12 +38,13 @@ function daysBetween(a: string, b: string): number {
 function today(): string { return new Date().toISOString().slice(0, 10); }
 
 export default function TabGantt() {
-  const project   = useAppStore(selActiveProject);
-  const tasks     = useAppStore(selTasks);
-  const plans     = useAppStore((s) => s.data.plans);
+  const { t } = useTranslation();
+  const project = useAppStore(selActiveProject);
+  const tasks = useAppStore(selTasks);
+  const plans = useAppStore((s) => s.data.plans);
   const _updateTask = useAppStore((s) => s.updateTask);
 
-  const [zoom, setZoom]         = useState<"week"|"month"|"quarter">("month");
+  const [zoom, setZoom] = useState<"week" | "month" | "quarter">("month");
   const [showDone, setShowDone] = useState(false);
   if (!project) return null;
 
@@ -58,13 +60,13 @@ export default function TabGantt() {
     );
     for (const t of projTasks) {
       list.push({
-        id:       t.id,
-        label:    t.title,
-        start:    t.dueDate!,
-        end:      t.dueDate!,
-        colour:   STATUS_COLOURS[t.status] ?? PRIORITY_COLOURS[t.priority] ?? "var(--cyan)",
-        kind:     "task",
-        status:   t.status,
+        id: t.id,
+        label: t.title,
+        start: t.dueDate!,
+        end: t.dueDate!,
+        colour: STATUS_COLOURS[t.status] ?? PRIORITY_COLOURS[t.priority] ?? "var(--cyan)",
+        kind: "task",
+        status: t.status,
         priority: t.priority,
       });
     }
@@ -73,12 +75,12 @@ export default function TabGantt() {
     for (const ms of plan?.milestones ?? []) {
       if (!ms.date) continue;
       list.push({
-        id:     ms.id,
-        label:  ms.title,
-        start:  ms.date,
-        end:    ms.date,
+        id: ms.id,
+        label: ms.title,
+        start: ms.date,
+        end: ms.date,
         colour: ms.status === "done" ? "var(--green)" : "var(--magenta, #ff00ff)",
-        kind:   "milestone",
+        kind: "milestone",
         status: ms.status,
       });
     }
@@ -107,8 +109,8 @@ export default function TabGantt() {
   const todayOffset = Math.max(0, daysBetween(viewStart, today())) * pxPerDay;
 
   const getBar = (item: GanttItem) => {
-    const left  = Math.max(0, daysBetween(viewStart, item.start)) * pxPerDay;
-    const span  = Math.max(1, daysBetween(item.start, item.end) + 1);
+    const left = Math.max(0, daysBetween(viewStart, item.start)) * pxPerDay;
+    const span = Math.max(1, daysBetween(item.start, item.end) + 1);
     const width = span * pxPerDay;
     return { left, width };
   };
@@ -130,26 +132,26 @@ export default function TabGantt() {
     <div className={s.root}>
       {/* Toolbar */}
       <div className={s.toolbar}>
-        <span className={s.title}>TIMELINE / GANTT</span>
+        <span className={s.title}>{t("gantt.title")}</span>
         <div className={s.zoomBtns}>
-          {(["week","month","quarter"] as const).map((z) => (
-            <button key={z} className={`${s.zoomBtn} ${zoom===z?s.zoomActive:""}`} onClick={() => setZoom(z)}>
-              {z}
+          {(["week", "month", "quarter"] as const).map((z) => (
+            <button key={z} className={`${s.zoomBtn} ${zoom === z ? s.zoomActive : ""}`} onClick={() => setZoom(z)}>
+              {t(`gantt.${z}`)}
             </button>
           ))}
         </div>
         <label className={s.toggle}>
           <input type="checkbox" checked={showDone} onChange={(e) => setShowDone(e.target.checked)} />
-          show done
+          {t("gantt.showDone")}
         </label>
-        {!items.length && <span className={s.hint}>Add due dates to tasks or milestones to the Plan to see them here.</span>}
+        {!items.length && <span className={s.hint}>{t("gantt.addTasksHint")}</span>}
       </div>
 
       {items.length === 0 && (
         <div className={s.empty}>
           <div className={s.emptyIcon}>📅</div>
-          <div>No tasks with due dates found.</div>
-          <div className={s.emptyHint}>Set due dates in the Tasks tab or add milestones in the Plan tab.</div>
+          <div>{t("gantt.empty.title")}</div>
+          <div className={s.emptyHint}>{t("gantt.empty.hint")}</div>
         </div>
       )}
 
@@ -158,7 +160,7 @@ export default function TabGantt() {
           {/* Row labels */}
           <div className={s.labels}>
             <div className={s.labelHeader}>
-              <span className={s.labelHeaderText}>ITEM</span>
+              <span className={s.labelHeaderText}>{t("gantt.item")}</span>
             </div>
             {/* Month spacer */}
             <div className={s.monthSpacer} />
@@ -197,7 +199,7 @@ export default function TabGantt() {
                   const dow = new Date(col).getDay();
                   const isWeekend = dow === 0 || dow === 6;
                   return (
-                    <div key={col} className={`${s.dayCell} ${isToday?s.dayCellToday:""} ${isWeekend?s.dayCellWeekend:""}`}
+                    <div key={col} className={`${s.dayCell} ${isToday ? s.dayCellToday : ""} ${isWeekend ? s.dayCellWeekend : ""}`}
                       style={{ width: pxPerDay }}>
                       {pxPerDay >= 24 ? new Date(col).getDate() : ""}
                     </div>
@@ -211,7 +213,7 @@ export default function TabGantt() {
                 {cols.map((col, i) => {
                   const dow = new Date(col).getDay();
                   return (
-                    <div key={col} className={`${s.gridLine} ${(dow===0||dow===6)?s.gridWeekend:""}`}
+                    <div key={col} className={`${s.gridLine} ${(dow === 0 || dow === 6) ? s.gridWeekend : ""}`}
                       style={{ left: i * pxPerDay, width: pxPerDay }} />
                   );
                 })}
@@ -233,9 +235,9 @@ export default function TabGantt() {
                         </div>
                       ) : (
                         <div
-                          className={`${s.bar} ${item.status==="done"?s.barDone:""}`}
+                          className={`${s.bar} ${item.status === "done" ? s.barDone : ""}`}
                           style={{ left, width: Math.max(width, 8), background: item.colour }}
-                          title={`${item.label}\n${item.start}${item.end!==item.start?" → "+item.end:""}\n[${item.priority}] ${item.status}`}
+                          title={`${item.label}\n${item.start}${item.end !== item.start ? " → " + item.end : ""}\n[${item.priority}] ${item.status}`}
                         >
                           {width > 50 && <span className={s.barLabel}>{item.label}</span>}
                         </div>
@@ -255,13 +257,13 @@ export default function TabGantt() {
           {Object.entries(STATUS_COLOURS).map(([k, v]) => (
             <span key={k} className={s.legendItem}>
               <span className={s.legendDot} style={{ background: v }} />
-              {k}
+              {t(`gantt.status.${k}`)}
             </span>
           ))}
           <span className={s.legendItem}>
-            <span style={{ color: "var(--magenta, #ff00ff)" }}>◆</span> milestone
+            <span style={{ color: "var(--magenta, #ff00ff)" }}>◆</span> {t("gantt.milestone")}
           </span>
-          <span className={s.legendItem} style={{ color: "var(--red)" }}>│ today</span>
+          <span className={s.legendItem} style={{ color: "var(--red)" }}>│ {t("gantt.today")}</span>
         </div>
       )}
     </div>
