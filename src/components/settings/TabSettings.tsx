@@ -144,8 +144,8 @@ export default function TabSettings() {
               <select className="input" style={{ width: "14em" }}
                 value={settings.theme}
                 onChange={(e) => set({ theme: e.target.value as import("@/types").Theme })}>
-                <option value="softcurse-dark">{t("settings.appearance.softcurseDark")}</option>
-                <option value="light">{t("settings.appearance.light")}</option>
+                <option value="softcurse-dark">Softcurse Dark</option>
+                <option value="light">Softcurse Light</option>
               </select>
             </Row>
             <Row label={t("settings.appearance.showGridBg")}>
@@ -162,14 +162,29 @@ export default function TabSettings() {
           <>
             <h2 className={s.title}>{t("settings.fonts.title")}</h2>
             <Row label={t("settings.fonts.uiFont")}>
-              <input className="input" style={{ width: "18em" }}
-                value={settings.uiFont}
-                onChange={(e) => set({ uiFont: e.target.value })} />
+              <select className="input" style={{ width: "18em" }}
+                value={settings.uiFont || ""}
+                onChange={(e) => set({ uiFont: e.target.value })}>
+                <option value="">System Default</option>
+                <option value="Share Tech Mono">Share Tech Mono</option>
+                <option value="Rajdhani">Rajdhani</option>
+                <option value="Inter">Inter</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Orbitron">Orbitron</option>
+                <option value="Courier New">Courier New</option>
+              </select>
             </Row>
             <Row label={t("settings.fonts.codeFont")}>
-              <input className="input" style={{ width: "18em" }}
-                value={settings.codeFont}
-                onChange={(e) => set({ codeFont: e.target.value })} />
+              <select className="input" style={{ width: "18em" }}
+                value={settings.codeFont || ""}
+                onChange={(e) => set({ codeFont: e.target.value })}>
+                <option value="">System Default</option>
+                <option value="Fira Code">Fira Code</option>
+                <option value="JetBrains Mono">JetBrains Mono</option>
+                <option value="Share Tech Mono">Share Tech Mono</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Consolas">Consolas</option>
+              </select>
             </Row>
             <Row label={t("settings.fonts.lineHeight")}>
               <select className="input" style={{ width: "10em" }}

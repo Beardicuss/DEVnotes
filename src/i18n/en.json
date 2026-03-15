@@ -299,9 +299,11 @@
       "inputPlaceholder": "e.g. Portfolio Website, API Refactor...",
       "templateLabel": "Select a starter template:",
       "templates": {
-        "empty": "Empty Workspace",
-        "software": "Software Development (Sprint Board, Docs)",
-        "marketing": "Marketing / Content (Kanban, Notes)"
+        "blank": "Blank",
+        "webapp": "Web App",
+        "mobile": "Mobile App",
+        "library": "Library / SDK",
+        "personal": "Personal"
       },
       "button": "Launch DevNotes"
     }

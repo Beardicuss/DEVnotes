@@ -9,7 +9,7 @@ type Step = typeof STEPS[number];
 
 const THEMES: { id: import("@/types").Theme; label: string; preview: string }[] = [
   { id: "softcurse-dark", label: "Softcurse Dark", preview: "#020202" },
-  { id: "light", label: "Light", preview: "#f5f5f5" },
+  { id: "light", label: "Softcurse Light", preview: "#f5f5f5" },
   { id: "system", label: "System", preview: "#333333" },
 ];
 

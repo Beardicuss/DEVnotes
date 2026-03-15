@@ -71,7 +71,7 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    color: var(--text-on-accent);
+    color: var(--text);
     text-align: left;
     transition: all var(--t-base);
 }

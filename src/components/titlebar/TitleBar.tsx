@@ -46,8 +46,8 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
   const handleDrag = (e: React.PointerEvent<HTMLElement>) => {
     if (!isTauri) return;
     const target = e.target as HTMLElement;
-    // Prevent dragging if the user clicked a button or a tab inside the navigation
-    if (target.closest('button') || target.closest('nav')) return;
+    // Prevent dragging if the user clicked a button, nav, or interactive element
+    if (target.closest('button') || target.closest('nav') || target.closest('[data-nodrag]')) return;
     try {
       getCurrentWindow().startDragging();
     } catch (err) {
@@ -113,7 +113,7 @@ export default function TitleBar({ onPomodoroToggle, pomodoroOpen, onSearchOpen,
           <button className={`${s.settingsBtn} ${pomodoroOpen ? s.pomodoroActive : ""}`}
             onClick={onPomodoroToggle} title={t("nav.pomodoro")}>🍅</button>
         )}
-        <button className={s.settingsBtn} onClick={() => setTab("settings")} title={t("nav.settings")}>⚙</button>
+        <button className={`${s.settingsBtn} ${activeTab === 'settings' ? s.tabActive : ''}`} onClick={() => setTab(activeTab === "settings" ? "dashboard" : "settings")} title={t("nav.settings")}>⚙</button>
 
         {isTauri && (
           <div className={s.winBtns}>
