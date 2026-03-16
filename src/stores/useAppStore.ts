@@ -41,6 +41,7 @@ interface AppStore {
   isInitialized: boolean;
   syncState: SyncState;
   quickCaptureOpen: boolean;
+  gitStatus: Record<ID, any>;
 
   // ── Lifecycle ──
   init: () => Promise<void>;
@@ -196,6 +197,7 @@ export const useAppStore = create<AppStore>()(
     isInitialized: false,
     syncState: { status: "idle", lastSyncAt: null, errorMessage: null },
     quickCaptureOpen: false,
+    gitStatus: {},
 
     // ── Init ──────────────────────────────────────────────────────
     init: async () => {
@@ -273,6 +275,14 @@ export const useAppStore = create<AppStore>()(
           }));
         }
         set({ syncState: result.state });
+      }
+
+      // Google Calendar auto-sync
+      try {
+        const { triggerCalendarSync } = await import("@/integrations/calendar/sync");
+        await triggerCalendarSync("on-save");
+      } catch (err) {
+        console.warn("[GCal Sync] Background sync failed:", err);
       }
 
       set({ isSaving: false });
@@ -611,7 +621,7 @@ export const useAppStore = create<AppStore>()(
     },
 
     // ── Git status cache ───────────────────────────────────────────
-    setGitStatus: (_projectId, _status) => { /* stored in component state for now */ },
+    setGitStatus: (projectId, status) => set((s) => ({ gitStatus: { ...s.gitStatus, [projectId]: status } })),
 
     // ── GitHub sync ───────────────────────────────────────────────
     syncNow: async () => {

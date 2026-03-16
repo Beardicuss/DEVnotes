@@ -26,9 +26,32 @@ export function clearReminder(taskId: string): void {
   if (t) { clearTimeout(t); scheduled.delete(taskId); }
 }
 
+// ─── DND Helper ───────────────────────────────────────────────────
+
+function applyDND(fireAtMs: number, dndStart?: string, dndEnd?: string): number {
+  if (!dndStart || !dndEnd) return fireAtMs;
+
+  const fireDate = new Date(fireAtMs);
+  const startParts = dndStart.split(':').map(Number);
+  const endParts = dndEnd.split(':').map(Number);
+
+  const startMs = new Date(fireDate).setHours(startParts[0] ?? 22, startParts[1] ?? 0, 0, 0);
+  let endMs = new Date(fireDate).setHours(endParts[0] ?? 8, endParts[1] ?? 0, 0, 0);
+
+  if (startMs > endMs) {
+    // Spans midnight: 22:00 -> 08:00
+    if (fireAtMs >= startMs) return endMs + 86400_000; // delay to tomorrow morning
+    if (fireAtMs < endMs) return endMs; // delay to this morning
+  } else {
+    // Normal range: 14:00 -> 16:00
+    if (fireAtMs >= startMs && fireAtMs < endMs) return endMs;
+  }
+  return fireAtMs;
+}
+
 // ─── Schedule ─────────────────────────────────────────────────────
 
-export function scheduleReminder(task: Task): void {
+export function scheduleReminder(task: Task, dndStart?: string, dndEnd?: string): void {
   clearReminder(task.id);
 
   if (!task.reminder?.enabled || !task.dueDate) return;
@@ -37,8 +60,9 @@ export function scheduleReminder(task: Task): void {
     ? new Date(`${task.dueDate}T${task.dueTime}`).getTime()
     : new Date(`${task.dueDate}T09:00`).getTime();   // default 9am if no time
 
-  const fireAt = dueMs - task.reminder.offsetMinutes * 60_000;
-  const delay  = fireAt - Date.now();
+  let fireAt = dueMs - task.reminder.offsetMinutes * 60_000;
+  fireAt = applyDND(fireAt, dndStart, dndEnd);
+  const delay = fireAt - Date.now();
 
   if (delay < 0) return;   // already past — don't fire
 
@@ -53,11 +77,11 @@ export function scheduleReminder(task: Task): void {
 /**
  * Re-schedule all tasks on app start or when tasks change.
  */
-export function scheduleAllReminders(tasks: Task[]): void {
+export function scheduleAllReminders(tasks: Task[], dndStart?: string, dndEnd?: string): void {
   clearAllReminders();
   for (const task of tasks) {
     if (task.status !== "done" && task.status !== "archived") {
-      scheduleReminder(task);
+      scheduleReminder(task, dndStart, dndEnd);
     }
   }
 }
@@ -66,7 +90,7 @@ export function scheduleAllReminders(tasks: Task[]): void {
 
 async function fireNotification(task: Task): Promise<void> {
   const title = `⏰ ${task.title}`;
-  const body  = task.dueDate
+  const body = task.dueDate
     ? `Due: ${task.dueDate}${task.dueTime ? " at " + task.dueTime : ""}`
     : "Task reminder";
 
@@ -101,29 +125,34 @@ async function fireNotification(task: Task): Promise<void> {
 
 export function scheduleDailyDigest(
   tasks: Task[],
-  digestHour: number   // 0–23, e.g. 8 for 8am
+  digestHour: number,   // 0–23, e.g. 8 for 8am
+  dndStart?: string,
+  dndEnd?: string
 ): void {
-  const now  = new Date();
+  const now = new Date();
   const fire = new Date();
   fire.setHours(digestHour, 0, 0, 0);
   if (fire <= now) fire.setDate(fire.getDate() + 1);   // tomorrow
 
-  const delay = fire.getTime() - now.getTime();
+  let fireAt = fire.getTime();
+  fireAt = applyDND(fireAt, dndStart, dndEnd);
+
+  const delay = fireAt - now.getTime();
 
   const timer = setTimeout(() => {
-    const today    = new Date().toISOString().slice(0, 10);
+    const today = new Date().toISOString().slice(0, 10);
     const dueToday = tasks.filter(
       (t) => t.dueDate === today && t.status !== "done" && t.status !== "archived"
     );
-    const overdue  = tasks.filter(
+    const overdue = tasks.filter(
       (t) => t.dueDate && t.dueDate < today && t.status !== "done" && t.status !== "archived"
     );
 
     const title = "DevNotes — Daily Digest";
-    const lines  = [];
-    if (dueToday.length)  lines.push(`📋 ${dueToday.length} task(s) due today`);
-    if (overdue.length)   lines.push(`⚠ ${overdue.length} overdue`);
-    if (!lines.length)    lines.push("✓ No tasks due today");
+    const lines = [];
+    if (dueToday.length) lines.push(`📋 ${dueToday.length} task(s) due today`);
+    if (overdue.length) lines.push(`⚠ ${overdue.length} overdue`);
+    if (!lines.length) lines.push("✓ No tasks due today");
 
     fireNotification({
       id: "digest", title,
@@ -139,4 +168,22 @@ export function scheduleDailyDigest(
   }, delay);
 
   scheduled.set("__digest__", timer);
+}
+
+// ─── Overdue alert ────────────────────────────────────────────────
+
+export function triggerOverdueAlert(tasks: Task[]): void {
+  const today = new Date().toISOString().slice(0, 10);
+  const overdue = tasks.filter(
+    (t) => t.dueDate && t.dueDate < today && t.status !== "done" && t.status !== "archived"
+  );
+  if (overdue.length > 0) {
+    fireNotification({
+      id: "overdueAlert", title: "⚠ Overdue Tasks",
+      projectId: "",
+      description: `You remain behind on ${overdue.length} task(s)!`,
+      dueDate: today, dueTime: null,
+      reminder: { enabled: true, offsetMinutes: 0, notificationId: null },
+    } as unknown as Task);
+  }
 }
