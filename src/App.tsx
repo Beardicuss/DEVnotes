@@ -7,6 +7,7 @@ import { useFileWatcher } from "@/hooks/useFileWatcher";
 import { useGlobalHotkey } from "@/hooks/useGlobalHotkey";
 import i18n from "@/i18n";
 import { applyResolution, type ResolutionKey } from "@/utils/resolution";
+import { hideWindow, showWindow, setAutostart, isAutostarted, isTauri } from "@/utils/platform";
 import TitleBar from "@/components/titlebar/TitleBar";
 import StatusBar from "@/components/statusbar/StatusBar";
 import ProjectPicker from "@/components/projects/ProjectPicker";
@@ -92,6 +93,27 @@ export default function App() {
     const lh = { compact: "1.4", normal: "1.65", relaxed: "2.0" };
     document.documentElement.style.setProperty("--lh", lh[settings.lineHeight]);
   }, [settings]);
+
+  // Apply autostart registry setting whenever the setting changes
+  useEffect(() => {
+    if (!isInit || !isTauri) return;
+    setAutostart(!!settings.autostart).catch(console.error);
+  }, [isInit, isTauri, settings.autostart]);
+
+  // Handle startMinimized window visibility (only once on boot)
+  useEffect(() => {
+    if (!isInit || !isTauri) return;
+
+    // Main window is hidden by default in tauri.conf.json.
+    // If we were launched manually (not autostarted), OR if startMinimized is false, show it.
+    isAutostarted().then((autostarted) => {
+      if (!(autostarted && settings.startMinimized)) {
+        showWindow().catch(console.error);
+      }
+    }).catch(console.error);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInit, isTauri]); // Only run once when initialization finishes
 
   if (!isInit) {
     return (

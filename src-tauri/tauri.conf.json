@@ -15,7 +15,8 @@
         "title": "devnotes",
         "width": 1024,
         "height": 768,
-        "decorations": false
+        "decorations": false,
+        "visible": false
       }
     ],
     "security": {

@@ -27,7 +27,7 @@ export async function storageRead(): Promise<string | null> {
     try {
       const { readTextFile, BaseDirectory } =
         await import("@tauri-apps/plugin-fs");
-      return await readTextFile("DevNotes/data.json", { baseDir: BaseDirectory.Executable });
+      return await readTextFile("data.json", { baseDir: BaseDirectory.AppData });
     } catch { return null; }
   }
   return localStorage.getItem(STORAGE_KEY);
@@ -37,8 +37,9 @@ export async function storageWrite(json: string): Promise<void> {
   if (isTauri) {
     const { writeTextFile, mkdir, BaseDirectory } =
       await import("@tauri-apps/plugin-fs");
-    await mkdir("DevNotes", { baseDir: BaseDirectory.Executable, recursive: true });
-    await writeTextFile("DevNotes/data.json", json, { baseDir: BaseDirectory.Executable });
+    // Ensure the folder exists in AppData
+    await mkdir("", { baseDir: BaseDirectory.AppData, recursive: true }).catch(() => { });
+    await writeTextFile("data.json", json, { baseDir: BaseDirectory.AppData });
     return;
   }
   localStorage.setItem(STORAGE_KEY, json);
@@ -49,16 +50,16 @@ export async function storageBackup(json: string, maxCount = 10): Promise<void> 
   try {
     const { writeTextFile, mkdir, readDir, remove, BaseDirectory } =
       await import("@tauri-apps/plugin-fs");
-    const baseDir = BaseDirectory.Executable;
-    await mkdir("DevNotes/backups", { baseDir, recursive: true });
+    const baseDir = BaseDirectory.AppData;
+    await mkdir("backups", { baseDir, recursive: true }).catch(() => { });
 
     // Write new backup
     const ts = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-    await writeTextFile(`DevNotes/backups/data-${ts}.json`, json, { baseDir });
+    await writeTextFile(`backups/data-${ts}.json`, json, { baseDir });
 
     // Prune oldest backups beyond maxCount
     try {
-      const entries = await readDir("DevNotes/backups", { baseDir });
+      const entries = await readDir("backups", { baseDir });
       const backups = entries
         .filter((e) => e.name?.endsWith(".json"))
         .sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")); // oldest first (ISO names sort lexicographically)
@@ -67,7 +68,7 @@ export async function storageBackup(json: string, maxCount = 10): Promise<void> 
         for (const entry of toDelete) {
           if (entry.name) {
             // Use the same baseDir option so Tauri resolves relative to AppData
-            await remove(`DevNotes/backups/${entry.name}`, { baseDir }).catch(() => { });
+            await remove(`backups/${entry.name}`, { baseDir }).catch(() => { });
           }
         }
       }
@@ -108,6 +109,14 @@ export async function setAutostart(enable: boolean): Promise<void> {
     const mod = await import("@tauri-apps/plugin-autostart");
     if (enable) await mod.enable(); else await mod.disable();
   } catch { /* plugin not installed */ }
+}
+
+export async function isAutostarted(): Promise<boolean> {
+  if (!isTauri) return false;
+  try {
+    const { invoke } = await import("@tauri-apps/api/core");
+    return await invoke("is_autostarted");
+  } catch { return false; }
 }
 
 /** Fire a notification (Tauri or Web). */

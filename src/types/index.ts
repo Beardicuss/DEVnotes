@@ -223,6 +223,7 @@ export interface AppSettings {
   launchAtStartup: boolean;
   minimizeToTray: boolean;
   startMinimized: boolean;
+  autostart: boolean;
   defaultProjectId: ID | null;
   autoDetectIDE: boolean;
   confirmDelete: boolean;

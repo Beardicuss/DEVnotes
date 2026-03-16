@@ -40,6 +40,7 @@ pub fn run() {
             unregister_global_hotkey,
             open_path_in_explorer,
             run_shell_command,
+            is_autostarted,
         ])
         .run(tauri::generate_context!())
         .expect("error running DevNotes Desktop");
@@ -281,6 +282,11 @@ fn hide_window(app: tauri::AppHandle) {
     if let Some(w) = app.get_webview_window("main") {
         let _ = w.hide();
     }
+}
+
+#[tauri::command]
+fn is_autostarted() -> bool {
+    std::env::args().any(|arg| arg == "--autostarted")
 }
 
 #[tauri::command]

@@ -6,6 +6,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
   launchAtStartup: false,
   minimizeToTray: true,
   startMinimized: false,
+  autostart: false,
   defaultProjectId: null,
   autoDetectIDE: true,
   confirmDelete: true,
