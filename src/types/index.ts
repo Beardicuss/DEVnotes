@@ -75,7 +75,7 @@ export interface Note {
   updatedAt: ISODateTime;
 }
 
-// ─── TODOS ────────────────────────────────────────────────────────
+// ─── TODO LISTS ─────────────────────────────────────────────────────
 
 export interface TodoItem {
   id: ID;

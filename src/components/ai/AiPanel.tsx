@@ -326,7 +326,7 @@ export default function AiPanel({ noteId, onClose }: { noteId?: string, onClose?
             setApplied(`🧠 Created mindmap: ${cmd.params.title}`);
           }
         } catch (err) {
-          console.error("Agent parsing error:", err);
+          setError(`Agent parsing error. The AI returned an invalid command format. Details: ${err instanceof Error ? err.message : String(err)}`);
         }
       }
 

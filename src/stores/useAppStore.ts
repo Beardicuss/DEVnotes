@@ -67,7 +67,7 @@ interface AppStore {
   restoreNote: (id: ID) => void;
   setNoteFilter: (patch: Partial<NoteFilter>) => void;
 
-  // ── Todos ──
+  // ── Todo Lists ──
   addTodoList: (name: string) => ID | undefined;
   updateTodoList: (id: ID, name: string) => void;
   deleteTodoList: (id: ID) => void;
@@ -410,7 +410,7 @@ export const useAppStore = create<AppStore>()(
     restoreNote: (id) => get().updateNote(id, { archived: false }),
     setNoteFilter: (patch) => set((s) => ({ noteFilter: { ...s.noteFilter, ...patch } })),
 
-    // ── Todos ─────────────────────────────────────────────────────
+    // ── Todo Lists ────────────────────────────────────────────────
     addTodoList: (name) => {
       const projectId = get().activeProjectId;
       if (!projectId) return undefined;
