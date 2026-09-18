@@ -56,28 +56,26 @@ async fn wait_oauth_callback() -> Result<serde_json::Value, String> {
     let req = BufReader::new(&stream)
         .lines()
         .next()
-        .ok_or("empty")?
+        .ok_or_else(|| "empty request".to_string())?
         .map_err(|e| e.to_string())?;
     let path = req.split_whitespace().nth(1).unwrap_or("/");
-    let query = path.split('?').nth(1).unwrap_or("");
+    let query = path.split_once('?').map(|(_, q)| q).unwrap_or("");
     let (mut code, mut state) = (String::new(), String::new());
     for p in query.split('&') {
         if let Some(v) = p.strip_prefix("code=") {
             code = v.to_string();
-        }
-        if let Some(v) = p.strip_prefix("state=") {
+        } else if let Some(v) = p.strip_prefix("state=") {
             state = v.to_string();
         }
     }
     let html = "<html><body style='background:#020202;color:#00ffff;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column'><h1>CONNECTED</h1><p>Return to DevNotes.</p></body></html>";
-    let _ = stream.write_all(
-        format!(
-            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
-            html.len(),
-            html
-        )
-        .as_bytes(),
+    let response = format!(
+        "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{}",
+        html.len(),
+        html
     );
+    let _ = stream.write_all(response.as_bytes());
+    let _ = stream.flush();
     if code.is_empty() {
         return Err("no code".to_string());
     }
@@ -168,6 +166,13 @@ async fn unregister_global_hotkey(app: tauri::AppHandle) -> Result<(), String> {
 // ── Shell utilities ───────────────────────────────────────────────
 #[tauri::command]
 async fn open_path_in_explorer(path: String) -> Result<(), String> {
+    if path.trim().is_empty() {
+        return Err("Path cannot be empty".to_string());
+    }
+    let p = std::path::Path::new(&path);
+    if !p.exists() {
+        return Err("Target path does not exist".to_string());
+    }
     #[cfg(target_os = "windows")]
     std::process::Command::new("explorer")
         .arg(&path)

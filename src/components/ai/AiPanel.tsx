@@ -36,15 +36,21 @@ async function callGroq(
 ): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
-  const combined = signal
-    ? (() => { signal.addEventListener("abort", () => controller.abort()); return controller.signal; })()
-    : controller.signal;
+  const onAbort = () => controller.abort();
+
+  if (signal) {
+    if (signal.aborted) {
+      controller.abort();
+    } else {
+      signal.addEventListener("abort", onAbort, { once: true });
+    }
+  }
 
   try {
     const fetchFn = isTauri ? (await import("@tauri-apps/plugin-http")).fetch : window.fetch;
     const res = await fetchFn("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
-      signal: combined,
+      signal: controller.signal,
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${apiKey}`
@@ -71,6 +77,9 @@ async function callGroq(
     throw e;
   } finally {
     clearTimeout(timer);
+    if (signal) {
+      signal.removeEventListener("abort", onAbort);
+    }
   }
 }
 
@@ -83,9 +92,15 @@ async function callGemini(
 ): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), AI_TIMEOUT_MS);
-  const combined = signal
-    ? (() => { signal.addEventListener("abort", () => controller.abort()); return controller.signal; })()
-    : controller.signal;
+  const onAbort = () => controller.abort();
+
+  if (signal) {
+    if (signal.aborted) {
+      controller.abort();
+    } else {
+      signal.addEventListener("abort", onAbort, { once: true });
+    }
+  }
 
   try {
     const fetchFn = isTauri ? (await import("@tauri-apps/plugin-http")).fetch : window.fetch;
@@ -97,7 +112,7 @@ async function callGemini(
 
     const res = await fetchFn(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: "POST",
-      signal: combined,
+      signal: controller.signal,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
@@ -117,6 +132,9 @@ async function callGemini(
     throw e;
   } finally {
     clearTimeout(timer);
+    if (signal) {
+      signal.removeEventListener("abort", onAbort);
+    }
   }
 }
 
