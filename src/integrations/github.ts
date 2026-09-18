@@ -84,6 +84,8 @@ function redactForSync(data: AppData): AppData {
       groqApiKey: null,   // never sync AI key to cloud
       geminiApiKey: null,
       githubToken: null,   // never sync the token that grants Gist access
+      googleClientId: "",
+      googleClientSecret: "",
       calendarAccessToken: null,
       calendarRefreshToken: null,
       calendarTokens: null,
